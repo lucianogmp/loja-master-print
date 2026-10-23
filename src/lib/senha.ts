@@ -2,6 +2,7 @@
 // só os 5 primeiros caracteres do hash saem do navegador; a senha nunca é enviada).
 export function validarSenha(s: string): string | null {
   if (s.length < 8) return 'Use pelo menos 8 caracteres.'
+  if (!/[A-Za-z]/.test(s) || !/\d/.test(s)) return 'A senha precisa ter letras e números.'
   return null
 }
 
