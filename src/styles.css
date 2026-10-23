@@ -1,0 +1,1140 @@
+/* =====================================================================
+   Loja Master Print — mesmo design do ERP
+   Fonte Outfit, azul como cor principal, painéis de vidro translúcido,
+   tema escuro (padrão) e claro. Os valores abaixo vêm do theme.css/index.css
+   do ERP; se o ERP mudar de visual, atualize aqui.
+   ===================================================================== */
+
+:root,
+:root[data-theme='dark'] {
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --floating-panel-bg: #1a2332;
+  --glass-bg: rgba(13, 13, 25, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(255, 255, 255, 0.16);
+  --glass-glow: rgba(59, 130, 246, 0.15);
+  --primary-glow: rgba(59, 130, 246, 0.35);
+  --body-bg: radial-gradient(circle at 50% 0%, #0c0d16 0%, #040408 100%);
+  --body-text: #f3f4f6;
+  --surface-strong-bg: rgba(10, 10, 18, 0.7);
+  --surface-soft-bg: rgba(10, 10, 18, 0.25);
+  --input-bg: rgba(7, 7, 12, 0.6);
+  --input-focus-bg: rgba(7, 7, 12, 0.8);
+  --text-primary: #ffffff;
+  --text-secondary: #f3f4f6;
+  --text-muted: #b6bfce;
+  --text-subtle: #9aa5b8;
+  --text-faint: #8b95a7;
+  --shadow-strong: rgba(0, 0, 0, 0.55);
+  --shadow-card: rgba(0, 0, 0, 0.4);
+  --link: #60a5fa;
+  --dinheiro: #10b981;
+  --art-bg: #111a2e;
+}
+
+:root[data-theme='light'] {
+  --floating-panel-bg: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(15, 23, 42, 0.12);
+  --glass-border-hover: rgba(37, 99, 235, 0.32);
+  --glass-glow: rgba(37, 99, 235, 0.12);
+  --primary-glow: rgba(37, 99, 235, 0.24);
+  --body-bg: radial-gradient(circle at 50% 0%, #f8fbff 0%, #e8edf5 100%);
+  --body-text: #111827;
+  --surface-strong-bg: rgba(255, 255, 255, 0.92);
+  --surface-soft-bg: rgba(241, 245, 249, 0.8);
+  --input-bg: rgba(255, 255, 255, 0.9);
+  --input-focus-bg: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #1f2937;
+  --text-muted: #475569;
+  --text-subtle: #64748b;
+  --text-faint: #7c8798;
+  --shadow-strong: rgba(15, 23, 42, 0.16);
+  --shadow-card: rgba(15, 23, 42, 0.12);
+  --link: #1d4ed8;
+  --dinheiro: #15803d;
+  --art-bg: #e3eaf5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-family);
+  background: var(--body-bg);
+  background-attachment: fixed;
+  color: var(--body-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: var(--link);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+::placeholder {
+  color: var(--text-faint);
+  opacity: 1;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border-hover) transparent;
+}
+
+.container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.secao {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.secao-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.centro {
+  text-align: center;
+}
+
+.titulo-pagina {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+}
+
+.subtitulo {
+  color: var(--text-muted);
+  margin-top: 0;
+}
+
+.dica {
+  display: block;
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+  margin: 4px 0 0;
+}
+
+.aviso-exemplo {
+  color: var(--text-subtle);
+  font-size: 0.8rem;
+  margin-top: 16px;
+}
+
+.vazio {
+  padding: 32px 0;
+  color: var(--text-muted);
+}
+
+/* ---------- Animações (as mesmas do ERP) ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradient-text-animated {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* O conteúdo ocupa o espaço que sobra, então o rodapé fica sempre embaixo */
+main {
+  flex: 1;
+  animation: slideUp 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.grade-produtos > *,
+.grade-categorias > * {
+  animation: fadeIn 500ms ease-out both;
+}
+
+.grade-produtos > :nth-child(1),
+.grade-categorias > :nth-child(1) {
+  animation-delay: 50ms;
+}
+.grade-produtos > :nth-child(2),
+.grade-categorias > :nth-child(2) {
+  animation-delay: 100ms;
+}
+.grade-produtos > :nth-child(3),
+.grade-categorias > :nth-child(3) {
+  animation-delay: 150ms;
+}
+.grade-produtos > :nth-child(4),
+.grade-categorias > :nth-child(4) {
+  animation-delay: 200ms;
+}
+.grade-produtos > :nth-child(5),
+.grade-categorias > :nth-child(5) {
+  animation-delay: 250ms;
+}
+.grade-produtos > :nth-child(6),
+.grade-categorias > :nth-child(6) {
+  animation-delay: 300ms;
+}
+
+.texto-gradiente {
+  background: linear-gradient(-45deg, #60a5fa, #3b82f6, #1d4ed8, #2563eb);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-text-animated 6s infinite ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main,
+  .grade-produtos > *,
+  .grade-categorias > *,
+  .texto-gradiente {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ---------- Vidro (mesmo efeito dos cards do ERP) ---------- */
+.vidro,
+.card-produto,
+.card-categoria,
+.item-carrinho,
+.resumo,
+.form-checkout,
+.caixa-preco,
+.ds-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--shadow-card);
+  border-radius: 1rem;
+}
+
+.card-produto,
+.card-categoria {
+  transition: border-color 500ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-produto:hover,
+.card-categoria:hover {
+  border-color: var(--glass-border-hover);
+  box-shadow: 0 8px 32px 0 var(--shadow-card), 0 0 20px var(--glass-glow);
+}
+
+/* ---------- Botões ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Igual ao botão azul ativo do ERP */
+.btn-primario {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.btn-primario:hover:not(:disabled) {
+  background: linear-gradient(135deg, #60a5fa, #2563eb);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.btn-secundario {
+  background: var(--surface-soft-bg);
+  border-color: var(--glass-border-hover);
+  color: var(--text-primary);
+}
+
+.btn-secundario:hover {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: var(--text-primary);
+}
+
+.btn-bloco {
+  width: 100%;
+}
+
+.link-botao {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--link);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.icone-botao {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.6rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+
+.icone-botao:hover {
+  color: var(--link);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ---------- Cabeçalho (como a barra superior do ERP) ---------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--surface-strong-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.barra-topo {
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+}
+
+.barra-topo-conteudo {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.barra-topo a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.header-principal {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.marca-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.marca-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+/* Logotipo igual ao do ERP: MASTER em azul + PRINT, preto pesado e apertado */
+.marca-texto strong {
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: var(--text-primary);
+}
+
+.marca-azul {
+  color: #3b82f6;
+}
+
+.marca-texto small {
+  font-size: 0.72rem;
+  color: var(--text-subtle);
+}
+
+.busca {
+  position: relative;
+  display: flex;
+  max-width: 520px;
+  width: 100%;
+  justify-self: center;
+}
+
+.busca-icone {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+.busca input {
+  flex: 1;
+  min-width: 0;
+  padding-left: 40px;
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.busca button {
+  padding: 0 18px;
+  border: 0;
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.header-acoes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.carrinho-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 0.6rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 300ms ease;
+}
+
+.carrinho-link:hover {
+  color: var(--link);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.contador {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* Abas de categoria: mesmo visual das abas do ERP */
+.categorias-lista {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-top: 0;
+  padding-bottom: 10px;
+}
+
+.categorias-lista::-webkit-scrollbar {
+  display: none;
+}
+
+.categorias-lista a {
+  flex: none;
+  padding: 8px 14px;
+  border-radius: 0.5rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 300ms ease;
+}
+
+.categorias-lista a:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--text-primary);
+}
+
+.categorias-lista a.active {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  background: radial-gradient(60% 90% at 85% 0%, var(--glass-glow), transparent 70%),
+    radial-gradient(40% 70% at 0% 100%, var(--glass-glow), transparent 70%);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.hero-grade {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 32px;
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.selo {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: var(--link);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.hero h1 {
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-weight: 800;
+}
+
+.hero p {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 520px;
+}
+
+.hero-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.hero-arte {
+  overflow: hidden;
+  border-radius: 1.25rem;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 16px 48px var(--shadow-strong), 0 0 40px var(--glass-glow);
+}
+
+.hero-arte svg {
+  width: 100%;
+  height: auto;
+}
+
+.beneficios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.beneficios div {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.beneficios strong {
+  font-size: 0.98rem;
+  color: var(--text-primary);
+}
+
+.faixa-beneficios {
+  background: var(--surface-soft-bg);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* ---------- Grades e cards ---------- */
+.grade-categorias {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.card-categoria {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-weight: 700;
+  text-align: center;
+}
+
+.card-categoria svg {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+}
+
+.card-categoria span {
+  padding: 10px 6px;
+  font-size: 0.9rem;
+}
+
+.grade-produtos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.card-produto {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.card-imagem svg {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+}
+
+.card-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  flex: 1;
+}
+
+.card-corpo h3 {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.card-corpo p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.card-preco {
+  margin-top: 8px;
+  font-weight: 800;
+  color: var(--dinheiro);
+}
+
+/* ---------- Catálogo ---------- */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 16px 0;
+  padding: 0.25rem;
+  width: fit-content;
+  max-width: 100%;
+  background: var(--surface-soft-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.75rem;
+}
+
+.filtros button {
+  padding: 8px 16px;
+  border-radius: 0.5rem;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+
+.filtros button:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--text-primary);
+}
+
+.filtros button.ativo {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* ---------- Produto ---------- */
+.migalhas {
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+  margin-bottom: 16px;
+}
+
+.produto-grade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  align-items: start;
+}
+
+.produto-imagem {
+  position: sticky;
+  top: 170px;
+}
+
+.produto-imagem svg {
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--shadow-card);
+}
+
+.legenda-imagem {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+  text-align: center;
+}
+
+.produto-info h1 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+}
+
+.produto-descricao {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.campo label,
+.campo legend {
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  padding: 0;
+}
+
+.campo-linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.campo-linha + .dica {
+  margin: -4px 0 14px;
+}
+
+/* Campos iguais aos do ERP: vidro, borda suave e brilho azul no foco */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 0.5rem;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.95rem;
+  transition: all 300ms ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: var(--input-focus-bg);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
+}
+
+select option {
+  background: var(--floating-panel-bg);
+  color: var(--text-primary);
+}
+
+.opcoes-arte {
+  gap: 6px;
+}
+
+.campo .radio,
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+.radio input {
+  width: auto;
+  accent-color: #3b82f6;
+}
+
+.caixa-preco {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 16px;
+  margin: 8px 0 16px;
+}
+
+.caixa-preco span {
+  color: var(--text-muted);
+}
+
+.caixa-preco strong {
+  font-size: 1.7rem;
+  color: var(--dinheiro);
+}
+
+.caixa-preco .prazo {
+  flex-basis: 100%;
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+}
+
+.acoes-produto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ---------- Carrinho e checkout ---------- */
+.carrinho-grade {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 28px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+.lista-carrinho {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item-carrinho {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  gap: 14px;
+  padding: 12px;
+  align-items: center;
+}
+
+.item-imagem svg {
+  width: 96px;
+  height: 72px;
+  border-radius: 0.6rem;
+}
+
+.item-info h3 {
+  margin: 0 0 2px;
+  font-size: 1rem;
+}
+
+.item-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.item-valor {
+  font-weight: 800;
+  color: var(--dinheiro);
+  text-align: right;
+}
+
+.resumo,
+.form-checkout {
+  padding: 20px;
+}
+
+.resumo {
+  position: sticky;
+  top: 170px;
+}
+
+.resumo h2,
+.form-checkout h2 {
+  font-size: 1.15rem;
+}
+
+.linha-resumo {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--glass-border);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.linha-resumo strong {
+  color: var(--dinheiro);
+}
+
+.resumo .btn {
+  margin: 14px 0 10px;
+}
+
+.resumo-itens {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+}
+
+.resumo-itens li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.resumo-itens li strong {
+  color: var(--dinheiro);
+}
+
+/* ---------- Texto ---------- */
+.texto-pagina {
+  max-width: 760px;
+  color: var(--text-secondary);
+}
+
+.texto-pagina h2 {
+  margin-top: 24px;
+  font-size: 1.2rem;
+}
+
+/* ---------- Rodapé e WhatsApp ---------- */
+.footer {
+  margin-top: 40px;
+  background: var(--surface-strong-bg);
+  border-top: 1px solid var(--glass-border);
+  color: var(--text-muted);
+}
+
+.footer-grade {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 24px;
+  padding-top: 36px;
+  padding-bottom: 28px;
+}
+
+.footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer a {
+  color: var(--text-muted);
+}
+
+.footer a:hover {
+  color: var(--link);
+}
+
+.footer-fim {
+  border-top: 1px solid var(--glass-border);
+  font-size: 0.82rem;
+  color: var(--text-subtle);
+  padding: 12px 0;
+}
+
+/* Verde do WhatsApp mantido de propósito: é a cor que o cliente reconhece */
+.whatsapp-flutuante {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 20px rgba(37, 211, 102, 0.3);
+  transition: transform 0.15s;
+}
+
+.whatsapp-flutuante:hover {
+  transform: scale(1.07);
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 960px) {
+  .grade-categorias {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .hero-grade,
+  .produto-grade,
+  .carrinho-grade {
+    grid-template-columns: 1fr;
+  }
+  .hero-arte {
+    max-width: 420px;
+  }
+  .produto-imagem,
+  .resumo {
+    position: static;
+  }
+}
+
+@media (max-width: 680px) {
+  /* 16px nos campos evita o zoom automático do iPhone ao digitar */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  .header-principal {
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+  }
+  .busca {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    max-width: none;
+  }
+  .carrinho-texto {
+    display: none;
+  }
+  .barra-topo-conteudo span {
+    display: none;
+  }
+  .barra-topo-conteudo {
+    justify-content: center;
+  }
+  .beneficios {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .grade-categorias {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-grade {
+    grid-template-columns: 1fr;
+  }
+  .item-carrinho {
+    grid-template-columns: 72px 1fr;
+  }
+  .item-imagem svg {
+    width: 72px;
+    height: 56px;
+  }
+  .item-valor {
+    grid-column: 2;
+    text-align: left;
+  }
+}
