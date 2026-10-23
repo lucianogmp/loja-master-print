@@ -1138,3 +1138,5 @@ select option {
     text-align: left;
   }
 }
+
+.form-auth { max-width: 440px; margin: 0 auto 24px; display: grid; gap: 14px; }

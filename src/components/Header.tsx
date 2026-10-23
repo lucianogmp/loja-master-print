@@ -1,13 +1,15 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Search, ShoppingCart } from 'lucide-react'
+import { Search, ShoppingCart, User } from 'lucide-react'
 import { categorias } from '../data/produtos'
 import { LOJA, linkWhatsApp } from '../config'
 import { useCart } from '../lib/cart'
+import { useAuth } from '../lib/auth'
 import ThemeToggle from './ThemeToggle'
 
 export default function Header() {
   const { totalItens } = useCart()
+  const { session } = useAuth()
   const navigate = useNavigate()
   const { pathname, search } = useLocation()
   const [busca, setBusca] = useState('')
@@ -58,6 +60,10 @@ export default function Header() {
 
         <div className="header-acoes">
           <ThemeToggle />
+          <Link to={session ? '/conta' : '/entrar'} className="carrinho-link">
+            <User size={20} />
+            <span className="carrinho-texto">{session ? 'Minha conta' : 'Entrar'}</span>
+          </Link>
           <Link to="/carrinho" className="carrinho-link" aria-label={`Carrinho, ${totalItens} itens`}>
             <ShoppingCart size={20} />
             <span className="carrinho-texto">Carrinho</span>
