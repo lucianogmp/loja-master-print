@@ -1,4 +1,4 @@
-import type { ArteTipo } from '../data/produtos'
+import type { ArteTipo } from '../lib/tipos'
 
 // Ilustrações vetoriais simples, usadas como imagem de exemplo.
 // Paleta tirada do ícone do ERP: azul + faixas CMYK. Serão trocadas pelas fotos reais.

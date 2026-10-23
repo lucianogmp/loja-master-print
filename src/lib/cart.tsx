@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { produtoPorSlug } from '../data/produtos'
+import { useCatalogo } from './catalogo'
 import { calcularTotal, type OpcaoArte } from './preco'
 
 export type ItemCarrinho = {
@@ -36,6 +36,7 @@ function carregar(): ItemCarrinho[] {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { produtoPorSlug } = useCatalogo()
   const [itens, setItens] = useState<ItemCarrinho[]>(carregar)
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       subtotal,
       temSobConsulta,
     }
-  }, [itens])
+  }, [itens, produtoPorSlug])
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>
 }

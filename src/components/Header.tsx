@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Search, ShoppingCart, User } from 'lucide-react'
-import { categorias } from '../data/produtos'
+import { useCatalogo } from '../lib/catalogo'
 import { LOJA, linkWhatsApp } from '../config'
 import { useCart } from '../lib/cart'
 import { useAuth } from '../lib/auth'
@@ -10,6 +10,7 @@ import ThemeToggle from './ThemeToggle'
 export default function Header() {
   const { totalItens } = useCart()
   const { session } = useAuth()
+  const { categorias } = useCatalogo()
   const navigate = useNavigate()
   const { pathname, search } = useLocation()
   const [busca, setBusca] = useState('')

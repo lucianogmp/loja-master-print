@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
-import { categorias, produtos } from '../data/produtos'
+import { useCatalogo } from '../lib/catalogo'
 import ProductCard from '../components/ProductCard'
 
 const normalizar = (s: string) =>
@@ -9,6 +9,7 @@ const normalizar = (s: string) =>
     .replace(/[̀-ͯ]/g, '')
 
 export default function Catalogo() {
+  const { produtos, categorias, carregando, erro } = useCatalogo()
   const [params] = useSearchParams()
   const categoria = params.get('categoria') ?? ''
   const busca = params.get('busca') ?? ''
@@ -27,7 +28,11 @@ export default function Catalogo() {
       <h1 className="titulo-pagina">{nomeCategoria ?? 'Todos os produtos'}</h1>
       {busca && <p className="subtitulo">Resultados para “{busca}”</p>}
 
-      {lista.length === 0 ? (
+      {carregando ? (
+        <p className="vazio">Carregando produtos...</p>
+      ) : erro ? (
+        <p className="vazio">Não foi possível carregar os produtos agora. Fale com a gente pelo WhatsApp.</p>
+      ) : lista.length === 0 ? (
         <p className="vazio">Nenhum produto encontrado. Tente outra busca ou fale com a gente pelo WhatsApp.</p>
       ) : (
         <div className="grade-produtos">

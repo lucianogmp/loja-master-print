@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
-import { categorias, produtos } from '../data/produtos'
+import { useCatalogo } from '../lib/catalogo'
 import { linkWhatsApp } from '../config'
 import ProductCard from '../components/ProductCard'
 import ProductArt from '../components/ProductArt'
 
 export default function Home() {
+  const { produtos, categorias } = useCatalogo()
   const destaques = produtos.filter((p) => p.destaque)
 
   return (
@@ -57,6 +58,7 @@ export default function Home() {
         </div>
       </section>
 
+      {categorias.length > 0 && (
       <section className="secao container">
         <h2>Categorias</h2>
         <div className="grade-categorias">
@@ -68,7 +70,9 @@ export default function Home() {
           ))}
         </div>
       </section>
+      )}
 
+      {destaques.length > 0 && (
       <section className="secao container">
         <div className="secao-topo">
           <h2>Mais pedidos</h2>
@@ -81,6 +85,7 @@ export default function Home() {
         </div>
         <p className="aviso-exemplo">Produtos e preços de exemplo, apenas para visualizar o layout.</p>
       </section>
+      )}
     </>
   )
 }

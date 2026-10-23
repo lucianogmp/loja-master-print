@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { produtoPorSlug } from '../data/produtos'
+import { useCatalogo } from '../lib/catalogo'
 import { linkWhatsApp } from '../config'
 import { brl } from '../lib/format'
 import { useCart } from '../lib/cart'
@@ -10,6 +10,7 @@ type Entrega = 'retirada' | 'entrega'
 
 export default function Checkout() {
   const { itens, subtotal, temSobConsulta } = useCart()
+  const { produtoPorSlug } = useCatalogo()
   const [nome, setNome] = useState('')
   const [telefone, setTelefone] = useState('')
   const [entrega, setEntrega] = useState<Entrega>('retirada')

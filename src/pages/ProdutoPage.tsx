@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { categoriaPorSlug, produtoPorSlug } from '../data/produtos'
+import { useCatalogo } from '../lib/catalogo'
 import { linkWhatsApp } from '../config'
 import { brl } from '../lib/format'
 import { useCart } from '../lib/cart'
@@ -9,6 +9,7 @@ import ProductArt from '../components/ProductArt'
 
 export default function ProdutoPage() {
   const { slug = '' } = useParams()
+  const { produtoPorSlug, categoriaPorSlug, carregando } = useCatalogo()
   const produto = produtoPorSlug(slug)
   const { adicionar } = useCart()
   const navigate = useNavigate()
@@ -19,6 +20,8 @@ export default function ProdutoPage() {
   const [altura, setAltura] = useState('')
   const [arte, setArte] = useState<OpcaoArte>('propria')
   const [observacao, setObservacao] = useState('')
+
+  if (carregando) return <div className="container secao">Carregando...</div>
 
   if (!produto) {
     return (
@@ -63,13 +66,21 @@ export default function ProdutoPage() {
 
       <div className="produto-grade">
         <div className="produto-imagem">
-          <ProductArt tipo={produto.arte} />
-          <p className="legenda-imagem">Imagem ilustrativa</p>
+          {produto.imagens[0] ? (
+            <img src={produto.imagens[0]} alt={produto.nome} />
+          ) : (
+            <>
+              <ProductArt tipo={produto.arte} />
+              <p className="legenda-imagem">Imagem ilustrativa</p>
+            </>
+          )}
         </div>
 
         <div className="produto-info">
           <h1>{produto.nome}</h1>
           <p className="produto-descricao">{produto.descricao}</p>
+          {produto.medidas && <p className="dica">Medidas: {produto.medidas}</p>}
+          {produto.infoEnvio && <p className="dica">Envio: {produto.infoEnvio}</p>}
 
           <div className="campo">
             <label htmlFor="variacao">{produto.rotuloVariacao}</label>

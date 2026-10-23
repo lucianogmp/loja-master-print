@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { produtoPorSlug } from '../data/produtos'
+import { useCatalogo } from '../lib/catalogo'
 import { brl } from '../lib/format'
 import { useCart } from '../lib/cart'
 import { calcularTotal, rotuloArte } from '../lib/preco'
@@ -7,6 +7,7 @@ import ProductArt from '../components/ProductArt'
 
 export default function Carrinho() {
   const { itens, remover, subtotal, temSobConsulta } = useCart()
+  const { produtoPorSlug } = useCatalogo()
 
   if (itens.length === 0) {
     return (

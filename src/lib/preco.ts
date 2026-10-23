@@ -1,4 +1,4 @@
-import type { Produto, Variacao } from '../data/produtos'
+import type { Produto, Variacao } from '../lib/tipos'
 
 export type OpcaoArte = 'propria' | 'ajuda' | 'modelo'
 

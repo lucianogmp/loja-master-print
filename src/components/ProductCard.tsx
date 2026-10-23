@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import type { Produto } from '../data/produtos'
+import type { Produto } from '../lib/tipos'
 import { brl } from '../lib/format'
 import ProductArt from './ProductArt'
 
@@ -15,7 +15,7 @@ export default function ProductCard({ produto }: { produto: Produto }) {
   return (
     <Link to={`/produto/${produto.slug}`} className="card-produto">
       <div className="card-imagem">
-        <ProductArt tipo={produto.arte} />
+        {produto.imagens[0] ? <img src={produto.imagens[0]} alt={produto.nome} loading="lazy" /> : <ProductArt tipo={produto.arte} />}
       </div>
       <div className="card-corpo">
         <h3>{produto.nome}</h3>
