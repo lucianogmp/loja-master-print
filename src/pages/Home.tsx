@@ -5,7 +5,7 @@ import ProductCard from '../components/ProductCard'
 import ProductArt from '../components/ProductArt'
 
 export default function Home() {
-  const { produtos, categorias } = useCatalogo()
+  const { produtos, grupos } = useCatalogo()
   const destaques = produtos.filter((p) => p.destaque)
 
   return (
@@ -58,12 +58,12 @@ export default function Home() {
         </div>
       </section>
 
-      {categorias.length > 0 && (
+      {grupos.length > 0 && (
       <section className="secao container">
         <h2>Categorias</h2>
         <div className="grade-categorias">
-          {categorias.map((c) => (
-            <Link key={c.slug} to={`/produtos?categoria=${c.slug}`} className="card-categoria">
+          {grupos.map((c) => (
+            <Link key={c.slug} to={`/produtos?grupo=${c.slug}`} className="card-categoria">
               <ProductArt tipo={c.arte} />
               <span>{c.nome}</span>
             </Link>

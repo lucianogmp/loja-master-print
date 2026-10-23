@@ -13,6 +13,14 @@ export type Categoria = {
   slug: string
   nome: string
   arte: ArteTipo
+  grupo: string // slug do grupo da loja
+}
+
+export type Grupo = {
+  slug: string
+  nome: string
+  arte: ArteTipo
+  ordem: number
 }
 
 export type ArteTipo = 'cartao' | 'adesivo' | 'banner' | 'impresso' | 'placa' | 'quadro'
@@ -22,6 +30,7 @@ export type Produto = {
   slug: string
   nome: string
   categoria: string
+  grupo: string
   arte: ArteTipo
   resumo: string
   descricao: string

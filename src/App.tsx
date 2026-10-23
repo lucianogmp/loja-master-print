@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Route, Routes, Link } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
@@ -9,6 +10,8 @@ import Atendimento from './pages/Atendimento'
 import Entrar from './pages/Entrar'
 import Cadastro from './pages/Cadastro'
 import Conta from './pages/Conta'
+
+const AdminLayout = lazy(() => import('./admin/AdminLayout'))
 
 function NaoEncontrada() {
   return (
@@ -34,6 +37,7 @@ export default function App() {
         <Route path="cadastro" element={<Cadastro />} />
         <Route path="conta" element={<Conta />} />
         <Route path="atendimento" element={<Atendimento />} />
+        <Route path="admin" element={<Suspense fallback={<div className="container secao">Carregando...</div>}><AdminLayout /></Suspense>} />
         <Route path="*" element={<NaoEncontrada />} />
       </Route>
     </Routes>

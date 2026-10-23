@@ -1142,3 +1142,15 @@ select option {
 .form-auth { max-width: 440px; margin: 0 auto 24px; display: grid; gap: 14px; }
 
 .produto-imagem img, .card-imagem img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: inherit; }
+
+/* ---------- Administração ---------- */
+.lista-admin { list-style: none; padding: 0; margin: 12px 0 24px; display: grid; gap: 8px; }
+.lista-admin li { display: flex; gap: 10px; align-items: center; padding: 10px 12px; background: var(--surface-soft-bg); border: 1px solid var(--glass-border); border-radius: 0.75rem; }
+.lista-admin li > span, .lista-admin li > input:first-child { flex: 1; }
+.admin-item { flex-direction: column; align-items: stretch !important; }
+.admin-item-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.aviso-admin { color: var(--dinheiro); }
+.admin-form { display: grid; gap: 14px; padding-top: 12px; }
+.admin-fotos { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.admin-foto { width: 110px; font-size: 0.8rem; }
+.admin-foto img { width: 110px; height: 110px; object-fit: cover; border-radius: 0.5rem; display: block; }

@@ -10,14 +10,14 @@ import ThemeToggle from './ThemeToggle'
 export default function Header() {
   const { totalItens } = useCart()
   const { session } = useAuth()
-  const { categorias } = useCatalogo()
+  const { grupos } = useCatalogo()
   const navigate = useNavigate()
   const { pathname, search } = useLocation()
   const [busca, setBusca] = useState('')
 
   // O destaque da aba depende do ?categoria= da URL, não só do caminho
   const noCatalogo = pathname === '/produtos'
-  const categoriaAtual = new URLSearchParams(search).get('categoria')
+  const categoriaAtual = new URLSearchParams(search).get('grupo')
 
   function buscar(e: FormEvent) {
     e.preventDefault()
@@ -78,10 +78,10 @@ export default function Header() {
           <Link to="/produtos" className={noCatalogo && !categoriaAtual ? 'active' : ''}>
             Todos
           </Link>
-          {categorias.map((c) => (
+          {grupos.map((c) => (
             <Link
               key={c.slug}
-              to={`/produtos?categoria=${c.slug}`}
+              to={`/produtos?grupo=${c.slug}`}
               className={noCatalogo && categoriaAtual === c.slug ? 'active' : ''}
             >
               {c.nome}
