@@ -1,8 +1,7 @@
 // Regras de senha + checagem de vazamento (Have I Been Pwned, k-anonymity:
 // só os 5 primeiros caracteres do hash saem do navegador; a senha nunca é enviada).
 export function validarSenha(s: string): string | null {
-  if (s.length < 10) return 'Use pelo menos 10 caracteres.'
-  if (!/[a-z]/.test(s) || !/[A-Z]/.test(s) || !/\d/.test(s)) return 'Misture letras maiúsculas, minúsculas e números.'
+  if (s.length < 8) return 'Use pelo menos 8 caracteres.'
   return null
 }
 

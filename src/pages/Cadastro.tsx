@@ -67,7 +67,7 @@ export default function Cadastro() {
         <div className="campo">
           <label htmlFor="senha">Senha</label>
           <input id="senha" type="password" required autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} />
-          <span className="dica">Mínimo 10 caracteres, com maiúsculas, minúsculas e números.</span>
+          <span className="dica">Mínimo 8 caracteres. Senhas muito comuns (como 12345678) não são aceitas.</span>
         </div>
         <label className="radio">
           <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} />
