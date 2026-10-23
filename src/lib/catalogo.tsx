@@ -4,9 +4,13 @@ import type { ArteTipo, Categoria, Produto } from './tipos'
 
 // Catálogo vem do banco do ERP, SOMENTE pela função pública loja_catalogo()
 // (só produtos ativos e marcados "aparece no site"; sem custo, margem ou cliente).
-const erp = createClient(import.meta.env.VITE_ERP_URL as string, import.meta.env.VITE_ERP_ANON_KEY as string, {
+const erp = createClient(
+  (import.meta.env.VITE_ERP_URL as string) || 'https://qrgdcyceqsrtmerqazgp.supabase.co',
+  (import.meta.env.VITE_ERP_ANON_KEY as string) || 'sb_publishable_ibl32QMcmkNbPQJU5C6g4Q_u7CuXpeV',
+  {
   auth: { persistSession: false, autoRefreshToken: false },
-})
+  },
+)
 
 type Linha = {
   id: string
