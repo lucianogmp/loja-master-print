@@ -4,7 +4,7 @@ export const LOJA = {
   nome: 'Master Print',
   slogan: 'Sua gráfica online',
   // WhatsApp no formato internacional, só números (ex.: 5532999999999).
-  whatsapp: '5533988139539',
+  whatsapp: '5533998139539',
   horario: 'Seg a Sex, 8h às 18h',
 }
 
