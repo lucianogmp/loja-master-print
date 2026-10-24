@@ -36,7 +36,9 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-fim">
-        <div className="container">© {new Date().getFullYear()} {LOJA.nome}. Todos os direitos reservados.</div>
+        <div className="container">
+          © {new Date().getFullYear()} {LOJA.nome}. Todos os direitos reservados. · <Link to="/admin">Administração</Link>
+        </div>
       </div>
     </footer>
   )
