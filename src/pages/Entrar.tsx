@@ -2,16 +2,18 @@ import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { erroAmigavel, useAuth } from '../lib/auth'
+import { useVoltar } from '../lib/voltar'
 
 export default function Entrar() {
   const { session } = useAuth()
   const navigate = useNavigate()
+  const { destino, sufixo } = useVoltar()
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
   const [enviando, setEnviando] = useState(false)
 
-  if (session) return <Navigate to="/conta" replace />
+  if (session) return <Navigate to={destino} replace />
 
   async function enviar(e: FormEvent) {
     e.preventDefault()
@@ -20,7 +22,7 @@ export default function Entrar() {
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password: senha })
     setEnviando(false)
     if (error) return setErro(erroAmigavel(error.message))
-    navigate('/conta')
+    navigate(destino, { replace: true })
   }
 
   async function esqueci() {
@@ -45,7 +47,7 @@ export default function Entrar() {
         {erro && <p className="dica" role="alert">{erro}</p>}
         <button className="btn btn-primario btn-bloco" disabled={enviando}>{enviando ? 'Entrando...' : 'Entrar'}</button>
         <button type="button" className="link-botao" onClick={esqueci}>Esqueci minha senha</button>
-        <p className="dica">Ainda não tem conta? <Link to="/cadastro">Criar conta</Link></p>
+        <p className="dica">Ainda não tem conta? <Link to={`/cadastro${sufixo}`}>Criar conta</Link></p>
       </form>
     </div>
   )

@@ -1,15 +1,17 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Search, ShoppingCart, User } from 'lucide-react'
+import { Search, Settings, ShoppingCart, User } from 'lucide-react'
 import { useCatalogo } from '../lib/catalogo'
 import { LOJA, linkWhatsApp } from '../config'
 import { useCart } from '../lib/cart'
 import { useAuth } from '../lib/auth'
+import { useEhAdmin } from '../lib/erpAdmin'
 import ThemeToggle from './ThemeToggle'
 
 export default function Header() {
   const { totalItens } = useCart()
   const { session } = useAuth()
+  const ehAdmin = useEhAdmin()
   const { grupos } = useCatalogo()
   const navigate = useNavigate()
   const { pathname, search } = useLocation()
@@ -61,6 +63,12 @@ export default function Header() {
 
         <div className="header-acoes">
           <ThemeToggle />
+          {ehAdmin && (
+            <Link to="/admin" className="carrinho-link">
+              <Settings size={20} />
+              <span className="carrinho-texto">Administração</span>
+            </Link>
+          )}
           <Link to={session ? '/conta' : '/entrar'} className="carrinho-link">
             <User size={20} />
             <span className="carrinho-texto">{session ? 'Minha conta' : 'Entrar'}</span>

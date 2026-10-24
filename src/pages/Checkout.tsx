@@ -61,8 +61,8 @@ export default function Checkout() {
         <h1 className="titulo-pagina">Entre para finalizar</h1>
         <p className="subtitulo">Seu carrinho fica guardado. Entre ou crie uma conta para enviar o pedido.</p>
         <div className="acoes-produto">
-          <Link to="/entrar" className="btn btn-primario">Entrar</Link>
-          <Link to="/cadastro" className="btn btn-secundario">Criar conta</Link>
+          <Link to="/entrar?voltar=/checkout" className="btn btn-primario">Entrar</Link>
+          <Link to="/cadastro?voltar=/checkout" className="btn btn-secundario">Criar conta</Link>
         </div>
       </div>
     )
