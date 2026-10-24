@@ -59,7 +59,7 @@ export default function ProdutoPage() {
         {categoria && (
           <>
             {' '}
-            / <Link to={`/produtos?grupo=${categoria.grupo}&categoria=${categoria.slug}`}>{categoria.nome}</Link>
+            / <Link to={`/produtos?categoria=${categoria.slug}`}>{categoria.nome}</Link>
           </>
         )}
       </nav>

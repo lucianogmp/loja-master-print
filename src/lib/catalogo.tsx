@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import type { ArteTipo, Categoria, Grupo, Produto } from './tipos'
+import type { ArteTipo, Categoria, Produto } from './tipos'
 import { erp } from './erp'
 
 // Catálogo vem do banco do ERP, SOMENTE pela função pública loja_catalogo()
@@ -9,7 +9,10 @@ type Linha = {
   id: string
   slug: string
   nome: string
-  categoria: string | null
+  categoria: string | null // nome público (editável na administração)
+  categoria_original: string | null // nome no ERP (base do endereço, não muda)
+  categoria_imagem: string | null
+  categoria_ordem: number
   por_metro_quadrado: boolean
   preco: number | null
   prazo_entrega_dias: number | null
@@ -22,9 +25,6 @@ type Linha = {
   entrega_modo: 'envio_e_retirada' | 'so_retirada'
   destaque: boolean
   ordem: number
-  grupo_slug: string | null
-  grupo_nome: string | null
-  grupo_ordem: number | null
 }
 
 const slugify = (s: string) =>
@@ -43,14 +43,13 @@ function arteDe(texto: string): ArteTipo {
 function paraProduto(l: Linha): Produto {
   // m² ou sem preço: nunca mostra valor; pedido fechado pelo WhatsApp.
   const sobConsulta = l.por_metro_quadrado || l.preco === null
-  const categoria = l.categoria ? slugify(l.categoria) : 'outros'
+  const categoria = l.categoria_original ? slugify(l.categoria_original) : 'outros'
   return {
     id: l.id,
     slug: l.slug,
     nome: l.nome,
     categoria,
-    grupo: l.grupo_slug ?? categoria, // categoria sem grupo vira seu próprio grupo
-    arte: arteDe(`${l.categoria ?? ''} ${l.nome}`),
+    arte: arteDe(`${l.categoria_original ?? ''} ${l.nome}`),
     resumo: l.descricao_publica?.split('\n')[0].slice(0, 110) ?? '',
     descricao: l.descricao_publica ?? '',
     imagens: l.imagens ?? [],
@@ -72,7 +71,6 @@ function paraProduto(l: Linha): Produto {
 type Ctx = {
   produtos: Produto[]
   categorias: Categoria[]
-  grupos: Grupo[]
   carregando: boolean
   erro: boolean
   produtoPorSlug: (slug: string) => Produto | undefined
@@ -98,23 +96,19 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
     const vistas = new Map<string, Categoria>()
     linhas.forEach((l, i) => {
       const c = produtos[i].categoria
-      if (!vistas.has(c)) vistas.set(c, { slug: c, nome: l.categoria ?? 'Outros', arte: produtos[i].arte, grupo: produtos[i].grupo })
+      if (!vistas.has(c))
+        vistas.set(c, {
+          slug: c,
+          nome: l.categoria ?? 'Outros',
+          arte: produtos[i].arte,
+          imagem: l.categoria_imagem ?? undefined,
+          ordem: l.categoria_ordem ?? 0,
+        })
     })
-    linhas.forEach((l, i) => {
-      const c = vistas.get(produtos[i].categoria)
-      if (c) c.grupo = produtos[i].grupo
-    })
-    const categorias = [...vistas.values()]
-    const gv = new Map<string, Grupo>()
-    linhas.forEach((l, i) => {
-      const g = produtos[i].grupo
-      if (!gv.has(g)) gv.set(g, { slug: g, nome: l.grupo_nome ?? l.categoria ?? 'Outros', arte: produtos[i].arte, ordem: l.grupo_ordem ?? 9999 })
-    })
-    const grupos = [...gv.values()].sort((a, b) => a.ordem - b.ordem || a.nome.localeCompare(b.nome))
+    const categorias = [...vistas.values()].sort((a, b) => a.ordem - b.ordem || a.nome.localeCompare(b.nome))
     return {
       produtos,
       categorias,
-      grupos,
       carregando,
       erro,
       produtoPorSlug: (slug) => produtos.find((p) => p.slug === slug),

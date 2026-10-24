@@ -12,14 +12,14 @@ export default function Header() {
   const { totalItens } = useCart()
   const { session } = useAuth()
   const ehAdmin = useEhAdmin()
-  const { grupos } = useCatalogo()
+  const { categorias } = useCatalogo()
   const navigate = useNavigate()
   const { pathname, search } = useLocation()
   const [busca, setBusca] = useState('')
 
   // O destaque da aba depende do ?categoria= da URL, não só do caminho
   const noCatalogo = pathname === '/produtos'
-  const categoriaAtual = new URLSearchParams(search).get('grupo')
+  const categoriaAtual = new URLSearchParams(search).get('categoria')
 
   function buscar(e: FormEvent) {
     e.preventDefault()
@@ -86,10 +86,10 @@ export default function Header() {
           <Link to="/produtos" className={noCatalogo && !categoriaAtual ? 'active' : ''}>
             Todos
           </Link>
-          {grupos.map((c) => (
+          {categorias.map((c) => (
             <Link
               key={c.slug}
-              to={`/produtos?grupo=${c.slug}`}
+              to={`/produtos?categoria=${c.slug}`}
               className={noCatalogo && categoriaAtual === c.slug ? 'active' : ''}
             >
               {c.nome}
