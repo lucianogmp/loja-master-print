@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { erp } from '../lib/erp'
+import AutoTextarea from '../components/AutoTextarea'
 
 type Item = { id: string; nome: string; categoria: string | null; lp: LP | null }
 type LP = {
@@ -158,7 +159,7 @@ function Editor({ item, aoSalvar }: { item: Item; aoSalvar: () => void }) {
       </div>
       <div className="campo">
         <label htmlFor={`d${item.id}`}>Descrição</label>
-        <textarea id={`d${item.id}`} rows={4} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+        <AutoTextarea id={`d${item.id}`} rows={3} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
       </div>
       <fieldset className="campo opcoes-arte">
         <legend>Envio</legend>
@@ -172,19 +173,13 @@ function Editor({ item, aoSalvar }: { item: Item; aoSalvar: () => void }) {
         </label>
         {modo === 'envio_e_retirada' && (
           <>
-            <div className="campo-linha">
-              <div className="campo"><label>Peso (kg)</label>
-                <input inputMode="decimal" value={peso} onChange={(e) => setPeso(e.target.value)} placeholder="ex.: 0,4" /></div>
+            <div className="medidas-linha">
+              <label>Peso <input inputMode="decimal" value={peso} onChange={(e) => setPeso(e.target.value)} placeholder="0,4" aria-label="Peso em kg" /> kg</label>
+              <label>Pacote <input inputMode="decimal" value={comp} onChange={(e) => setComp(e.target.value)} placeholder="C" aria-label="Comprimento em cm" />
+                × <input inputMode="decimal" value={larg} onChange={(e) => setLarg(e.target.value)} placeholder="L" aria-label="Largura em cm" />
+                × <input inputMode="decimal" value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="A" aria-label="Altura em cm" /> cm</label>
             </div>
-            <div className="campo-linha">
-              <div className="campo"><label>Comprimento (cm)</label>
-                <input inputMode="decimal" value={comp} onChange={(e) => setComp(e.target.value)} placeholder="15" /></div>
-              <div className="campo"><label>Largura (cm)</label>
-                <input inputMode="decimal" value={larg} onChange={(e) => setLarg(e.target.value)} placeholder="15" /></div>
-              <div className="campo"><label>Altura (cm)</label>
-                <input inputMode="decimal" value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="18" /></div>
-            </div>
-            <span className="dica">Tamanho do pacote já embalado. Usado para calcular o frete automaticamente.</span>
+            <span className="dica">Pacote já embalado (comprimento × largura × altura). Usado no cálculo do frete.</span>
           </>
         )}
       </fieldset>
@@ -195,10 +190,9 @@ function Editor({ item, aoSalvar }: { item: Item; aoSalvar: () => void }) {
           <span className="dica">Gerado automaticamente a partir do nome. Só mude se precisar.</span>
         </div>
       </details>
-      <div className="campo-linha">
+      <div className="medidas-linha">
         <label className="radio"><input type="checkbox" checked={destaque} onChange={(e) => setDestaque(e.target.checked)} /> Destaque na página inicial</label>
-        <div className="campo"><label>Ordem</label>
-          <input type="number" value={ordem} onChange={(e) => setOrdem(Number(e.target.value) || 0)} /></div>
+        <label>Ordem <input type="number" value={ordem} onChange={(e) => setOrdem(Number(e.target.value) || 0)} /></label>
       </div>
       {msg && <p className="dica" role="alert">{msg}</p>}
       <button className="btn btn-primario">Salvar</button>

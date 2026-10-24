@@ -1154,3 +1154,12 @@ select option {
 .admin-fotos { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
 .admin-foto { width: 110px; font-size: 0.8rem; }
 .admin-foto img { width: 110px; height: 110px; object-fit: cover; border-radius: 0.5rem; display: block; }
+
+/* Administração compacta */
+.admin-form { gap: 8px; padding-top: 8px; }
+.admin-form .campo { margin-bottom: 0; }
+.admin-form .opcoes-arte { gap: 4px; }
+.medidas-linha { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; font-size: 0.9rem; }
+.medidas-linha label { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); }
+.medidas-linha input:not([type='checkbox']) { width: 4.2rem; padding: 6px 8px; text-align: center; }
+.lista-admin li { padding: 8px 10px; }
