@@ -29,9 +29,10 @@ export const useAuth = () => useContext(AuthContext)
 
 // Mensagens genéricas: não revelam se um e-mail já existe.
 export function erroAmigavel(msg: string): string {
+  console.error('[auth]', msg)
   const m = msg.toLowerCase()
   if (m.includes('invalid login')) return 'E-mail ou senha incorretos.'
   if (m.includes('email not confirmed')) return 'Confirme seu e-mail pelo link que enviamos.'
   if (m.includes('rate limit') || m.includes('too many')) return 'Muitas tentativas. Aguarde alguns minutos.'
-  return 'Não foi possível concluir. Tente novamente.'
+  return `Não foi possível concluir. Tente novamente. (detalhe: ${msg})`
 }
