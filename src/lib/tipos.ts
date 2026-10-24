@@ -35,8 +35,10 @@ export type Produto = {
   resumo: string
   descricao: string
   imagens: string[]
-  medidas?: string
-  infoEnvio?: string
+  // Envio: usado no cálculo do frete (peso em kg, pacote em cm) e na regra "só retirada".
+  pesoKg?: number
+  pacoteCm?: { comprimento: number; largura: number; altura: number }
+  entregaModo: 'envio_e_retirada' | 'so_retirada'
   tipoPreco: TipoPreco
   variacoes: Variacao[]
   rotuloVariacao: string

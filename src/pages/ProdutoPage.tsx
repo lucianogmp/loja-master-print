@@ -79,8 +79,7 @@ export default function ProdutoPage() {
         <div className="produto-info">
           <h1>{produto.nome}</h1>
           <p className="produto-descricao">{produto.descricao}</p>
-          {produto.medidas && <p className="dica">Medidas: {produto.medidas}</p>}
-          {produto.infoEnvio && <p className="dica">Envio: {produto.infoEnvio}</p>}
+          {produto.entregaModo === 'so_retirada' && <p className="dica">Este produto é somente para retirada na gráfica.</p>}
 
           <div className="campo">
             <label htmlFor="variacao">{produto.rotuloVariacao}</label>

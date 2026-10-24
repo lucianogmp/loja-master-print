@@ -6,10 +6,19 @@ type LP = {
   slug: string
   descricao_publica: string | null
   imagens: string[]
-  medidas: string | null
-  info_envio: string | null
+  peso_kg: number | null
+  comprimento_cm: number | null
+  largura_cm: number | null
+  altura_cm: number | null
+  entrega_modo: 'envio_e_retirada' | 'so_retirada'
   destaque: boolean
   ordem: number
+}
+
+// Aceita vírgula decimal (0,4) e devolve null se vazio/inválido.
+const num = (v: string): number | null => {
+  const n = Number(v.replace(',', '.'))
+  return v.trim() !== '' && Number.isFinite(n) && n > 0 ? n : null
 }
 
 const slugify = (s: string) =>
@@ -43,7 +52,7 @@ export default function AdminProdutos() {
   return (
     <div>
       <p className="dica">
-        Aqui aparecem os produtos marcados com "Aparece no site" no ERP. Cadastre foto, descrição, medidas e envio de cada um.
+        Aqui aparecem os produtos marcados com "Aparece no site" no ERP. Cadastre foto, descrição e dados de envio (peso e tamanho do pacote) de cada um.
       </p>
       {carregando && <p>Carregando...</p>}
       {!carregando && itens.length === 0 && <p className="vazio">Nenhum produto marcado no ERP ainda.</p>}
@@ -71,8 +80,11 @@ export default function AdminProdutos() {
 function Editor({ item, aoSalvar }: { item: Item; aoSalvar: () => void }) {
   const [slug, setSlug] = useState(item.lp?.slug ?? slugify(item.nome))
   const [descricao, setDescricao] = useState(item.lp?.descricao_publica ?? '')
-  const [medidas, setMedidas] = useState(item.lp?.medidas ?? '')
-  const [envio, setEnvio] = useState(item.lp?.info_envio ?? '')
+  const [peso, setPeso] = useState(item.lp?.peso_kg != null ? String(item.lp.peso_kg) : '')
+  const [comp, setComp] = useState(item.lp?.comprimento_cm != null ? String(item.lp.comprimento_cm) : '')
+  const [larg, setLarg] = useState(item.lp?.largura_cm != null ? String(item.lp.largura_cm) : '')
+  const [alt, setAlt] = useState(item.lp?.altura_cm != null ? String(item.lp.altura_cm) : '')
+  const [modo, setModo] = useState<'envio_e_retirada' | 'so_retirada'>(item.lp?.entrega_modo ?? 'envio_e_retirada')
   const [destaque, setDestaque] = useState(item.lp?.destaque ?? false)
   const [ordem, setOrdem] = useState(item.lp?.ordem ?? 0)
   const [imagens, setImagens] = useState<string[]>(item.lp?.imagens ?? [])
@@ -105,14 +117,20 @@ function Editor({ item, aoSalvar }: { item: Item; aoSalvar: () => void }) {
   async function salvar(e: FormEvent) {
     e.preventDefault()
     const s = slugify(slug)
+    if (modo === 'envio_e_retirada' && [peso, comp, larg, alt].some((v) => v.trim() !== '') && [peso, comp, larg, alt].some((v) => num(v) === null)) {
+      return setMsg('Preencha peso e as 3 medidas do pacote (ou deixe todos vazios).')
+    }
     if (!s) return setMsg('Endereço (slug) inválido.')
     const { error } = await erp.from('loja_produtos').upsert({
       produto_id: item.id,
       slug: s,
       descricao_publica: descricao.trim() || null,
       imagens,
-      medidas: medidas.trim() || null,
-      info_envio: envio.trim() || null,
+      peso_kg: num(peso),
+      comprimento_cm: num(comp),
+      largura_cm: num(larg),
+      altura_cm: num(alt),
+      entrega_modo: modo,
       destaque,
       ordem,
     })
@@ -142,16 +160,41 @@ function Editor({ item, aoSalvar }: { item: Item; aoSalvar: () => void }) {
         <label htmlFor={`d${item.id}`}>Descrição</label>
         <textarea id={`d${item.id}`} rows={4} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
       </div>
-      <div className="campo-linha">
-        <div className="campo"><label>Medidas</label>
-          <input value={medidas} onChange={(e) => setMedidas(e.target.value)} placeholder="ex.: A3 — 29,7 x 42 cm" /></div>
-        <div className="campo"><label>Endereço (slug)</label>
-          <input value={slug} onChange={(e) => setSlug(e.target.value)} /></div>
-      </div>
-      <div className="campo">
-        <label>Informações de envio</label>
-        <textarea rows={2} value={envio} onChange={(e) => setEnvio(e.target.value)} />
-      </div>
+      <fieldset className="campo opcoes-arte">
+        <legend>Envio</legend>
+        <label className="radio">
+          <input type="radio" name={`m${item.id}`} checked={modo === 'envio_e_retirada'} onChange={() => setModo('envio_e_retirada')} />
+          Envia pelos Correios e também retira na gráfica
+        </label>
+        <label className="radio">
+          <input type="radio" name={`m${item.id}`} checked={modo === 'so_retirada'} onChange={() => setModo('so_retirada')} />
+          Somente retirada na gráfica
+        </label>
+        {modo === 'envio_e_retirada' && (
+          <>
+            <div className="campo-linha">
+              <div className="campo"><label>Peso (kg)</label>
+                <input inputMode="decimal" value={peso} onChange={(e) => setPeso(e.target.value)} placeholder="ex.: 0,4" /></div>
+            </div>
+            <div className="campo-linha">
+              <div className="campo"><label>Comprimento (cm)</label>
+                <input inputMode="decimal" value={comp} onChange={(e) => setComp(e.target.value)} placeholder="15" /></div>
+              <div className="campo"><label>Largura (cm)</label>
+                <input inputMode="decimal" value={larg} onChange={(e) => setLarg(e.target.value)} placeholder="15" /></div>
+              <div className="campo"><label>Altura (cm)</label>
+                <input inputMode="decimal" value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="18" /></div>
+            </div>
+            <span className="dica">Tamanho do pacote já embalado. Usado para calcular o frete automaticamente.</span>
+          </>
+        )}
+      </fieldset>
+      <details>
+        <summary className="dica">Avançado: endereço da página (slug)</summary>
+        <div className="campo">
+          <input value={slug} onChange={(e) => setSlug(e.target.value)} />
+          <span className="dica">Gerado automaticamente a partir do nome. Só mude se precisar.</span>
+        </div>
+      </details>
       <div className="campo-linha">
         <label className="radio"><input type="checkbox" checked={destaque} onChange={(e) => setDestaque(e.target.checked)} /> Destaque na página inicial</label>
         <div className="campo"><label>Ordem</label>

@@ -15,8 +15,11 @@ type Linha = {
   prazo_entrega_dias: number | null
   descricao_publica: string | null
   imagens: string[]
-  medidas: string | null
-  info_envio: string | null
+  peso_kg: number | null
+  comprimento_cm: number | null
+  largura_cm: number | null
+  altura_cm: number | null
+  entrega_modo: 'envio_e_retirada' | 'so_retirada'
   destaque: boolean
   ordem: number
   grupo_slug: string | null
@@ -51,8 +54,12 @@ function paraProduto(l: Linha): Produto {
     resumo: l.descricao_publica?.split('\n')[0].slice(0, 110) ?? '',
     descricao: l.descricao_publica ?? '',
     imagens: l.imagens ?? [],
-    medidas: l.medidas ?? undefined,
-    infoEnvio: l.info_envio ?? undefined,
+    pesoKg: l.peso_kg ? Number(l.peso_kg) : undefined,
+    pacoteCm:
+      l.comprimento_cm && l.largura_cm && l.altura_cm
+        ? { comprimento: Number(l.comprimento_cm), largura: Number(l.largura_cm), altura: Number(l.altura_cm) }
+        : undefined,
+    entregaModo: l.entrega_modo ?? 'envio_e_retirada',
     tipoPreco: sobConsulta ? 'consulta' : 'unidade',
     variacoes: [{ id: 'unico', label: l.nome, preco: l.preco ?? 0 }],
     rotuloVariacao: 'Produto',

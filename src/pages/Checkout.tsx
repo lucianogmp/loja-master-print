@@ -14,13 +14,17 @@ export default function Checkout() {
   const { itens, subtotal, temSobConsulta, limpar } = useCart()
   const { produtoPorSlug } = useCatalogo()
   const { session, carregando } = useAuth()
-  const [entrega, setEntrega] = useState<Entrega>('retirada')
+  const [entregaEscolhida, setEntrega] = useState<Entrega>('retirada')
   const [cep, setCep] = useState('')
   const [observacao, setObservacao] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState('')
   const [feito, setFeito] = useState<{ numero: number; total: number } | null>(null)
   const ref = useRef(crypto.randomUUID()) // evita pedido duplicado se clicar duas vezes
+
+  // Se algum produto do carrinho é só para retirada, a entrega fica indisponível.
+  const soRetirada = itens.some((i) => produtoPorSlug(i.slug)?.entregaModo === 'so_retirada')
+  const entrega: Entrega = soRetirada ? 'retirada' : entregaEscolhida
 
   if (feito) {
     const msg =
@@ -120,12 +124,15 @@ export default function Checkout() {
 
           <fieldset className="campo opcoes-arte">
             <legend>Como quer receber?</legend>
+            {soRetirada && (
+              <span className="dica">Há produto no carrinho que só pode ser retirado na gráfica.</span>
+            )}
             <label className="radio">
               <input type="radio" name="entrega" checked={entrega === 'retirada'} onChange={() => setEntrega('retirada')} />
               Retirar na gráfica
             </label>
             <label className="radio">
-              <input type="radio" name="entrega" checked={entrega === 'entrega'} onChange={() => setEntrega('entrega')} />
+              <input type="radio" name="entrega" checked={entrega === 'entrega'} disabled={soRetirada} onChange={() => setEntrega('entrega')} />
               Receber em casa (frete combinado)
             </label>
           </fieldset>
