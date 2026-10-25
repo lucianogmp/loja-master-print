@@ -22,6 +22,7 @@ export type Aparencia = {
   logo: string // logo de cor clara, para fundo escuro; vazio = logo padrão (ícone + nome)
   logoEscuro: string // logo de cor escura, para fundo claro; vazio = usa o outro
   favicon: string // vazio = ícone padrão
+  iconeApp: string // ícone do aplicativo instalado (PNG quadrado, 512 px); vazio = padrão
   cor: string // cor principal em #rrggbb; vazio = azul padrão
   tituloAba: string // título da aba do navegador
 }
@@ -79,6 +80,7 @@ export const APARENCIA_PADRAO: Aparencia = {
   logo: '',
   logoEscuro: '',
   favicon: '',
+  iconeApp: '',
   cor: '',
   tituloAba: 'Master Print — Gráfica online',
 }
@@ -135,6 +137,7 @@ export function normalizarAparencia(v: unknown): Aparencia {
     logo: texto(o.logo, p.logo),
     logoEscuro: texto(o.logoEscuro, p.logoEscuro),
     favicon: texto(o.favicon, p.favicon),
+    iconeApp: texto(o.iconeApp, p.iconeApp),
     cor: /^#[0-9a-f]{6}$/i.test(cor) ? cor.toLowerCase() : '',
     tituloAba: texto(o.tituloAba, p.tituloAba).trim() || p.tituloAba,
   }
@@ -177,6 +180,16 @@ export function aplicarAparencia(a: Aparencia) {
     icone.href = a.favicon || '/favicon.svg'
     icone.type = a.favicon ? '' : 'image/svg+xml'
   }
+  // Ícone usado ao adicionar à tela inicial (iPhone) — no Android/Chrome vale o manifesto
+  let toque = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]')
+  if (a.iconeApp) {
+    if (!toque) {
+      toque = document.createElement('link')
+      toque.rel = 'apple-touch-icon'
+      document.head.appendChild(toque)
+    }
+    toque.href = a.iconeApp
+  } else toque?.remove()
   try {
     localStorage.setItem(CHAVE_CACHE, JSON.stringify(a))
   } catch {

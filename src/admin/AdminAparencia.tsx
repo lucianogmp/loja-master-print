@@ -14,8 +14,16 @@ export default function AdminAparencia() {
   useEffect(() => setF(salva), [salva])
   const set = <K extends keyof Aparencia>(k: K, v: Aparencia[K]) => setF((x) => ({ ...x, [k]: v }))
 
-  async function subir(campo: 'logo' | 'logoEscuro' | 'favicon', arquivo: File | undefined) {
+  async function subir(campo: 'logo' | 'logoEscuro' | 'favicon' | 'iconeApp', arquivo: File | undefined) {
     if (!arquivo) return
+    if (campo === 'iconeApp') {
+      if (arquivo.type !== 'image/png') return setMsg('O ícone do aplicativo precisa ser PNG.')
+      const bmp = await createImageBitmap(arquivo).catch(() => null)
+      if (!bmp) return setMsg('Não consegui ler essa imagem.')
+      const { width, height } = bmp
+      bmp.close()
+      if (width !== height || width < 512) return setMsg(`O ícone do aplicativo precisa ser quadrado, com pelo menos 512 × 512 px (essa tem ${width} × ${height}).`)
+    }
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(arquivo.type)) return setMsg('Use JPG, PNG ou WebP.')
     if (arquivo.size > 2 * 1024 * 1024) return setMsg('Imagem acima de 2 MB.')
     setEnviando(campo)
@@ -107,8 +115,18 @@ export default function AdminAparencia() {
           </button>
         )}
       </div>
+      <div className="admin-linha admin-linha-centro">
+        <span>Ícone do aplicativo</span>
+        <img className="admin-logo-thumb" src={f.iconeApp || '/favicon.svg'} alt="" />
+        <input type="file" accept="image/png" onChange={(e) => subir('iconeApp', e.target.files?.[0])} />
+        {f.iconeApp && (
+          <button type="button" className="link-botao" onClick={() => set('iconeApp', '')}>
+            Usar ícone padrão
+          </button>
+        )}
+      </div>
       <span className="dica">
-        {enviando ? 'Enviando...' : 'JPG, PNG ou WebP, até 2 MB. Imagem quadrada, com fundo transparente (PNG), funciona melhor.'}
+        {enviando ? 'Enviando...' : 'JPG, PNG ou WebP, até 2 MB. O ícone do aplicativo (quando alguém instala o site no celular ou no computador) precisa ser PNG quadrado de no mínimo 512 × 512 px. Para o ícone da aba, use só o símbolo do logo.'}
       </span>
 
       <h2 className="admin-sub">Título da aba do navegador</h2>
