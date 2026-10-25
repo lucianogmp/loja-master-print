@@ -1208,3 +1208,13 @@ select option {
 .admin-cor { width: 44px; height: 32px; padding: 0 !important; border-radius: 6px; cursor: pointer; flex: none; }
 .admin-cor-amostra { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--glass-border); cursor: pointer; padding: 0; flex: none; }
 .admin-logo-thumb { width: 36px; height: 36px; object-fit: contain; border-radius: 8px; border: 1px solid var(--glass-border); flex: none; }
+
+/* Logo no lugar do nome: ocupa o espaço da marca, trocando de versão conforme o tema */
+.marca-so-logo img { height: 52px; width: auto; max-width: min(320px, 60vw); object-fit: contain; display: block; border-radius: 0; }
+.logo-fundo-claro { display: none !important; }
+:root[data-theme='light'] .logo-fundo-claro { display: block !important; }
+:root[data-theme='light'] .logo-fundo-escuro { display: none !important; }
+.admin-logo-thumb { width: auto; max-width: 140px; height: 36px; }
+.admin-logo-escuro { background: #0c0d16; padding: 2px 6px; }
+.admin-logo-claro { background: #fff; padding: 2px 6px; }
+@media (max-width: 680px) { .marca-so-logo img { height: 40px; } }

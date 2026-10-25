@@ -19,7 +19,8 @@ export type Empresa = {
 }
 
 export type Aparencia = {
-  logo: string // vazio = logo padrão
+  logo: string // logo de cor clara, para fundo escuro; vazio = logo padrão (ícone + nome)
+  logoEscuro: string // logo de cor escura, para fundo claro; vazio = usa o outro
   favicon: string // vazio = ícone padrão
   cor: string // cor principal em #rrggbb; vazio = azul padrão
   tituloAba: string // título da aba do navegador
@@ -76,6 +77,7 @@ export const INICIO_PADRAO: Inicio = {
 
 export const APARENCIA_PADRAO: Aparencia = {
   logo: '',
+  logoEscuro: '',
   favicon: '',
   cor: '',
   tituloAba: 'Master Print — Gráfica online',
@@ -131,6 +133,7 @@ export function normalizarAparencia(v: unknown): Aparencia {
   const cor = texto(o.cor, '').trim()
   return {
     logo: texto(o.logo, p.logo),
+    logoEscuro: texto(o.logoEscuro, p.logoEscuro),
     favicon: texto(o.favicon, p.favicon),
     cor: /^#[0-9a-f]{6}$/i.test(cor) ? cor.toLowerCase() : '',
     tituloAba: texto(o.tituloAba, p.tituloAba).trim() || p.tituloAba,

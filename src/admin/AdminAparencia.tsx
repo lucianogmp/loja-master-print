@@ -14,7 +14,7 @@ export default function AdminAparencia() {
   useEffect(() => setF(salva), [salva])
   const set = <K extends keyof Aparencia>(k: K, v: Aparencia[K]) => setF((x) => ({ ...x, [k]: v }))
 
-  async function subir(campo: 'logo' | 'favicon', arquivo: File | undefined) {
+  async function subir(campo: 'logo' | 'logoEscuro' | 'favicon', arquivo: File | undefined) {
     if (!arquivo) return
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(arquivo.type)) return setMsg('Use JPG, PNG ou WebP.')
     if (arquivo.size > 2 * 1024 * 1024) return setMsg('Imagem acima de 2 MB.')
@@ -73,13 +73,27 @@ export default function AdminAparencia() {
       {muitoClara && <p className="dica aviso-admin">Essa cor é muito clara: o texto branco dos botões pode ficar difícil de ler.</p>}
 
       <h2 className="admin-sub">Logo e ícone</h2>
+      <p className="dica">
+        O logo substitui o nome no topo e ocupa o espaço todo. Envie as duas versões: o site troca sozinho
+        conforme o tema (claro ou escuro). Se enviar só uma, ela vale para os dois.
+      </p>
       <div className="admin-linha admin-linha-centro">
-        <span>Logo do topo</span>
-        <img className="admin-logo-thumb" src={f.logo || '/favicon.svg'} alt="" />
+        <span>Logo para fundo escuro (versão clara)</span>
+        {f.logo && <img className="admin-logo-thumb admin-logo-escuro" src={f.logo} alt="" />}
         <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => subir('logo', e.target.files?.[0])} />
         {f.logo && (
           <button type="button" className="link-botao" onClick={() => set('logo', '')}>
-            Usar logo padrão
+            Remover
+          </button>
+        )}
+      </div>
+      <div className="admin-linha admin-linha-centro">
+        <span>Logo para fundo claro (versão escura)</span>
+        {f.logoEscuro && <img className="admin-logo-thumb admin-logo-claro" src={f.logoEscuro} alt="" />}
+        <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => subir('logoEscuro', e.target.files?.[0])} />
+        {f.logoEscuro && (
+          <button type="button" className="link-botao" onClick={() => set('logoEscuro', '')}>
+            Remover
           </button>
         )}
       </div>

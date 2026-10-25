@@ -43,16 +43,23 @@ export default function Header() {
       </div>
 
       <div className="container header-principal">
-        <Link to="/" className="marca" aria-label={`${empresa.nome} — página inicial`}>
-          <img className="marca-logo" src={aparencia.logo || '/favicon.svg'} alt="" width={40} height={40} />
-          <span className="marca-texto">
-            <strong>
-              <span className="marca-azul">{primeira}</span>
-              {resto && ` ${resto}`}
-            </strong>
-            <small>{empresa.slogan}</small>
-          </span>
-        </Link>
+        {aparencia.logo || aparencia.logoEscuro ? (
+          <Link to="/" className="marca marca-so-logo" aria-label={`${empresa.nome} — página inicial`}>
+            <img className="logo-fundo-escuro" src={aparencia.logo || aparencia.logoEscuro} alt={empresa.nome} />
+            <img className="logo-fundo-claro" src={aparencia.logoEscuro || aparencia.logo} alt={empresa.nome} />
+          </Link>
+        ) : (
+          <Link to="/" className="marca" aria-label={`${empresa.nome} — página inicial`}>
+            <img className="marca-logo" src="/favicon.svg" alt="" width={40} height={40} />
+            <span className="marca-texto">
+              <strong>
+                <span className="marca-azul">{primeira}</span>
+                {resto && ` ${resto}`}
+              </strong>
+              <small>{empresa.slogan}</small>
+            </span>
+          </Link>
+        )}
 
         <form className="busca" onSubmit={buscar} role="search">
           <Search size={18} className="busca-icone" aria-hidden="true" />
