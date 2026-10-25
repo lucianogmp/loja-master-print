@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom'
-import { LOJA, linkWhatsApp } from '../config'
+import { linkWhatsApp } from '../config'
+import { useSite } from '../lib/site'
 
 export default function Footer() {
+  const { empresa } = useSite()
   return (
     <footer className="footer">
       <div className="container footer-grade">
         <div>
-          <h3>{LOJA.nome}</h3>
-          <p>Impressos e comunicação visual com atendimento de verdade.</p>
+          <h3>{empresa.nome}</h3>
+          {empresa.textoRodape && <p>{empresa.textoRodape}</p>}
         </div>
         <div>
           <h4>Loja</h4>
@@ -27,17 +29,37 @@ export default function Footer() {
           <h4>Fale com a gente</h4>
           <ul>
             <li>
-              <a href={linkWhatsApp('Olá! Vim pelo site da Master Print.')} target="_blank" rel="noreferrer">
+              <a href={linkWhatsApp()} target="_blank" rel="noreferrer">
                 WhatsApp
               </a>
             </li>
-            <li>{LOJA.horario}</li>
+            {empresa.email && (
+              <li>
+                <a href={`mailto:${empresa.email}`}>{empresa.email}</a>
+              </li>
+            )}
+            {empresa.instagram && (
+              <li>
+                <a href={empresa.instagram} target="_blank" rel="noreferrer">
+                  Instagram
+                </a>
+              </li>
+            )}
+            {empresa.facebook && (
+              <li>
+                <a href={empresa.facebook} target="_blank" rel="noreferrer">
+                  Facebook
+                </a>
+              </li>
+            )}
+            <li>{empresa.horario}</li>
+            {empresa.endereco && <li>{empresa.endereco}</li>}
           </ul>
         </div>
       </div>
       <div className="footer-fim">
         <div className="container">
-          © {new Date().getFullYear()} {LOJA.nome}. Todos os direitos reservados. · <Link to="/admin">Administração</Link>
+          © {new Date().getFullYear()} {empresa.nome}. Todos os direitos reservados. · <Link to="/admin">Administração</Link>
         </div>
       </div>
     </footer>

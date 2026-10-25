@@ -1182,3 +1182,15 @@ select option {
 /* Corrige miniatura que esticava na lista de categorias */
 .lista-admin li > .cat-thumb { flex: none; width: 28px; height: 28px; }
 .lista-admin li > .cat-erp { flex: 0 0 11rem; }
+
+/* Administração: editor do site */
+.hero-arte img { width: 100%; height: auto; display: block; }
+.admin-sub { font-size: 0.95rem; margin: 10px 0 0; }
+.admin-linha { display: flex; flex-wrap: wrap; gap: 8px; }
+.admin-linha > * { flex: 1 1 12rem; min-width: 0; }
+.admin-linha-centro { align-items: center; }
+.admin-linha-centro > * { flex: 0 1 auto; }
+.admin-form input:not([type='checkbox']):not([type='file']) { padding: 6px 10px; font-size: 0.9rem; }
+.admin-hero-thumb { width: 96px; height: 64px; object-fit: cover; border-radius: 0.5rem; }
+.icone-btn { display: inline-flex; padding: 4px; border-radius: 6px; border: 1px solid var(--glass-border); background: transparent; color: inherit; cursor: pointer; }
+.icone-btn:disabled { opacity: 0.35; cursor: default; }

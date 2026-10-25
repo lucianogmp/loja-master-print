@@ -5,14 +5,15 @@ import App from './App'
 import { CatalogoProvider } from './lib/catalogo'
 import { CartProvider } from './lib/cart'
 import { AuthProvider } from './lib/auth'
+import { SiteProvider } from './lib/site'
 import './styles.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider><CatalogoProvider><CartProvider>
+      <AuthProvider><SiteProvider><CatalogoProvider><CartProvider>
         <App />
-      </CartProvider></CatalogoProvider></AuthProvider>
+      </CartProvider></CatalogoProvider></SiteProvider></AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 )

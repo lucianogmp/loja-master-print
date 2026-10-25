@@ -3,13 +3,15 @@ import type { Session } from '@supabase/supabase-js'
 import { erp } from '../lib/erp'
 import AdminProdutos from './AdminProdutos'
 import AdminCategorias from './AdminCategorias'
+import AdminInicio from './AdminInicio'
+import AdminEmpresa from './AdminEmpresa'
 
 const PAPEIS = ['dono', 'admin']
 
 export default function AdminLayout() {
   const [session, setSession] = useState<Session | null>(null)
   const [carregando, setCarregando] = useState(true)
-  const [aba, setAba] = useState<'produtos' | 'categorias'>('produtos')
+  const [aba, setAba] = useState<'produtos' | 'categorias' | 'inicio' | 'empresa'>('produtos')
 
   useEffect(() => {
     erp.auth.getSession().then(({ data }) => {
@@ -43,8 +45,13 @@ export default function AdminLayout() {
       <div className="filtros" role="tablist">
         <button className={aba === 'produtos' ? 'ativo' : ''} onClick={() => setAba('produtos')}>Produtos</button>
         <button className={aba === 'categorias' ? 'ativo' : ''} onClick={() => setAba('categorias')}>Categorias</button>
+        <button className={aba === 'inicio' ? 'ativo' : ''} onClick={() => setAba('inicio')}>Página inicial</button>
+        <button className={aba === 'empresa' ? 'ativo' : ''} onClick={() => setAba('empresa')}>Dados da empresa</button>
       </div>
-      {aba === 'produtos' ? <AdminProdutos /> : <AdminCategorias />}
+      {aba === 'produtos' && <AdminProdutos />}
+      {aba === 'categorias' && <AdminCategorias />}
+      {aba === 'inicio' && <AdminInicio />}
+      {aba === 'empresa' && <AdminEmpresa />}
     </div>
   )
 }

@@ -1,6 +1,8 @@
-import { LOJA, linkWhatsApp } from '../config'
+import { linkWhatsApp } from '../config'
+import { useSite } from '../lib/site'
 
 export default function Atendimento() {
+  const { empresa } = useSite()
   return (
     <div className="container secao texto-pagina">
       <h1 className="titulo-pagina">Atendimento e informações</h1>
@@ -26,8 +28,8 @@ export default function Atendimento() {
       </p>
 
       <h2>Fale com a gente</h2>
-      <p>Atendimento: {LOJA.horario}.</p>
-      <a className="btn btn-primario" href={linkWhatsApp('Olá! Vim pelo site da Master Print.')} target="_blank" rel="noreferrer">
+      <p>Atendimento: {empresa.horario}.</p>
+      <a className="btn btn-primario" href={linkWhatsApp()} target="_blank" rel="noreferrer">
         Chamar no WhatsApp
       </a>
     </div>

@@ -2,13 +2,15 @@ import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Search, Settings, ShoppingCart, User } from 'lucide-react'
 import { useCatalogo } from '../lib/catalogo'
-import { LOJA, linkWhatsApp } from '../config'
+import { linkWhatsApp } from '../config'
+import { useSite } from '../lib/site'
 import { useCart } from '../lib/cart'
 import { useAuth } from '../lib/auth'
 import { useEhAdmin } from '../lib/erpAdmin'
 import ThemeToggle from './ThemeToggle'
 
 export default function Header() {
+  const { empresa } = useSite()
   const { totalItens } = useCart()
   const { session } = useAuth()
   const ehAdmin = useEhAdmin()
@@ -31,21 +33,21 @@ export default function Header() {
     <header className="header">
       <div className="barra-topo">
         <div className="container barra-topo-conteudo">
-          <span>{LOJA.horario}</span>
-          <a href={linkWhatsApp('Olá! Vim pelo site da Master Print.')} target="_blank" rel="noreferrer">
+          <span>{empresa.horario}</span>
+          <a href={linkWhatsApp()} target="_blank" rel="noreferrer">
             Atendimento pelo WhatsApp
           </a>
         </div>
       </div>
 
       <div className="container header-principal">
-        <Link to="/" className="marca" aria-label={`${LOJA.nome} — página inicial`}>
+        <Link to="/" className="marca" aria-label={`${empresa.nome} — página inicial`}>
           <img className="marca-logo" src="/favicon.svg" alt="" width={40} height={40} />
           <span className="marca-texto">
             <strong>
               <span className="marca-azul">MASTER</span> PRINT
             </strong>
-            <small>{LOJA.slogan}</small>
+            <small>{empresa.slogan}</small>
           </span>
         </Link>
 
