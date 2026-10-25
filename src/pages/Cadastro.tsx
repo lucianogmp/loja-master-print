@@ -4,6 +4,16 @@ import { supabase } from '../lib/supabase'
 import { erroAmigavel } from '../lib/auth'
 import { senhaVazada, validarSenha } from '../lib/senha'
 import { useVoltar } from '../lib/voltar'
+import { useSite } from '../lib/site'
+
+function PoliticaLink() {
+  const { paginas } = useSite()
+  return paginas.some((p) => p.slug === 'privacidade') ? (
+    <Link to="/pagina/privacidade" target="_blank">Política de Privacidade</Link>
+  ) : (
+    <>Política de Privacidade</>
+  )
+}
 
 export default function Cadastro() {
   const { destino, sufixo } = useVoltar()
@@ -73,7 +83,7 @@ export default function Cadastro() {
         </div>
         <label className="radio">
           <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} />
-          Aceito a Política de Privacidade e o uso dos meus dados para atender meus pedidos.
+          Aceito a <PoliticaLink /> e o uso dos meus dados para atender meus pedidos.
         </label>
         {erro && <p className="dica" role="alert">{erro}</p>}
         <button className="btn btn-primario btn-bloco" disabled={enviando}>{enviando ? 'Criando...' : 'Criar conta'}</button>

@@ -3,7 +3,8 @@ import { linkWhatsApp } from '../config'
 import { useSite } from '../lib/site'
 
 export default function Footer() {
-  const { empresa } = useSite()
+  const { empresa, paginas } = useSite()
+  const noRodape = paginas.filter((p) => p.no_rodape)
   return (
     <footer className="footer">
       <div className="container footer-grade">
@@ -23,6 +24,11 @@ export default function Footer() {
             <li>
               <Link to="/atendimento">Atendimento e informações</Link>
             </li>
+            {noRodape.map((p) => (
+              <li key={p.slug}>
+                <Link to={`/pagina/${p.slug}`}>{p.titulo}</Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div>

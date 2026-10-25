@@ -27,6 +27,8 @@ export type Aparencia = {
   tituloAba: string // título da aba do navegador
 }
 
+export type Pagina = { slug: string; titulo: string; conteudo: string; no_rodape: boolean; ordem: number }
+
 export type SecaoId = 'beneficios' | 'mais_vendidos' | 'produtos'
 export type Secao = { id: SecaoId; titulo: string; visivel: boolean }
 export type Beneficio = { titulo: string; texto: string }
@@ -207,7 +209,7 @@ function aparenciaInicial(): Aparencia {
   return APARENCIA_PADRAO
 }
 
-type Ctx = { empresa: Empresa; inicio: Inicio; aparencia: Aparencia; recarregar: () => Promise<void> }
+type Ctx = { empresa: Empresa; inicio: Inicio; aparencia: Aparencia; paginas: Pagina[]; paginasCarregadas: boolean; recarregar: () => Promise<void> }
 const SiteCtx = createContext<Ctx | null>(null)
 
 function aplicarEmpresa(e: Empresa) {
@@ -223,8 +225,14 @@ export function SiteProvider({ children }: { children: ReactNode }) {
   const [empresa, setEmpresa] = useState<Empresa>(EMPRESA_PADRAO)
   const [inicio, setInicio] = useState<Inicio>(INICIO_PADRAO)
   const [aparencia, setAparencia] = useState<Aparencia>(aparenciaInicial)
+  const [paginas, setPaginas] = useState<Pagina[]>([])
+  const [paginasCarregadas, setPaginasCarregadas] = useState(false)
 
   const recarregar = useCallback(async () => {
+    erp.rpc('loja_paginas').then(({ data, error }) => {
+      if (!error && Array.isArray(data)) setPaginas(data as Pagina[])
+      setPaginasCarregadas(true)
+    })
     const { data, error } = await erp.rpc('loja_config')
     if (error || !data) return
     const e = normalizarEmpresa((data as Record<string, unknown>).empresa)
@@ -243,7 +251,10 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recarregar])
 
-  const valor = useMemo(() => ({ empresa, inicio, aparencia, recarregar }), [empresa, inicio, aparencia, recarregar])
+  const valor = useMemo(
+    () => ({ empresa, inicio, aparencia, paginas, paginasCarregadas, recarregar }),
+    [empresa, inicio, aparencia, paginas, paginasCarregadas, recarregar],
+  )
   return <SiteCtx.Provider value={valor}>{children}</SiteCtx.Provider>
 }
 

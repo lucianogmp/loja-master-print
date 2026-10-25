@@ -10,6 +10,7 @@ import Atendimento from './pages/Atendimento'
 import Entrar from './pages/Entrar'
 import Cadastro from './pages/Cadastro'
 import Conta from './pages/Conta'
+import PaginaTexto from './pages/PaginaTexto'
 
 const AdminLayout = lazy(() => import('./admin/AdminLayout'))
 
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="entrar" element={<Entrar />} />
         <Route path="cadastro" element={<Cadastro />} />
         <Route path="conta" element={<Conta />} />
+        <Route path="pagina/:slug" element={<PaginaTexto />} />
         <Route path="atendimento" element={<Atendimento />} />
         <Route path="admin" element={<Suspense fallback={<div className="container secao">Carregando...</div>}><AdminLayout /></Suspense>} />
         <Route path="*" element={<NaoEncontrada />} />

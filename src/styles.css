@@ -1218,3 +1218,7 @@ select option {
 .admin-logo-escuro { background: #0c0d16; padding: 2px 6px; }
 .admin-logo-claro { background: #fff; padding: 2px 6px; }
 @media (max-width: 680px) { .marca-so-logo img { height: 40px; } }
+.admin-barra { gap: 6px; }
+.admin-barra .btn { padding: 3px 10px; font-size: 0.8rem; flex: 0 0 auto; }
+.campo-curto { flex: 0 0 5.5rem !important; }
+.admin-form textarea { font-size: 0.9rem; padding: 8px 10px; }
