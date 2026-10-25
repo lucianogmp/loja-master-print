@@ -17,11 +17,11 @@ export default function Home() {
           <div>
             <span className="selo">Gráfica online</span>
             <h1>
-              Imprima do seu jeito, <span className="texto-gradiente">receba sem complicação.</span>
+              Ideias boas merecem <span className="texto-gradiente">uma boa impressão.</span>
             </h1>
             <p>
-              Cartões de visita, adesivos, banners, impressos, placas e quadros. Escolha o produto,
-              informe as medidas e peça pelo site ou pelo WhatsApp.
+              Materiais gráficos e personalizados para sua marca, seu negócio e seus momentos
+              especiais. Peça pelo site ou pelo WhatsApp
             </p>
             <div className="hero-acoes">
               <Link to="/produtos" className="btn btn-primario">
