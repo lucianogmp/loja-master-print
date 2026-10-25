@@ -1178,3 +1178,7 @@ select option {
 .card-categoria img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .filtros button { padding: 5px 12px; font-size: 0.85rem; }
 .filtros { margin: 8px 0; }
+
+/* Corrige miniatura que esticava na lista de categorias */
+.lista-admin li > .cat-thumb { flex: none; width: 28px; height: 28px; }
+.lista-admin li > .cat-erp { flex: 0 0 11rem; }
