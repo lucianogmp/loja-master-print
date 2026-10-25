@@ -5,8 +5,10 @@ import ProductCard from '../components/ProductCard'
 import ProductArt from '../components/ProductArt'
 
 export default function Home() {
-  const { produtos, categorias } = useCatalogo()
-  const destaques = produtos.filter((p) => p.destaque)
+  const { produtos, carregando } = useCatalogo()
+  // Destaques marcados na administração vêm primeiro; o resto segue a ordem do catálogo.
+  const lista = [...produtos].sort((a, b) => Number(!!b.destaque) - Number(!!a.destaque))
+  const maisVendidos = produtos.filter((p) => p.maisVendido)
 
   return (
     <>
@@ -58,34 +60,36 @@ export default function Home() {
         </div>
       </section>
 
-      {categorias.length > 0 && (
-      <section className="secao container">
-        <h2>Categorias</h2>
-        <div className="grade-categorias">
-          {categorias.map((c) => (
-            <Link key={c.slug} to={`/produtos?categoria=${c.slug}`} className="card-categoria">
-              {c.imagem ? <img src={c.imagem} alt={c.nome} loading="lazy" /> : <ProductArt tipo={c.arte} />}
-              <span>{c.nome}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {maisVendidos.length > 0 && (
+        <section className="secao container">
+          <div className="secao-topo">
+            <h2>Mais vendidos</h2>
+          </div>
+          <div className="grade-produtos">
+            {maisVendidos.map((p) => (
+              <ProductCard key={p.id} produto={p} />
+            ))}
+          </div>
+        </section>
       )}
 
-      {destaques.length > 0 && (
       <section className="secao container">
         <div className="secao-topo">
-          <h2>Mais pedidos</h2>
+          <h2>Produtos</h2>
           <Link to="/produtos">Ver todos →</Link>
         </div>
-        <div className="grade-produtos">
-          {destaques.map((p) => (
-            <ProductCard key={p.id} produto={p} />
-          ))}
-        </div>
-        <p className="aviso-exemplo">Produtos e preços de exemplo, apenas para visualizar o layout.</p>
+        {carregando ? (
+          <p className="vazio">Carregando produtos...</p>
+        ) : lista.length === 0 ? (
+          <p className="vazio">Em breve novos produtos. Fale com a gente pelo WhatsApp.</p>
+        ) : (
+          <div className="grade-produtos">
+            {lista.map((p) => (
+              <ProductCard key={p.id} produto={p} />
+            ))}
+          </div>
+        )}
       </section>
-      )}
     </>
   )
 }

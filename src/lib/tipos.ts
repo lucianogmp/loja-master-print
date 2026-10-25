@@ -40,5 +40,6 @@ export type Produto = {
   prazo: string
   precisaArte: boolean
   destaque?: boolean
+  maisVendido?: boolean // só vem do banco quando há venda real
 }
 

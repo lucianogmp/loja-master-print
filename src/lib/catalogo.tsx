@@ -25,6 +25,7 @@ type Linha = {
   entrega_modo: 'envio_e_retirada' | 'so_retirada'
   destaque: boolean
   ordem: number
+  mais_vendido?: boolean
 }
 
 const slugify = (s: string) =>
@@ -65,6 +66,7 @@ function paraProduto(l: Linha): Produto {
     prazo: l.prazo_entrega_dias ? `${l.prazo_entrega_dias} dia(s) úteis` : 'a combinar',
     precisaArte: true,
     destaque: l.destaque,
+    maisVendido: l.mais_vendido === true,
   }
 }
 
