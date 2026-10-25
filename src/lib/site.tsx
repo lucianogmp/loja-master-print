@@ -18,6 +18,13 @@ export type Empresa = {
   textoRodape: string
 }
 
+export type Aparencia = {
+  logo: string // vazio = logo padrão
+  favicon: string // vazio = ícone padrão
+  cor: string // cor principal em #rrggbb; vazio = azul padrão
+  tituloAba: string // título da aba do navegador
+}
+
 export type SecaoId = 'beneficios' | 'mais_vendidos' | 'produtos'
 export type Secao = { id: SecaoId; titulo: string; visivel: boolean }
 export type Beneficio = { titulo: string; texto: string }
@@ -67,6 +74,13 @@ export const INICIO_PADRAO: Inicio = {
   ],
 }
 
+export const APARENCIA_PADRAO: Aparencia = {
+  logo: '',
+  favicon: '',
+  cor: '',
+  tituloAba: 'Master Print — Gráfica online',
+}
+
 const texto = (v: unknown, padrao: string) => (typeof v === 'string' ? v : padrao)
 
 export function normalizarEmpresa(v: unknown): Empresa {
@@ -111,7 +125,73 @@ export function normalizarInicio(v: unknown): Inicio {
   }
 }
 
-type Ctx = { empresa: Empresa; inicio: Inicio; recarregar: () => Promise<void> }
+export function normalizarAparencia(v: unknown): Aparencia {
+  const o = (v && typeof v === 'object' ? v : {}) as Record<string, unknown>
+  const p = APARENCIA_PADRAO
+  const cor = texto(o.cor, '').trim()
+  return {
+    logo: texto(o.logo, p.logo),
+    favicon: texto(o.favicon, p.favicon),
+    cor: /^#[0-9a-f]{6}$/i.test(cor) ? cor.toLowerCase() : '',
+    tituloAba: texto(o.tituloAba, p.tituloAba).trim() || p.tituloAba,
+  }
+}
+
+const rgbDe = (hex: string): [number, number, number] => [
+  parseInt(hex.slice(1, 3), 16),
+  parseInt(hex.slice(3, 5), 16),
+  parseInt(hex.slice(5, 7), 16),
+]
+const misturar = (hex: string, alvo: number, f: number) => {
+  const [r, g, b] = rgbDe(hex).map((c) => Math.round(c + (alvo - c) * f))
+  return `#${[r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('')}`
+}
+/** Brilho de 0 (preto) a 1 (branco). Cores muito claras deixam o texto branco dos botões ilegível. */
+export function brilho(hex: string) {
+  const [r, g, b] = rgbDe(hex)
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255
+}
+
+const CHAVE_CACHE = 'loja-aparencia'
+
+export function aplicarAparencia(a: Aparencia) {
+  const raiz = document.documentElement
+  const vars = ['--cor-1', '--cor-2', '--cor-3', '--cor-4', '--cor-rgb', '--cor-rgb-2']
+  if (a.cor) {
+    const c = a.cor
+    raiz.style.setProperty('--cor-1', c)
+    raiz.style.setProperty('--cor-2', misturar(c, 0, 0.3))
+    raiz.style.setProperty('--cor-3', misturar(c, 255, 0.3))
+    raiz.style.setProperty('--cor-4', misturar(c, 0, 0.15))
+    raiz.style.setProperty('--cor-rgb', rgbDe(c).join(', '))
+    raiz.style.setProperty('--cor-rgb-2', rgbDe(misturar(c, 0, 0.15)).join(', '))
+  } else {
+    vars.forEach((v) => raiz.style.removeProperty(v))
+  }
+  document.title = a.tituloAba
+  const icone = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+  if (icone) {
+    icone.href = a.favicon || '/favicon.svg'
+    icone.type = a.favicon ? '' : 'image/svg+xml'
+  }
+  try {
+    localStorage.setItem(CHAVE_CACHE, JSON.stringify(a))
+  } catch {
+    // sem armazenamento: só não evita o piscar da cor na próxima visita
+  }
+}
+
+function aparenciaInicial(): Aparencia {
+  try {
+    const c = localStorage.getItem(CHAVE_CACHE)
+    if (c) return normalizarAparencia(JSON.parse(c))
+  } catch {
+    // ignora
+  }
+  return APARENCIA_PADRAO
+}
+
+type Ctx = { empresa: Empresa; inicio: Inicio; aparencia: Aparencia; recarregar: () => Promise<void> }
 const SiteCtx = createContext<Ctx | null>(null)
 
 function aplicarEmpresa(e: Empresa) {
@@ -126,6 +206,7 @@ function aplicarEmpresa(e: Empresa) {
 export function SiteProvider({ children }: { children: ReactNode }) {
   const [empresa, setEmpresa] = useState<Empresa>(EMPRESA_PADRAO)
   const [inicio, setInicio] = useState<Inicio>(INICIO_PADRAO)
+  const [aparencia, setAparencia] = useState<Aparencia>(aparenciaInicial)
 
   const recarregar = useCallback(async () => {
     const { data, error } = await erp.rpc('loja_config')
@@ -134,13 +215,19 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     aplicarEmpresa(e)
     setEmpresa(e)
     setInicio(normalizarInicio((data as Record<string, unknown>).inicio))
+    const a = normalizarAparencia((data as Record<string, unknown>).aparencia)
+    aplicarAparencia(a)
+    setAparencia(a)
   }, [])
 
+  // Aplica já a última aparência conhecida (evita piscar a cor padrão), depois atualiza do banco
   useEffect(() => {
+    aplicarAparencia(aparencia)
     recarregar()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recarregar])
 
-  const valor = useMemo(() => ({ empresa, inicio, recarregar }), [empresa, inicio, recarregar])
+  const valor = useMemo(() => ({ empresa, inicio, aparencia, recarregar }), [empresa, inicio, aparencia, recarregar])
   return <SiteCtx.Provider value={valor}>{children}</SiteCtx.Provider>
 }
 

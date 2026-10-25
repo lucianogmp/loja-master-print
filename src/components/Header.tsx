@@ -10,7 +10,7 @@ import { useEhAdmin } from '../lib/erpAdmin'
 import ThemeToggle from './ThemeToggle'
 
 export default function Header() {
-  const { empresa } = useSite()
+  const { empresa, aparencia } = useSite()
   const { totalItens } = useCart()
   const { session } = useAuth()
   const ehAdmin = useEhAdmin()
@@ -18,6 +18,8 @@ export default function Header() {
   const navigate = useNavigate()
   const { pathname, search } = useLocation()
   const [busca, setBusca] = useState('')
+  const [primeira, ...restoPalavras] = empresa.nome.toUpperCase().split(' ')
+  const resto = restoPalavras.join(' ')
 
   // O destaque da aba depende do ?categoria= da URL, não só do caminho
   const noCatalogo = pathname === '/produtos'
@@ -42,10 +44,11 @@ export default function Header() {
 
       <div className="container header-principal">
         <Link to="/" className="marca" aria-label={`${empresa.nome} — página inicial`}>
-          <img className="marca-logo" src="/favicon.svg" alt="" width={40} height={40} />
+          <img className="marca-logo" src={aparencia.logo || '/favicon.svg'} alt="" width={40} height={40} />
           <span className="marca-texto">
             <strong>
-              <span className="marca-azul">MASTER</span> PRINT
+              <span className="marca-azul">{primeira}</span>
+              {resto && ` ${resto}`}
             </strong>
             <small>{empresa.slogan}</small>
           </span>

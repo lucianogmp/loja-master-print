@@ -5,13 +5,14 @@ import AdminProdutos from './AdminProdutos'
 import AdminCategorias from './AdminCategorias'
 import AdminInicio from './AdminInicio'
 import AdminEmpresa from './AdminEmpresa'
+import AdminAparencia from './AdminAparencia'
 
 const PAPEIS = ['dono', 'admin']
 
 export default function AdminLayout() {
   const [session, setSession] = useState<Session | null>(null)
   const [carregando, setCarregando] = useState(true)
-  const [aba, setAba] = useState<'produtos' | 'categorias' | 'inicio' | 'empresa'>('produtos')
+  const [aba, setAba] = useState<'produtos' | 'categorias' | 'inicio' | 'empresa' | 'aparencia'>('produtos')
 
   useEffect(() => {
     erp.auth.getSession().then(({ data }) => {
@@ -47,11 +48,13 @@ export default function AdminLayout() {
         <button className={aba === 'categorias' ? 'ativo' : ''} onClick={() => setAba('categorias')}>Categorias</button>
         <button className={aba === 'inicio' ? 'ativo' : ''} onClick={() => setAba('inicio')}>Página inicial</button>
         <button className={aba === 'empresa' ? 'ativo' : ''} onClick={() => setAba('empresa')}>Dados da empresa</button>
+        <button className={aba === 'aparencia' ? 'ativo' : ''} onClick={() => setAba('aparencia')}>Aparência</button>
       </div>
       {aba === 'produtos' && <AdminProdutos />}
       {aba === 'categorias' && <AdminCategorias />}
       {aba === 'inicio' && <AdminInicio />}
       {aba === 'empresa' && <AdminEmpresa />}
+      {aba === 'aparencia' && <AdminAparencia />}
     </div>
   )
 }

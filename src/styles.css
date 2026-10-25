@@ -5,6 +5,16 @@
    do ERP; se o ERP mudar de visual, atualize aqui.
    ===================================================================== */
 
+/* Cor principal: o padrão é o azul do ERP; a administração pode trocar (lib/site.tsx) */
+:root {
+  --cor-1: #3b82f6;
+  --cor-2: #1d4ed8;
+  --cor-3: #60a5fa;
+  --cor-4: #2563eb;
+  --cor-rgb: 59, 130, 246;
+  --cor-rgb-2: 37, 99, 235;
+}
+
 :root,
 :root[data-theme='dark'] {
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -12,8 +22,8 @@
   --glass-bg: rgba(13, 13, 25, 0.55);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-border-hover: rgba(255, 255, 255, 0.16);
-  --glass-glow: rgba(59, 130, 246, 0.15);
-  --primary-glow: rgba(59, 130, 246, 0.35);
+  --glass-glow: rgba(var(--cor-rgb), 0.15);
+  --primary-glow: rgba(var(--cor-rgb), 0.35);
   --body-bg: radial-gradient(circle at 50% 0%, #0c0d16 0%, #040408 100%);
   --body-text: #f3f4f6;
   --surface-strong-bg: rgba(10, 10, 18, 0.7);
@@ -27,7 +37,7 @@
   --text-faint: #8b95a7;
   --shadow-strong: rgba(0, 0, 0, 0.55);
   --shadow-card: rgba(0, 0, 0, 0.4);
-  --link: #60a5fa;
+  --link: var(--cor-3);
   --dinheiro: #10b981;
   --art-bg: #111a2e;
 }
@@ -36,9 +46,9 @@
   --floating-panel-bg: #ffffff;
   --glass-bg: rgba(255, 255, 255, 0.78);
   --glass-border: rgba(15, 23, 42, 0.12);
-  --glass-border-hover: rgba(37, 99, 235, 0.32);
-  --glass-glow: rgba(37, 99, 235, 0.12);
-  --primary-glow: rgba(37, 99, 235, 0.24);
+  --glass-border-hover: rgba(var(--cor-rgb-2), 0.32);
+  --glass-glow: rgba(var(--cor-rgb-2), 0.12);
+  --primary-glow: rgba(var(--cor-rgb-2), 0.24);
   --body-bg: radial-gradient(circle at 50% 0%, #f8fbff 0%, #e8edf5 100%);
   --body-text: #111827;
   --surface-strong-bg: rgba(255, 255, 255, 0.92);
@@ -52,7 +62,7 @@
   --text-faint: #7c8798;
   --shadow-strong: rgba(15, 23, 42, 0.16);
   --shadow-card: rgba(15, 23, 42, 0.12);
-  --link: #1d4ed8;
+  --link: var(--cor-2);
   --dinheiro: #15803d;
   --art-bg: #e3eaf5;
 }
@@ -233,7 +243,7 @@ main {
 }
 
 .texto-gradiente {
-  background: linear-gradient(-45deg, #60a5fa, #3b82f6, #1d4ed8, #2563eb);
+  background: linear-gradient(-45deg, var(--cor-3), var(--cor-1), var(--cor-2), var(--cor-4));
   background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -304,14 +314,14 @@ main {
 
 /* Igual ao botão azul ativo do ERP */
 .btn-primario {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, var(--cor-1), var(--cor-2));
+  box-shadow: 0 4px 14px rgba(var(--cor-rgb-2), 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
 .btn-primario:hover:not(:disabled) {
-  background: linear-gradient(135deg, #60a5fa, #2563eb);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, var(--cor-3), var(--cor-4));
+  box-shadow: 0 6px 20px rgba(var(--cor-rgb-2), 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.25);
   color: #fff;
 }
 
@@ -322,8 +332,8 @@ main {
 }
 
 .btn-secundario:hover {
-  background: rgba(59, 130, 246, 0.12);
-  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(var(--cor-rgb), 0.12);
+  border-color: rgba(var(--cor-rgb), 0.5);
   color: var(--text-primary);
 }
 
@@ -356,11 +366,11 @@ main {
 
 .icone-botao:hover {
   color: var(--link);
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--cor-rgb), 0.1);
 }
 
 :focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--cor-1);
   outline-offset: 2px;
 }
 
@@ -432,7 +442,7 @@ main {
 }
 
 .marca-azul {
-  color: #3b82f6;
+  color: var(--cor-1);
 }
 
 .marca-texto small {
@@ -468,7 +478,7 @@ main {
   padding: 0 18px;
   border: 0;
   border-radius: 0 0.5rem 0.5rem 0;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, var(--cor-1), var(--cor-2));
   color: #fff;
   font: inherit;
   font-weight: 700;
@@ -496,7 +506,7 @@ main {
 
 .carrinho-link:hover {
   color: var(--link);
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--cor-rgb), 0.1);
 }
 
 .contador {
@@ -506,7 +516,7 @@ main {
   height: 20px;
   padding: 0 5px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, var(--cor-1), var(--cor-2));
   color: #fff;
   font-size: 0.75rem;
   font-weight: 800;
@@ -538,13 +548,13 @@ main {
 }
 
 .categorias-lista a:hover {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--cor-rgb), 0.1);
   color: var(--text-primary);
 }
 
 .categorias-lista a.active {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, var(--cor-1), var(--cor-2));
+  box-shadow: 0 4px 14px rgba(var(--cor-rgb-2), 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
@@ -568,8 +578,8 @@ main {
   display: inline-block;
   padding: 4px 12px;
   border-radius: 999px;
-  background: rgba(59, 130, 246, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: rgba(var(--cor-rgb), 0.12);
+  border: 1px solid rgba(var(--cor-rgb), 0.25);
   color: var(--link);
   font-size: 0.8rem;
   font-weight: 700;
@@ -735,13 +745,13 @@ main {
 }
 
 .filtros button:hover {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--cor-rgb), 0.1);
   color: var(--text-primary);
 }
 
 .filtros button.ativo {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, var(--cor-1), var(--cor-2));
+  box-shadow: 0 4px 14px rgba(var(--cor-rgb-2), 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
@@ -838,9 +848,9 @@ input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--cor-1);
   background: var(--input-focus-bg);
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 1px rgba(var(--cor-rgb), 0.5), 0 0 15px rgba(var(--cor-rgb), 0.3);
 }
 
 select option {
@@ -866,7 +876,7 @@ select option {
 
 .radio input {
   width: auto;
-  accent-color: #3b82f6;
+  accent-color: var(--cor-1);
 }
 
 .caixa-preco {
@@ -1194,3 +1204,7 @@ select option {
 .admin-hero-thumb { width: 96px; height: 64px; object-fit: cover; border-radius: 0.5rem; }
 .icone-btn { display: inline-flex; padding: 4px; border-radius: 6px; border: 1px solid var(--glass-border); background: transparent; color: inherit; cursor: pointer; }
 .icone-btn:disabled { opacity: 0.35; cursor: default; }
+.marca-logo { object-fit: contain; }
+.admin-cor { width: 44px; height: 32px; padding: 0 !important; border-radius: 6px; cursor: pointer; flex: none; }
+.admin-cor-amostra { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--glass-border); cursor: pointer; padding: 0; flex: none; }
+.admin-logo-thumb { width: 36px; height: 36px; object-fit: contain; border-radius: 8px; border: 1px solid var(--glass-border); flex: none; }
