@@ -7,6 +7,9 @@ import { useAuth } from '../lib/auth'
 import { useCatalogo } from '../lib/catalogo'
 import { ERP_URL } from '../lib/erp'
 import { calcularTotal } from '../lib/preco'
+import { supabase } from '../lib/supabase'
+import { ENDERECO_VAZIO, paraLinha, so, textoEndereco, useEnderecos, validarEndereco, type EnderecoCampos as Campos } from '../lib/enderecos'
+import EnderecoCampos from '../components/EnderecoCampos'
 
 type Entrega = 'retirada' | 'entrega'
 
@@ -15,7 +18,10 @@ export default function Checkout() {
   const { produtoPorSlug } = useCatalogo()
   const { session, carregando } = useAuth()
   const [entregaEscolhida, setEntrega] = useState<Entrega>('retirada')
-  const [cep, setCep] = useState('')
+  const { lista: enderecos, indisponivel: semEnderecos } = useEnderecos()
+  const [escolhido, setEscolhido] = useState<string>('') // id de um endereço salvo, ou 'novo'
+  const [novo, setNovo] = useState<Campos>(ENDERECO_VAZIO)
+  const [salvarNovo, setSalvarNovo] = useState(true)
   const [observacao, setObservacao] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState('')
@@ -72,15 +78,31 @@ export default function Checkout() {
     )
   }
 
+  // Sem escolha explícita: usa o endereço padrão (ou o primeiro); sem nenhum salvo, o formulário novo
+  const idEfetivo = escolhido || enderecos.find((x) => x.padrao)?.id || enderecos[0]?.id || 'novo'
+  const salvoEscolhido = enderecos.find((x) => x.id === idEfetivo)
+
   async function enviar(e: FormEvent) {
     e.preventDefault()
     setErro('')
+    let endereco: Campos | null = null
+    if (entrega === 'entrega') {
+      endereco = salvoEscolhido ?? novo
+      const meta = (session!.user.user_metadata as { nome?: string; telefone?: string }) ?? {}
+      if (!endereco.destinatario.trim()) endereco = { ...endereco, destinatario: meta.nome ?? '' }
+      const problema = validarEndereco(endereco)
+      if (problema) return setErro(problema)
+    }
     setEnviando(true)
     try {
+      if (endereco && !salvoEscolhido && salvarNovo && !semEnderecos && enderecos.length < 5) {
+        // guarda o endereço na conta para os próximos pedidos (se falhar, o pedido segue mesmo assim)
+        await supabase.from('enderecos').insert({ ...paraLinha(endereco, session!.user.id), padrao: enderecos.length === 0 })
+      }
       const corpo = {
         ref: ref.current,
         entrega,
-        cep,
+        endereco: endereco && { ...endereco, cep: so(endereco.cep) },
         observacao,
         itens: itens
           .map((i) => {
@@ -138,11 +160,37 @@ export default function Checkout() {
           </fieldset>
 
           {entrega === 'entrega' && (
-            <div className="campo">
-              <label htmlFor="cep">CEP</label>
-              <input id="cep" inputMode="numeric" placeholder="00000-000" value={cep} onChange={(e) => setCep(e.target.value)} />
+            <fieldset className="campo opcoes-arte">
+              <legend>Endereço de entrega</legend>
+              {enderecos.map((x) => (
+                <label key={x.id} className="radio">
+                  <input type="radio" name="endereco" checked={idEfetivo === x.id} onChange={() => setEscolhido(x.id)} />
+                  <span>
+                    <strong>{x.destinatario}</strong>
+                    {x.padrao && <small className="selo-padrao"> · padrão</small>}
+                    <br />
+                    <small>{textoEndereco(x)}</small>
+                  </span>
+                </label>
+              ))}
+              {enderecos.length > 0 && (
+                <label className="radio">
+                  <input type="radio" name="endereco" checked={idEfetivo === 'novo'} onChange={() => setEscolhido('novo')} />
+                  Usar outro endereço
+                </label>
+              )}
+              {idEfetivo === 'novo' && (
+                <>
+                  <EnderecoCampos valor={novo} onChange={setNovo} prefixo="ck" />
+                  {!semEnderecos && enderecos.length < 5 && (
+                    <label className="radio">
+                      <input type="checkbox" checked={salvarNovo} onChange={(e) => setSalvarNovo(e.target.checked)} /> Salvar este endereço na minha conta
+                    </label>
+                  )}
+                </>
+              )}
               <span className="dica">O valor e o prazo do frete são confirmados pela gráfica.</span>
-            </div>
+            </fieldset>
           )}
 
           <div className="campo">

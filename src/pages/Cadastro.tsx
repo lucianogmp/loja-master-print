@@ -5,6 +5,7 @@ import { erroAmigavel } from '../lib/auth'
 import { senhaVazada, validarSenha } from '../lib/senha'
 import { useVoltar } from '../lib/voltar'
 import { useSite } from '../lib/site'
+import { mascaraTelefone, so } from '../lib/enderecos'
 
 function PoliticaLink() {
   const { paginas } = useSite()
@@ -31,6 +32,7 @@ export default function Cadastro() {
     setErro('')
     const problema = validarSenha(senha)
     if (problema) return setErro(problema)
+    if (so(telefone).length < 10) return setErro('Informe o WhatsApp com DDD.')
     if (!aceite) return setErro('É preciso aceitar a Política de Privacidade.')
     setEnviando(true)
     if (await senhaVazada(senha)) {
@@ -41,7 +43,7 @@ export default function Cadastro() {
       email: email.trim(),
       password: senha,
       options: {
-        data: { nome: nome.trim(), telefone: telefone.trim() },
+        data: { nome: nome.trim(), telefone: so(telefone) },
         emailRedirectTo: `${window.location.origin}${destino}`,
       },
     })
@@ -70,7 +72,7 @@ export default function Cadastro() {
         </div>
         <div className="campo">
           <label htmlFor="tel">WhatsApp</label>
-          <input id="tel" inputMode="tel" autoComplete="tel" placeholder="(00) 00000-0000" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+          <input id="tel" required inputMode="tel" autoComplete="tel" placeholder="(00) 00000-0000" value={mascaraTelefone(telefone)} onChange={(e) => setTelefone(e.target.value)} />
         </div>
         <div className="campo">
           <label htmlFor="email">E-mail</label>
