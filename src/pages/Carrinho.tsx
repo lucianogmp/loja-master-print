@@ -34,7 +34,7 @@ export default function Carrinho() {
             return (
               <li key={item.id} className="item-carrinho">
                 <div className="item-imagem">
-                  <ProductArt tipo={produto.arte} />
+                  {produto.imagens[0] ? <img src={produto.imagens[0]} alt={produto.nome} /> : <ProductArt tipo={produto.arte} />}
                 </div>
                 <div className="item-info">
                   <h3>{produto.nome}</h3>
@@ -43,7 +43,7 @@ export default function Carrinho() {
                     {item.larguraCm && item.alturaCm ? ` · ${item.larguraCm} x ${item.alturaCm} cm` : ''}
                     {' · '}Qtd. {item.quantidade}
                   </p>
-                  <p className="dica">{rotuloArte[item.arte]}</p>
+                  <p className="dica">{produto.arteFixa ? 'Arte pronta do produto' : rotuloArte[item.arte]}</p>
                   {item.observacao && <p className="dica">Obs.: {item.observacao}</p>}
                   <button className="link-botao" onClick={() => remover(item.id)}>
                     Remover

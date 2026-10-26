@@ -42,7 +42,7 @@ export default function ProdutoPage() {
   const faltaMedida = ehM2 && (!larguraCm || !alturaCm)
 
   function adicionarAoCarrinho() {
-    adicionar({ slug: produto!.slug, variacaoId, quantidade, larguraCm, alturaCm, arte, observacao })
+    adicionar({ slug: produto!.slug, variacaoId, quantidade, larguraCm, alturaCm, arte: produto!.arteFixa ? 'modelo' : arte, observacao })
     navigate('/carrinho')
   }
 
@@ -140,6 +140,7 @@ export default function ProdutoPage() {
             </div>
           )}
 
+          {produto.arteFixa && <p className="dica">Este produto já vem com a arte pronta: você só escolhe a quantidade.</p>}
           {produto.precisaArte && (
             <fieldset className="campo opcoes-arte">
               <legend>Sobre a arte</legend>

@@ -7,13 +7,14 @@ import AdminInicio from './AdminInicio'
 import AdminEmpresa from './AdminEmpresa'
 import AdminAparencia from './AdminAparencia'
 import AdminPaginas from './AdminPaginas'
+import AdminDerivados from './AdminDerivados'
 
 const PAPEIS = ['dono', 'admin']
 
 export default function AdminLayout() {
   const [session, setSession] = useState<Session | null>(null)
   const [carregando, setCarregando] = useState(true)
-  const [aba, setAba] = useState<'produtos' | 'categorias' | 'inicio' | 'empresa' | 'aparencia' | 'paginas'>('produtos')
+  const [aba, setAba] = useState<'produtos' | 'categorias' | 'inicio' | 'empresa' | 'aparencia' | 'paginas' | 'derivados'>('produtos')
 
   useEffect(() => {
     erp.auth.getSession().then(({ data }) => {
@@ -46,6 +47,7 @@ export default function AdminLayout() {
       </div>
       <div className="filtros" role="tablist">
         <button className={aba === 'produtos' ? 'ativo' : ''} onClick={() => setAba('produtos')}>Produtos</button>
+        <button className={aba === 'derivados' ? 'ativo' : ''} onClick={() => setAba('derivados')}>Derivados</button>
         <button className={aba === 'categorias' ? 'ativo' : ''} onClick={() => setAba('categorias')}>Categorias</button>
         <button className={aba === 'inicio' ? 'ativo' : ''} onClick={() => setAba('inicio')}>Página inicial</button>
         <button className={aba === 'empresa' ? 'ativo' : ''} onClick={() => setAba('empresa')}>Dados da empresa</button>
@@ -53,6 +55,7 @@ export default function AdminLayout() {
         <button className={aba === 'paginas' ? 'ativo' : ''} onClick={() => setAba('paginas')}>Páginas de texto</button>
       </div>
       {aba === 'produtos' && <AdminProdutos />}
+      {aba === 'derivados' && <AdminDerivados />}
       {aba === 'categorias' && <AdminCategorias />}
       {aba === 'inicio' && <AdminInicio />}
       {aba === 'empresa' && <AdminEmpresa />}

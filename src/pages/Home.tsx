@@ -67,7 +67,7 @@ export default function Home() {
                 </div>
                 <div className="grade-produtos">
                   {maisVendidos.map((p) => (
-                    <ProductCard key={p.id} produto={p} />
+                    <ProductCard key={p.slug} produto={p} />
                   ))}
                 </div>
               </section>
@@ -85,7 +85,7 @@ export default function Home() {
               ) : (
                 <div className="grade-produtos">
                   {lista.map((p) => (
-                    <ProductCard key={p.id} produto={p} />
+                    <ProductCard key={p.slug} produto={p} />
                   ))}
                 </div>
               )}

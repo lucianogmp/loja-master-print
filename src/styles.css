@@ -1247,3 +1247,4 @@ select option {
 .pedido-etapas { list-style: none; display: flex; gap: 6px; padding: 0; margin: 0; flex-wrap: wrap; font-size: 0.78rem; }
 .pedido-etapas li { padding: 3px 10px; border-radius: 999px; border: 1px solid var(--glass-border); color: var(--text-muted); }
 .pedido-etapas li.feita { background: linear-gradient(135deg, var(--cor-1), var(--cor-2)); border-color: transparent; color: #fff; font-weight: 700; }
+.item-imagem img { width: 96px; height: 72px; object-fit: cover; border-radius: 0.6rem; display: block; }

@@ -107,7 +107,7 @@ export default function Checkout() {
         itens: itens
           .map((i) => {
             const p = produtoPorSlug(i.slug)
-            return p ? { produto_id: p.id, quantidade: i.quantidade, arte: i.arte, observacao: i.observacao } : null
+            return p ? { produto_id: p.id, derivado_id: p.derivadoId, quantidade: i.quantidade, arte: i.arte, observacao: i.observacao } : null
           })
           .filter(Boolean),
       }

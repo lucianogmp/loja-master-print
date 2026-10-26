@@ -41,5 +41,8 @@ export type Produto = {
   precisaArte: boolean
   destaque?: boolean
   maisVendido?: boolean // só vem do banco quando há venda real
+  // Produto derivado: usa preço, prazo e produção de um produto do ERP, mas com arte pronta própria
+  derivadoId?: string
+  arteFixa?: boolean
 }
 

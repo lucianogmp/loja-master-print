@@ -26,6 +26,7 @@ type Linha = {
   destaque: boolean
   ordem: number
   mais_vendido?: boolean
+  derivado_id?: string | null
 }
 
 const slugify = (s: string) =>
@@ -64,7 +65,9 @@ function paraProduto(l: Linha): Produto {
     variacoes: [{ id: 'unico', label: l.nome, preco: l.preco ?? 0 }],
     rotuloVariacao: 'Produto',
     prazo: l.prazo_entrega_dias ? `${l.prazo_entrega_dias} dia(s) úteis` : 'a combinar',
-    precisaArte: true,
+    precisaArte: !l.derivado_id,
+    derivadoId: l.derivado_id ?? undefined,
+    arteFixa: !!l.derivado_id,
     destaque: l.destaque,
     maisVendido: l.mais_vendido === true,
   }
@@ -86,7 +89,7 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
   const [erro, setErro] = useState(false)
 
   useEffect(() => {
-    erp.rpc('loja_catalogo').then(({ data, error }) => {
+    erp.rpc('loja_catalogo_v2').then(({ data, error }) => {
       if (error) setErro(true)
       else setLinhas((data ?? []) as Linha[])
       setCarregando(false)
