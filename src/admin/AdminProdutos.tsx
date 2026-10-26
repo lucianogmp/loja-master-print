@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { erp } from '../lib/erp'
 import AutoTextarea from '../components/AutoTextarea'
+import ListaOuBlocos, { BotoesVisao, useVisao } from './ListaOuBlocos'
 
 type Item = { id: string; nome: string; categoria: string | null; lp: LP | null }
 type LP = {
@@ -29,6 +30,7 @@ export default function AdminProdutos() {
   const [itens, setItens] = useState<Item[]>([])
   const [aberto, setAberto] = useState<string | null>(null)
   const [carregando, setCarregando] = useState(true)
+  const [visao, setVisao] = useVisao()
 
   const carregar = useCallback(async () => {
     const { data: prods } = await erp
@@ -57,23 +59,23 @@ export default function AdminProdutos() {
       </p>
       {carregando && <p>Carregando...</p>}
       {!carregando && itens.length === 0 && <p className="vazio">Nenhum produto marcado no ERP ainda.</p>}
-      <ul className="lista-admin">
-        {itens.map((it) => (
-          <li key={it.id} className="admin-item">
-            <div className="admin-item-topo">
-              <div>
-                <strong>{it.nome}</strong>
-                <small> · {it.categoria ?? 'sem categoria'}</small>
-                {!it.lp && <small className="aviso-admin"> · sem foto/descrição</small>}
-              </div>
-              <button className="btn btn-secundario" onClick={() => setAberto(aberto === it.id ? null : it.id)}>
-                {aberto === it.id ? 'Fechar' : 'Editar'}
-              </button>
-            </div>
-            {aberto === it.id && <Editor item={it} aoSalvar={() => { carregar(); setAberto(null) }} />}
-          </li>
-        ))}
-      </ul>
+      <BotoesVisao visao={visao} onChange={setVisao} />
+      <ListaOuBlocos
+        itens={itens.map((it) => ({
+          id: it.id,
+          nome: it.nome,
+          sub: it.categoria ?? 'sem categoria',
+          foto: it.lp?.imagens?.[0],
+          avisos: it.lp ? [] : ['sem foto/descrição'],
+        }))}
+        visao={visao}
+        aberto={aberto}
+        onAbrir={setAberto}
+        editor={(id) => {
+          const it = itens.find((x) => x.id === id)
+          return it ? <Editor key={id} item={it} aoSalvar={() => { carregar(); setAberto(null) }} /> : null
+        }}
+      />
     </div>
   )
 }

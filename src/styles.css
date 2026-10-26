@@ -1248,3 +1248,22 @@ select option {
 .pedido-etapas li { padding: 3px 10px; border-radius: 999px; border: 1px solid var(--glass-border); color: var(--text-muted); }
 .pedido-etapas li.feita { background: linear-gradient(135deg, var(--cor-1), var(--cor-2)); border-color: transparent; color: #fff; font-weight: 700; }
 .item-imagem img { width: 96px; height: 72px; object-fit: cover; border-radius: 0.6rem; display: block; }
+
+/* Administração: alternar entre lista e blocos */
+.visao-botoes { display: inline-flex; gap: 4px; margin: 4px 0 8px; padding: 3px; border: 1px solid var(--glass-border); border-radius: 0.6rem; background: var(--surface-soft-bg); }
+.visao-botoes button { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; font-size: 0.8rem; border: 0; border-radius: 0.45rem; background: transparent; color: var(--text-muted); cursor: pointer; font-family: inherit; }
+.visao-botoes button.ativo { background: linear-gradient(135deg, var(--cor-1), var(--cor-2)); color: #fff; font-weight: 700; }
+.mini-foto { width: 30px; height: 30px; object-fit: cover; border-radius: 6px; flex: none; display: block; }
+.mini-foto-vazia { background: var(--surface-soft-bg); border: 1px dashed var(--glass-border); }
+.item-lista-texto { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.admin-blocos { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 8px; margin: 4px 0 10px; }
+.bloco-item { position: relative; display: flex; flex-direction: column; border: 1px solid var(--glass-border); border-radius: 0.7rem; background: var(--surface-soft-bg); overflow: hidden; }
+.bloco-item.ativo { border-color: var(--cor-1); box-shadow: 0 0 0 1px rgba(var(--cor-rgb), 0.5); }
+.bloco-botao { display: flex; flex-direction: column; gap: 2px; align-items: stretch; text-align: left; padding: 0 0 6px; background: transparent; border: 0; color: inherit; font: inherit; cursor: pointer; flex: 1; }
+.bloco-botao .mini-foto { width: 100%; height: 84px; border-radius: 0; }
+.bloco-botao strong { font-size: 0.8rem; line-height: 1.2; padding: 4px 8px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.bloco-botao small { font-size: 0.7rem; color: var(--text-muted); padding: 0 8px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bloco-botao small.aviso-admin { color: var(--dinheiro); }
+.bloco-acoes { padding: 0 8px 6px; font-size: 0.75rem; }
+.bloco-editor { padding: 8px 10px; border: 1px solid var(--glass-border); border-radius: 0.7rem; background: var(--surface-soft-bg); margin-bottom: 10px; }
+.lista-admin .item-lista-texto { font-size: 0.88rem; }

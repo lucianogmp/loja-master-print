@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } fr
 import { erp } from '../lib/erp'
 import { brl } from '../lib/format'
 import AutoTextarea from '../components/AutoTextarea'
+import ListaOuBlocos, { BotoesVisao, useVisao } from './ListaOuBlocos'
 
 type Base = { id: string; nome: string; preco_venda: number | null }
 type Der = {
@@ -26,6 +27,7 @@ export default function AdminDerivados() {
   const [lista, setLista] = useState<Der[]>([])
   const [aberto, setAberto] = useState<string | null>(null) // id aberto; 'novo' = criando
   const [msg, setMsg] = useState('')
+  const [visao, setVisao] = useVisao()
 
   const carregar = useCallback(async () => {
     const [b, d] = await Promise.all([
@@ -57,29 +59,27 @@ export default function AdminDerivados() {
         Produto derivado = um produto do ERP (preço, prazo e produção) com <strong>arte pronta própria</strong>: foto/mockup, descrição e o arquivo da arte são seus.
         No pedido, entra no ERP como o produto base, com o nome da arte e o link do arquivo anotados no item.
       </p>
-      <ul className="lista-admin">
-        {lista.map((d) => (
-          <li key={d.id} className="admin-item">
-            <div className="admin-item-topo">
-              <span>
-                <strong>{d.nome}</strong>
-                <small> · base: {nomeBase(d.produto_id)}</small>
-                {!d.visivel && <small className="aviso-admin"> · oculto</small>}
-                {!d.arte_arquivo && <small className="aviso-admin"> · sem arquivo da arte</small>}
-              </span>
-              <span className="conta-acoes">
-                <button type="button" className="link-botao" onClick={() => duplicar(d)}>Duplicar</button>
-                <button className="btn btn-secundario" onClick={() => setAberto(aberto === d.id ? null : d.id)}>
-                  {aberto === d.id ? 'Fechar' : 'Editar'}
-                </button>
-              </span>
-            </div>
-            {aberto === d.id && (
-              <Editor key={d.id} inicial={d} existe bases={bases} aoSalvar={(t) => { setAberto(null); setMsg(t); carregar() }} />
-            )}
-          </li>
-        ))}
-      </ul>
+      <BotoesVisao visao={visao} onChange={setVisao} />
+      <ListaOuBlocos
+        itens={lista.map((d) => ({
+          id: d.id,
+          nome: d.nome,
+          sub: `base: ${nomeBase(d.produto_id)}`,
+          foto: d.imagens[0],
+          avisos: [...(d.visivel ? [] : ['oculto']), ...(d.arte_arquivo ? [] : ['sem arquivo da arte'])],
+        }))}
+        visao={visao}
+        aberto={aberto}
+        onAbrir={setAberto}
+        acoes={(id) => {
+          const d = lista.find((x) => x.id === id)
+          return d ? <button type="button" className="link-botao" onClick={() => duplicar(d)}>Duplicar</button> : null
+        }}
+        editor={(id) => {
+          const d = lista.find((x) => x.id === id)
+          return d ? <Editor key={id} inicial={d} existe bases={bases} aoSalvar={(t) => { setAberto(null); setMsg(t); carregar() }} /> : null
+        }}
+      />
       {aberto === 'novo' ? (
         <Editor
           key="novo"
