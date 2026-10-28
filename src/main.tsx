@@ -8,6 +8,16 @@ import { AuthProvider } from './lib/auth'
 import { SiteProvider } from './lib/site'
 import './styles.css'
 
+// A roda do mouse não deve mudar o valor de campos numéricos (quantidade, preço...) por acidente
+document.addEventListener(
+  'wheel',
+  () => {
+    const a = document.activeElement
+    if (a instanceof HTMLInputElement && a.type === 'number') a.blur()
+  },
+  { passive: true },
+)
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

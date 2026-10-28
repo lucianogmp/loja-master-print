@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { Navigate, useSearchParams } from 'react-router-dom'
+import { prefetchPedidos } from '../lib/pedidos'
 import { useAuth } from '../lib/auth'
 import ContaDados from '../conta/ContaDados'
 import ContaPedidos from '../conta/ContaPedidos'
@@ -18,6 +20,11 @@ export default function Conta() {
   const { session, carregando, sair } = useAuth()
   const [params, setParams] = useSearchParams()
   const atual = ABAS.find((a) => a.id === params.get('aba'))?.id ?? 'dados'
+
+  // Já busca os pedidos em segundo plano: quando a pessoa abrir a aba, a lista está pronta
+  useEffect(() => {
+    if (session) prefetchPedidos(session.access_token, session.user.id)
+  }, [session])
 
   if (carregando) return <div className="container secao">Carregando...</div>
   if (!session) return <Navigate to="/entrar?voltar=/conta" replace />

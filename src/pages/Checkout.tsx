@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { linkWhatsApp } from '../config'
 import { brl } from '../lib/format'
@@ -6,6 +6,7 @@ import { useCart } from '../lib/cart'
 import { useAuth } from '../lib/auth'
 import { useCatalogo } from '../lib/catalogo'
 import { ERP_URL } from '../lib/erp'
+import { limparCachePedidos } from '../lib/pedidos'
 import { calcularTotal } from '../lib/preco'
 import { supabase } from '../lib/supabase'
 import { ENDERECO_VAZIO, paraLinha, so, textoEndereco, useEnderecos, validarEndereco, type EnderecoCampos as Campos } from '../lib/enderecos'
@@ -27,6 +28,11 @@ export default function Checkout() {
   const [erro, setErro] = useState('')
   const [feito, setFeito] = useState<{ numero: number; total: number } | null>(null)
   const ref = useRef(crypto.randomUUID()) // evita pedido duplicado se clicar duas vezes
+
+  // "Acorda" a função de pedidos ao abrir o checkout: o primeiro envio não paga a partida a frio
+  useEffect(() => {
+    fetch(`${ERP_URL}/functions/v1/loja-criar-pedido`, { method: 'POST', body: '{}' }).catch(() => {})
+  }, [])
 
   // Se algum produto do carrinho é só para retirada, a entrega fica indisponível.
   const soRetirada = itens.some((i) => produtoPorSlug(i.slug)?.entregaModo === 'so_retirada')
@@ -121,6 +127,7 @@ export default function Checkout() {
         setErro(dados.erro ?? 'Não foi possível enviar o pedido. Tente pelo WhatsApp.')
         return
       }
+      limparCachePedidos()
       setFeito({ numero: dados.numero, total: dados.total })
       limpar()
       ref.current = crypto.randomUUID()

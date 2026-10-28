@@ -26,18 +26,44 @@ export async function buscarPedidos(token: string): Promise<Pedido[]> {
   return j.pedidos as Pedido[]
 }
 
+// Cache em memória (some ao fechar a aba): a lista aparece na hora e é atualizada em seguida.
+let cache: { userId: string; pedidos: Pedido[] } | null = null
+let emAndamento: Promise<Pedido[]> | null = null
+
+/** Começa a carregar os pedidos antes de a pessoa abrir a aba (chamado ao entrar na Minha conta). */
+export function prefetchPedidos(token: string, userId: string) {
+  if (emAndamento) return emAndamento
+  emAndamento = buscarPedidos(token)
+    .then((p) => {
+      cache = { userId, pedidos: p }
+      return p
+    })
+    .finally(() => {
+      emAndamento = null
+    })
+  emAndamento.catch(() => {})
+  return emAndamento
+}
+
+/** Chamar depois de fazer um pedido novo, para a lista não ficar desatualizada. */
+export function limparCachePedidos() {
+  cache = null
+}
+
 export function usePedidos() {
   const { session } = useAuth()
-  const [pedidos, setPedidos] = useState<Pedido[]>([])
-  const [carregando, setCarregando] = useState(true)
+  const uid = session?.user.id
+  const inicial = cache && cache.userId === uid ? cache.pedidos : null
+  const [pedidos, setPedidos] = useState<Pedido[]>(inicial ?? [])
+  const [carregando, setCarregando] = useState(!inicial)
   const [erro, setErro] = useState('')
 
   const recarregar = useCallback(async () => {
     if (!session) return
-    setCarregando(true)
     setErro('')
     try {
-      setPedidos(await buscarPedidos(session.access_token))
+      const p = await prefetchPedidos(session.access_token, session.user.id)
+      setPedidos(p)
     } catch (e) {
       setErro(e instanceof Error ? e.message : 'Não foi possível carregar seus pedidos.')
     }
