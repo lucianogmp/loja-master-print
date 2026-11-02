@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../components/Link'
 import { useCatalogo } from '../lib/catalogo'
 import { brl } from '../lib/format'
 import { useCart } from '../lib/cart'
@@ -28,7 +28,18 @@ export default function Carrinho() {
         <ul className="lista-carrinho">
           {itens.map((item) => {
             const produto = produtoPorSlug(item.slug)
-            if (!produto) return null
+            if (!produto)
+              return (
+                <li key={item.id} className="item-carrinho item-indisponivel">
+                  <div className="item-info">
+                    <h3>Produto indisponível</h3>
+                    <p className="dica">Este item saiu do catálogo e não entra no subtotal.</p>
+                    <button className="link-botao" onClick={() => remover(item.id)}>
+                      Remover
+                    </button>
+                  </div>
+                </li>
+              )
             const variacao = produto.variacoes.find((v) => v.id === item.variacaoId)
             const total = calcularTotal(produto, item)
             return (

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from './Link'
 import { linkWhatsApp } from '../config'
 import { useSite } from '../lib/site'
 
@@ -34,11 +34,13 @@ export default function Footer() {
         <div>
           <h4>Fale com a gente</h4>
           <ul>
-            <li>
-              <a href={linkWhatsApp()} target="_blank" rel="noreferrer">
-                WhatsApp
-              </a>
-            </li>
+            {empresa.whatsapp && (
+              <li>
+                <a href={linkWhatsApp()} target="_blank" rel="noreferrer">
+                  WhatsApp
+                </a>
+              </li>
+            )}
             {empresa.email && (
               <li>
                 <a href={`mailto:${empresa.email}`}>{empresa.email}</a>
