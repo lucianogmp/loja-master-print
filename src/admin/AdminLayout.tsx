@@ -1,6 +1,11 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import { Menu } from 'lucide-react'
 import { erp } from '../lib/erp'
+import { CONSULTA_MOBILE } from '../lib/telas'
+import { useMediaQuery } from '../hooks/useMediaQuery'
+import { useMenuLateral } from '../hooks/useMenuLateral'
+import AdminMenu, { type Aba } from './AdminMenu'
 import AdminProdutos from './AdminProdutos'
 import AdminCategorias from './AdminCategorias'
 import AdminInicio from './AdminInicio'
@@ -14,7 +19,10 @@ const PAPEIS = ['dono', 'admin']
 export default function AdminLayout() {
   const [session, setSession] = useState<Session | null>(null)
   const [carregando, setCarregando] = useState(true)
-  const [aba, setAba] = useState<'produtos' | 'categorias' | 'inicio' | 'empresa' | 'aparencia' | 'paginas' | 'derivados'>('produtos')
+  const [aba, setAba] = useState<Aba>('produtos')
+  const mobile = useMediaQuery(CONSULTA_MOBILE)
+  const { abrir } = useMenuLateral('adminMenu')
+  const botaoMenu = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     erp.auth.getSession().then(({ data }) => {
@@ -40,27 +48,28 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="container secao">
-      <div className="secao-topo">
-        <h1 className="titulo-pagina">Administração da loja</h1>
-        <button className="link-botao" onClick={() => erp.auth.signOut()}>Sair</button>
+    <div className="container secao admin-casca">
+      {mobile && (
+        <header className="admin-topo">
+          <button ref={botaoMenu} type="button" className="icone-botao" aria-label="Abrir menu" onClick={abrir}>
+            <Menu size={22} />
+          </button>
+          <strong>Administração</strong>
+        </header>
+      )}
+      <div className="admin-grade">
+        <AdminMenu aba={aba} onEscolher={setAba} mobile={mobile} botaoMenu={botaoMenu} />
+        <div className="admin-conteudo">
+          <h1 className="titulo-pagina">Administração da loja</h1>
+          {aba === 'produtos' && <AdminProdutos />}
+          {aba === 'derivados' && <AdminDerivados />}
+          {aba === 'categorias' && <AdminCategorias />}
+          {aba === 'inicio' && <AdminInicio />}
+          {aba === 'empresa' && <AdminEmpresa />}
+          {aba === 'aparencia' && <AdminAparencia />}
+          {aba === 'paginas' && <AdminPaginas />}
+        </div>
       </div>
-      <div className="filtros" role="tablist">
-        <button className={aba === 'produtos' ? 'ativo' : ''} onClick={() => setAba('produtos')}>Produtos</button>
-        <button className={aba === 'derivados' ? 'ativo' : ''} onClick={() => setAba('derivados')}>Derivados</button>
-        <button className={aba === 'categorias' ? 'ativo' : ''} onClick={() => setAba('categorias')}>Categorias</button>
-        <button className={aba === 'inicio' ? 'ativo' : ''} onClick={() => setAba('inicio')}>Página inicial</button>
-        <button className={aba === 'empresa' ? 'ativo' : ''} onClick={() => setAba('empresa')}>Dados da empresa</button>
-        <button className={aba === 'aparencia' ? 'ativo' : ''} onClick={() => setAba('aparencia')}>Aparência</button>
-        <button className={aba === 'paginas' ? 'ativo' : ''} onClick={() => setAba('paginas')}>Páginas de texto</button>
-      </div>
-      {aba === 'produtos' && <AdminProdutos />}
-      {aba === 'derivados' && <AdminDerivados />}
-      {aba === 'categorias' && <AdminCategorias />}
-      {aba === 'inicio' && <AdminInicio />}
-      {aba === 'empresa' && <AdminEmpresa />}
-      {aba === 'aparencia' && <AdminAparencia />}
-      {aba === 'paginas' && <AdminPaginas />}
     </div>
   )
 }
