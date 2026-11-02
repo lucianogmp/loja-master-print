@@ -1,0 +1,797 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-02T10:39:37+00:00",
+  "title": "Design System: Master Print",
+  "extensions": {
+    "colorMeta": {
+      "azul-vitrine": {
+        "role": "primary",
+        "displayName": "Azul Vitrine",
+        "canonical": "oklch(62.3% 0.188 259.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.094 259.8)",
+          "oklch(26.0% 0.115 259.8)",
+          "oklch(37.0% 0.135 259.8)",
+          "oklch(48.0% 0.156 259.8)",
+          "oklch(60.0% 0.179 259.8)",
+          "oklch(72.0% 0.188 259.8)",
+          "oklch(84.0% 0.188 259.8)",
+          "oklch(95.0% 0.188 259.8)"
+        ],
+        "note": "Valor padrão; o /admin sobrescreve --cor-1 e o sistema recalcula --cor-2..4."
+      },
+      "azul-vitrine-fundo": {
+        "role": "primary",
+        "displayName": "Azul Vitrine Fundo",
+        "canonical": "oklch(48.8% 0.217 264.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.109 264.4)",
+          "oklch(26.0% 0.132 264.4)",
+          "oklch(37.0% 0.156 264.4)",
+          "oklch(48.0% 0.180 264.4)",
+          "oklch(60.0% 0.206 264.4)",
+          "oklch(72.0% 0.217 264.4)",
+          "oklch(84.0% 0.217 264.4)",
+          "oklch(95.0% 0.217 264.4)"
+        ],
+        "note": "Valor padrão; o /admin sobrescreve --cor-1 e o sistema recalcula --cor-2..4."
+      },
+      "azul-vitrine-claro": {
+        "role": "primary",
+        "displayName": "Azul Vitrine Claro",
+        "canonical": "oklch(71.4% 0.143 254.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.072 254.6)",
+          "oklch(26.0% 0.087 254.6)",
+          "oklch(37.0% 0.103 254.6)",
+          "oklch(48.0% 0.119 254.6)",
+          "oklch(60.0% 0.136 254.6)",
+          "oklch(72.0% 0.143 254.6)",
+          "oklch(84.0% 0.143 254.6)",
+          "oklch(95.0% 0.143 254.6)"
+        ],
+        "note": "Valor padrão; o /admin sobrescreve --cor-1 e o sistema recalcula --cor-2..4."
+      },
+      "azul-vitrine-medio": {
+        "role": "primary",
+        "displayName": "Azul Vitrine Médio",
+        "canonical": "oklch(54.6% 0.215 262.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.108 262.9)",
+          "oklch(26.0% 0.131 262.9)",
+          "oklch(37.0% 0.155 262.9)",
+          "oklch(48.0% 0.179 262.9)",
+          "oklch(60.0% 0.204 262.9)",
+          "oklch(72.0% 0.215 262.9)",
+          "oklch(84.0% 0.215 262.9)",
+          "oklch(95.0% 0.215 262.9)"
+        ],
+        "note": "Valor padrão; o /admin sobrescreve --cor-1 e o sistema recalcula --cor-2..4."
+      },
+      "noite-topo": {
+        "role": "neutral",
+        "displayName": "Noite (topo)",
+        "canonical": "oklch(16.3% 0.019 279.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.010 279.1)",
+          "oklch(26.0% 0.012 279.1)",
+          "oklch(37.0% 0.014 279.1)",
+          "oklch(48.0% 0.016 279.1)",
+          "oklch(60.0% 0.018 279.1)",
+          "oklch(72.0% 0.019 279.1)",
+          "oklch(84.0% 0.019 279.1)",
+          "oklch(95.0% 0.019 279.1)"
+        ]
+      },
+      "noite-fundo": {
+        "role": "neutral",
+        "displayName": "Noite (fundo)",
+        "canonical": "oklch(11.0% 0.013 284.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.006 284.1)",
+          "oklch(26.0% 0.008 284.1)",
+          "oklch(37.0% 0.009 284.1)",
+          "oklch(48.0% 0.011 284.1)",
+          "oklch(60.0% 0.012 284.1)",
+          "oklch(72.0% 0.013 284.1)",
+          "oklch(84.0% 0.013 284.1)",
+          "oklch(95.0% 0.013 284.1)"
+        ]
+      },
+      "vidro-noite": {
+        "role": "neutral",
+        "displayName": "Vidro Noite",
+        "canonical": "rgba(13, 13, 25, 0.55)"
+      },
+      "superficie-forte-noite": {
+        "role": "neutral",
+        "displayName": "Superfície Forte (escuro)",
+        "canonical": "rgba(10, 10, 18, 0.7)"
+      },
+      "superficie-suave-noite": {
+        "role": "neutral",
+        "displayName": "Superfície Suave (escuro)",
+        "canonical": "rgba(10, 10, 18, 0.25)"
+      },
+      "campo-noite": {
+        "role": "neutral",
+        "displayName": "Campo (escuro)",
+        "canonical": "rgba(7, 7, 12, 0.6)"
+      },
+      "folha-noite": {
+        "role": "neutral",
+        "displayName": "Folha (escuro)",
+        "canonical": "oklch(18.2% 0.023 279.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.011 279.9)",
+          "oklch(26.0% 0.014 279.9)",
+          "oklch(37.0% 0.016 279.9)",
+          "oklch(48.0% 0.019 279.9)",
+          "oklch(60.0% 0.021 279.9)",
+          "oklch(72.0% 0.023 279.9)",
+          "oklch(84.0% 0.023 279.9)",
+          "oklch(95.0% 0.023 279.9)"
+        ]
+      },
+      "painel-noite": {
+        "role": "neutral",
+        "displayName": "Painel Flutuante (escuro)",
+        "canonical": "oklch(25.5% 0.031 260.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.016 260.4)",
+          "oklch(26.0% 0.019 260.4)",
+          "oklch(37.0% 0.023 260.4)",
+          "oklch(48.0% 0.026 260.4)",
+          "oklch(60.0% 0.030 260.4)",
+          "oklch(72.0% 0.031 260.4)",
+          "oklch(84.0% 0.031 260.4)",
+          "oklch(95.0% 0.031 260.4)"
+        ]
+      },
+      "arte-noite": {
+        "role": "neutral",
+        "displayName": "Arte (escuro)",
+        "canonical": "oklch(22.0% 0.042 264.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.021 264.8)",
+          "oklch(26.0% 0.025 264.8)",
+          "oklch(37.0% 0.030 264.8)",
+          "oklch(48.0% 0.035 264.8)",
+          "oklch(60.0% 0.040 264.8)",
+          "oklch(72.0% 0.042 264.8)",
+          "oklch(84.0% 0.042 264.8)",
+          "oklch(95.0% 0.042 264.8)"
+        ]
+      },
+      "borda-vidro-noite": {
+        "role": "neutral",
+        "displayName": "Borda de Vidro (escuro)",
+        "canonical": "rgba(255, 255, 255, 0.08)"
+      },
+      "borda-vidro-noite-hover": {
+        "role": "neutral",
+        "displayName": "Borda de Vidro Hover (escuro)",
+        "canonical": "rgba(255, 255, 255, 0.16)"
+      },
+      "texto-noite": {
+        "role": "neutral",
+        "displayName": "Texto noite",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 89.9)",
+          "oklch(26.0% 0.000 89.9)",
+          "oklch(37.0% 0.000 89.9)",
+          "oklch(48.0% 0.000 89.9)",
+          "oklch(60.0% 0.000 89.9)",
+          "oklch(72.0% 0.000 89.9)",
+          "oklch(84.0% 0.000 89.9)",
+          "oklch(95.0% 0.000 89.9)"
+        ]
+      },
+      "texto-noite-secundario": {
+        "role": "neutral",
+        "displayName": "Texto noite secundario",
+        "canonical": "oklch(96.7% 0.003 264.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.001 264.5)",
+          "oklch(26.0% 0.002 264.5)",
+          "oklch(37.0% 0.002 264.5)",
+          "oklch(48.0% 0.002 264.5)",
+          "oklch(60.0% 0.003 264.5)",
+          "oklch(72.0% 0.003 264.5)",
+          "oklch(84.0% 0.003 264.5)",
+          "oklch(95.0% 0.003 264.5)"
+        ]
+      },
+      "texto-noite-suave": {
+        "role": "neutral",
+        "displayName": "Texto noite suave",
+        "canonical": "oklch(80.2% 0.023 260.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.012 260.7)",
+          "oklch(26.0% 0.014 260.7)",
+          "oklch(37.0% 0.017 260.7)",
+          "oklch(48.0% 0.019 260.7)",
+          "oklch(60.0% 0.022 260.7)",
+          "oklch(72.0% 0.023 260.7)",
+          "oklch(84.0% 0.023 260.7)",
+          "oklch(95.0% 0.023 260.7)"
+        ]
+      },
+      "texto-noite-sutil": {
+        "role": "neutral",
+        "displayName": "Texto noite sutil",
+        "canonical": "oklch(71.9% 0.030 261.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 261.4)",
+          "oklch(26.0% 0.019 261.4)",
+          "oklch(37.0% 0.022 261.4)",
+          "oklch(48.0% 0.025 261.4)",
+          "oklch(60.0% 0.029 261.4)",
+          "oklch(72.0% 0.030 261.4)",
+          "oklch(84.0% 0.030 261.4)",
+          "oklch(95.0% 0.030 261.4)"
+        ]
+      },
+      "texto-noite-apagado": {
+        "role": "neutral",
+        "displayName": "Texto noite apagado",
+        "canonical": "oklch(66.8% 0.029 262.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 262.3)",
+          "oklch(26.0% 0.018 262.3)",
+          "oklch(37.0% 0.021 262.3)",
+          "oklch(48.0% 0.024 262.3)",
+          "oklch(60.0% 0.028 262.3)",
+          "oklch(72.0% 0.029 262.3)",
+          "oklch(84.0% 0.029 262.3)",
+          "oklch(95.0% 0.029 262.3)"
+        ]
+      },
+      "papel-topo": {
+        "role": "neutral",
+        "displayName": "Papel (topo)",
+        "canonical": "oklch(98.7% 0.006 255.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.003 255.5)",
+          "oklch(26.0% 0.004 255.5)",
+          "oklch(37.0% 0.004 255.5)",
+          "oklch(48.0% 0.005 255.5)",
+          "oklch(60.0% 0.006 255.5)",
+          "oklch(72.0% 0.006 255.5)",
+          "oklch(84.0% 0.006 255.5)",
+          "oklch(95.0% 0.006 255.5)"
+        ]
+      },
+      "papel-fundo": {
+        "role": "neutral",
+        "displayName": "Papel (fundo)",
+        "canonical": "oklch(94.5% 0.012 259.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.006 259.8)",
+          "oklch(26.0% 0.007 259.8)",
+          "oklch(37.0% 0.009 259.8)",
+          "oklch(48.0% 0.010 259.8)",
+          "oklch(60.0% 0.011 259.8)",
+          "oklch(72.0% 0.012 259.8)",
+          "oklch(84.0% 0.012 259.8)",
+          "oklch(95.0% 0.012 259.8)"
+        ]
+      },
+      "vidro-dia": {
+        "role": "neutral",
+        "displayName": "Vidro Dia",
+        "canonical": "rgba(255, 255, 255, 0.78)"
+      },
+      "superficie-forte-dia": {
+        "role": "neutral",
+        "displayName": "Superfície Forte (claro)",
+        "canonical": "rgba(255, 255, 255, 0.92)"
+      },
+      "superficie-suave-dia": {
+        "role": "neutral",
+        "displayName": "Superfície Suave (claro)",
+        "canonical": "rgba(241, 245, 249, 0.8)"
+      },
+      "arte-dia": {
+        "role": "neutral",
+        "displayName": "Arte (claro)",
+        "canonical": "oklch(93.5% 0.017 259.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 259.4)",
+          "oklch(26.0% 0.010 259.4)",
+          "oklch(37.0% 0.012 259.4)",
+          "oklch(48.0% 0.014 259.4)",
+          "oklch(60.0% 0.016 259.4)",
+          "oklch(72.0% 0.017 259.4)",
+          "oklch(84.0% 0.017 259.4)",
+          "oklch(95.0% 0.017 259.4)"
+        ]
+      },
+      "borda-vidro-dia": {
+        "role": "neutral",
+        "displayName": "Borda de Vidro (claro)",
+        "canonical": "rgba(15, 23, 42, 0.12)"
+      },
+      "texto-dia": {
+        "role": "neutral",
+        "displayName": "Texto dia",
+        "canonical": "oklch(20.8% 0.040 265.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.020 265.8)",
+          "oklch(26.0% 0.024 265.8)",
+          "oklch(37.0% 0.029 265.8)",
+          "oklch(48.0% 0.033 265.8)",
+          "oklch(60.0% 0.038 265.8)",
+          "oklch(72.0% 0.040 265.8)",
+          "oklch(84.0% 0.040 265.8)",
+          "oklch(95.0% 0.040 265.8)"
+        ]
+      },
+      "texto-dia-secundario": {
+        "role": "neutral",
+        "displayName": "Texto dia secundario",
+        "canonical": "oklch(27.8% 0.030 256.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 256.8)",
+          "oklch(26.0% 0.018 256.8)",
+          "oklch(37.0% 0.021 256.8)",
+          "oklch(48.0% 0.025 256.8)",
+          "oklch(60.0% 0.028 256.8)",
+          "oklch(72.0% 0.030 256.8)",
+          "oklch(84.0% 0.030 256.8)",
+          "oklch(95.0% 0.030 256.8)"
+        ]
+      },
+      "texto-dia-suave": {
+        "role": "neutral",
+        "displayName": "Texto dia suave",
+        "canonical": "oklch(44.6% 0.037 257.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.019 257.3)",
+          "oklch(26.0% 0.023 257.3)",
+          "oklch(37.0% 0.027 257.3)",
+          "oklch(48.0% 0.031 257.3)",
+          "oklch(60.0% 0.036 257.3)",
+          "oklch(72.0% 0.037 257.3)",
+          "oklch(84.0% 0.037 257.3)",
+          "oklch(95.0% 0.037 257.3)"
+        ]
+      },
+      "texto-dia-sutil": {
+        "role": "neutral",
+        "displayName": "Texto dia sutil",
+        "canonical": "oklch(51.0% 0.032 258.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.016 258.4)",
+          "oklch(26.0% 0.020 258.4)",
+          "oklch(37.0% 0.023 258.4)",
+          "oklch(48.0% 0.027 258.4)",
+          "oklch(60.0% 0.031 258.4)",
+          "oklch(72.0% 0.032 258.4)",
+          "oklch(84.0% 0.032 258.4)",
+          "oklch(95.0% 0.032 258.4)"
+        ]
+      },
+      "texto-dia-apagado": {
+        "role": "neutral",
+        "displayName": "Texto dia apagado",
+        "canonical": "oklch(52.5% 0.030 259.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 259.0)",
+          "oklch(26.0% 0.018 259.0)",
+          "oklch(37.0% 0.022 259.0)",
+          "oklch(48.0% 0.025 259.0)",
+          "oklch(60.0% 0.029 259.0)",
+          "oklch(72.0% 0.030 259.0)",
+          "oklch(84.0% 0.030 259.0)",
+          "oklch(95.0% 0.030 259.0)"
+        ]
+      },
+      "verde-dinheiro-noite": {
+        "role": "secondary",
+        "displayName": "Verde Dinheiro (escuro)",
+        "canonical": "oklch(69.6% 0.149 162.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.075 162.5)",
+          "oklch(26.0% 0.091 162.5)",
+          "oklch(37.0% 0.107 162.5)",
+          "oklch(48.0% 0.124 162.5)",
+          "oklch(60.0% 0.142 162.5)",
+          "oklch(72.0% 0.149 162.5)",
+          "oklch(84.0% 0.149 162.5)",
+          "oklch(95.0% 0.149 162.5)"
+        ]
+      },
+      "verde-dinheiro-dia": {
+        "role": "secondary",
+        "displayName": "Verde Dinheiro (claro)",
+        "canonical": "oklch(44.8% 0.108 151.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.054 151.3)",
+          "oklch(26.0% 0.066 151.3)",
+          "oklch(37.0% 0.078 151.3)",
+          "oklch(48.0% 0.090 151.3)",
+          "oklch(60.0% 0.103 151.3)",
+          "oklch(72.0% 0.108 151.3)",
+          "oklch(84.0% 0.108 151.3)",
+          "oklch(95.0% 0.108 151.3)"
+        ]
+      },
+      "verde-whatsapp": {
+        "role": "secondary",
+        "displayName": "Verde WhatsApp",
+        "canonical": "oklch(76.1% 0.201 149.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.101 149.7)",
+          "oklch(26.0% 0.123 149.7)",
+          "oklch(37.0% 0.145 149.7)",
+          "oklch(48.0% 0.167 149.7)",
+          "oklch(60.0% 0.191 149.7)",
+          "oklch(72.0% 0.201 149.7)",
+          "oklch(84.0% 0.201 149.7)",
+          "oklch(95.0% 0.201 149.7)"
+        ]
+      },
+      "tinta-whatsapp": {
+        "role": "neutral",
+        "displayName": "Tinta WhatsApp",
+        "canonical": "oklch(26.6% 0.063 152.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.031 152.9)",
+          "oklch(26.0% 0.038 152.9)",
+          "oklch(37.0% 0.045 152.9)",
+          "oklch(48.0% 0.052 152.9)",
+          "oklch(60.0% 0.060 152.9)",
+          "oklch(72.0% 0.063 152.9)",
+          "oklch(84.0% 0.063 152.9)",
+          "oklch(95.0% 0.063 152.9)"
+        ]
+      },
+      "erro-noite": {
+        "role": "tertiary",
+        "displayName": "Erro (escuro)",
+        "canonical": "oklch(71.1% 0.166 22.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.083 22.2)",
+          "oklch(26.0% 0.101 22.2)",
+          "oklch(37.0% 0.120 22.2)",
+          "oklch(48.0% 0.138 22.2)",
+          "oklch(60.0% 0.158 22.2)",
+          "oklch(72.0% 0.166 22.2)",
+          "oklch(84.0% 0.166 22.2)",
+          "oklch(95.0% 0.166 22.2)"
+        ]
+      },
+      "erro-dia": {
+        "role": "tertiary",
+        "displayName": "Erro (claro)",
+        "canonical": "oklch(50.1% 0.178 28.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.089 28.7)",
+          "oklch(26.0% 0.109 28.7)",
+          "oklch(37.0% 0.128 28.7)",
+          "oklch(48.0% 0.148 28.7)",
+          "oklch(60.0% 0.169 28.7)",
+          "oklch(72.0% 0.178 28.7)",
+          "oklch(84.0% 0.178 28.7)",
+          "oklch(95.0% 0.178 28.7)"
+        ]
+      },
+      "vermelho-cancelado": {
+        "role": "tertiary",
+        "displayName": "Vermelho Cancelado",
+        "canonical": "oklch(63.7% 0.208 25.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.104 25.3)",
+          "oklch(26.0% 0.127 25.3)",
+          "oklch(37.0% 0.150 25.3)",
+          "oklch(48.0% 0.173 25.3)",
+          "oklch(60.0% 0.197 25.3)",
+          "oklch(72.0% 0.208 25.3)",
+          "oklch(84.0% 0.208 25.3)",
+          "oklch(95.0% 0.208 25.3)"
+        ]
+      },
+      "branco": {
+        "role": "neutral",
+        "displayName": "Branco",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.000 89.9)",
+          "oklch(26.0% 0.000 89.9)",
+          "oklch(37.0% 0.000 89.9)",
+          "oklch(48.0% 0.000 89.9)",
+          "oklch(60.0% 0.000 89.9)",
+          "oklch(72.0% 0.000 89.9)",
+          "oklch(84.0% 0.000 89.9)",
+          "oklch(95.0% 0.000 89.9)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Título do destaque da Início."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Título de página e nome do produto."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Título da barra de topo do celular, folhas e blocos."
+      },
+      "marca": {
+        "displayName": "Marca",
+        "purpose": "Logotipo em texto."
+      },
+      "preco": {
+        "displayName": "Preco",
+        "purpose": "Preço nos cartões; 1.7rem na caixa de preço."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Campos, opções e texto corrido."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Dicas, legendas, migalhas, mensagem de atendimento."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Rótulos de campo e seções do menu, em caixa alta."
+      },
+      "tab-label": {
+        "displayName": "Tab Label",
+        "purpose": "Rótulos das abas da barra inferior."
+      }
+    },
+    "shadows": [
+      {
+        "name": "vidro-ambiente",
+        "value": "0 8px 32px 0 var(--shadow-card)",
+        "purpose": "Todo painel de vidro em repouso."
+      },
+      {
+        "name": "vidro-aceso",
+        "value": "0 8px 32px 0 var(--shadow-card), 0 0 20px var(--glass-glow)",
+        "purpose": "Cartão navegável no hover."
+      },
+      {
+        "name": "botao-luminoso",
+        "value": "0 4px 14px rgba(var(--cor-rgb-2), 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2)",
+        "purpose": "Botão principal e abas ativas."
+      },
+      {
+        "name": "botao-luminoso-hover",
+        "value": "0 6px 20px rgba(var(--cor-rgb-2), 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.25)",
+        "purpose": "Botão principal no hover."
+      },
+      {
+        "name": "campo-aceso",
+        "value": "0 0 0 1px rgba(var(--cor-rgb), 0.5), 0 0 15px rgba(var(--cor-rgb), 0.3)",
+        "purpose": "Campo em foco."
+      },
+      {
+        "name": "etapa-atual",
+        "value": "0 0 0 3px rgba(var(--cor-rgb), 0.25)",
+        "purpose": "Passo corrente da linha do tempo."
+      },
+      {
+        "name": "arte-destaque",
+        "value": "0 16px 48px var(--shadow-strong), 0 0 40px var(--glass-glow)",
+        "purpose": "Imagem do destaque da Início."
+      },
+      {
+        "name": "folha",
+        "value": "0 -8px 32px rgba(0, 0, 0, 0.35)",
+        "purpose": "Folha que sobe do rodapé."
+      },
+      {
+        "name": "whatsapp",
+        "value": "0 6px 18px rgba(0, 0, 0, 0.35)",
+        "purpose": "Botão flutuante de WhatsApp, sem halo."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-entrada",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Entrada do conteúdo (600 ms) e borda/sombra de cartões (500 ms)."
+      },
+      {
+        "name": "estado",
+        "value": "300ms ease",
+        "purpose": "Mudanças de estado de botões, campos, links e abas."
+      },
+      {
+        "name": "menu-lateral",
+        "value": "220ms ease-out",
+        "purpose": "Deslize do painel e fade do fundo."
+      },
+      {
+        "name": "empurrar-recuar",
+        "value": "240ms ease-out",
+        "purpose": "Transições de tela (View Transitions) ao entrar e voltar de subpáginas."
+      },
+      {
+        "name": "grade-escalonada",
+        "value": "fadeIn 500ms ease-out, atraso de 50 ms por item até o 6º",
+        "purpose": "Entrada das grades de produtos e categorias."
+      },
+      {
+        "name": "movimento-reduzido",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Remove animações, transições de tela e deslizes."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "grade-2",
+        "value": "560px"
+      },
+      {
+        "name": "grade-3",
+        "value": "760px"
+      },
+      {
+        "name": "casca-celular",
+        "value": "767.98px"
+      },
+      {
+        "name": "computador",
+        "value": "768px"
+      },
+      {
+        "name": "grade-4",
+        "value": "960px"
+      },
+      {
+        "name": "grade-5",
+        "value": "1180px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "A ação principal da tela; o único elemento que brilha em repouso.",
+      "html": "<button class=\"ds-btn-primario\">Adicionar ao carrinho</button>",
+      "css": ".ds-btn-primario { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 0.75rem; border: 1px solid transparent; font: inherit; font-family: var(--font-family); font-weight: 700; color: var(--cor-texto); cursor: pointer; background: linear-gradient(135deg, var(--cor-4), var(--cor-2)); box-shadow: 0 4px 14px rgba(var(--cor-rgb-2), 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2); transition: all 300ms ease; } .ds-btn-primario:hover { background: linear-gradient(135deg, var(--cor-2), var(--cor-4)); box-shadow: 0 6px 20px rgba(var(--cor-rgb-2), 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.25); } .ds-btn-primario:focus-visible { outline: 2px solid var(--cor-1); outline-offset: 2px; } .ds-btn-primario:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação alternativa ao lado do botão principal.",
+      "html": "<button class=\"ds-btn-secundario\">Falar no WhatsApp</button>",
+      "css": ".ds-btn-secundario { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 0.75rem; font: inherit; font-family: var(--font-family); font-weight: 700; cursor: pointer; background: var(--surface-soft-bg); border: 1px solid var(--glass-border-hover); color: var(--text-primary); transition: all 300ms ease; } .ds-btn-secundario:hover { background: rgba(var(--cor-rgb), 0.12); border-color: rgba(var(--cor-rgb), 0.5); } .ds-btn-secundario:focus-visible { outline: 2px solid var(--cor-1); outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo de formulário com rótulo em caixa alta e brilho azul no foco.",
+      "html": "<label class=\"ds-campo\"><span>E-mail</span><input type=\"email\" placeholder=\"voce@empresa.com.br\"></label>",
+      "css": ".ds-campo { display: flex; flex-direction: column; gap: 4px; font-family: var(--font-family); } .ds-campo span { font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); } .ds-campo input { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--glass-border); border-radius: 0.5rem; background: var(--input-bg); color: var(--text-primary); font: inherit; font-size: 0.95rem; transition: all 300ms ease; } .ds-campo input::placeholder { color: var(--text-faint); } .ds-campo input:focus { outline: none; border-color: var(--cor-1); background: var(--input-focus-bg); box-shadow: 0 0 0 1px rgba(var(--cor-rgb), 0.5), 0 0 15px rgba(var(--cor-rgb), 0.3); }"
+    },
+    {
+      "name": "Cartão de produto",
+      "kind": "card",
+      "refersTo": "card-glass",
+      "description": "Cartão de vidro da grade: imagem 1:1, nome em duas linhas, preço em 800.",
+      "html": "<a class=\"ds-card-produto\" href=\"#\"><div class=\"ds-card-imagem\"></div><div class=\"ds-card-corpo\"><h3>Banner em lona 440 g com acabamento em bastão</h3><small>a partir de</small><strong>R$ 89,90</strong></div></a>",
+      "css": ".ds-card-produto { display: flex; flex-direction: column; width: 180px; overflow: hidden; text-decoration: none; color: var(--text-primary); font-family: var(--font-family); border-radius: 1rem; background: var(--glass-bg); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 var(--shadow-card); transition: border-color 500ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 500ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-card-produto:hover { border-color: var(--glass-border-hover); box-shadow: 0 8px 32px 0 var(--shadow-card), 0 0 20px var(--glass-glow); } .ds-card-produto:focus-visible { outline: 2px solid var(--cor-1); outline-offset: 2px; } .ds-card-imagem { aspect-ratio: 1 / 1; background: var(--art-bg); } .ds-card-corpo { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; } .ds-card-corpo h3 { margin: 0 0 6px; font-size: 0.86rem; font-weight: 500; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; } .ds-card-corpo small { font-size: 0.7rem; color: var(--text-muted); } .ds-card-corpo strong { font-size: 1.1rem; font-weight: 800; line-height: 1.15; }"
+    },
+    {
+      "name": "Chips de categoria",
+      "kind": "chip",
+      "refersTo": "chip-categoria",
+      "description": "Fileira rolável de categorias no topo da Início e do catálogo no celular.",
+      "html": "<nav class=\"ds-chips\"><a class=\"ds-ativo\" href=\"#\">Todos</a><a href=\"#\">Banners</a><a href=\"#\">Adesivos</a><a href=\"#\">Cartões</a></nav>",
+      "css": ".ds-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; font-family: var(--font-family); } .ds-chips a { flex: none; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--surface-soft-bg); color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 500; white-space: nowrap; transition: all 300ms ease; } .ds-chips a:hover { color: var(--text-primary); } .ds-chips a:focus-visible { outline: 2px solid var(--cor-1); outline-offset: 2px; } .ds-chips a.ds-ativo { background: linear-gradient(135deg, var(--cor-4), var(--cor-2)); border-color: transparent; color: var(--cor-texto); font-weight: 700; }"
+    },
+    {
+      "name": "Barra inferior",
+      "kind": "nav",
+      "refersTo": "barra-inferior",
+      "description": "Cinco abas da casca do celular, com contador do carrinho.",
+      "html": "<nav class=\"ds-barra-inferior\"><a class=\"ds-aba ds-ativa\" href=\"#\"><span class=\"ds-icone\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z\"/></svg></span>Início</a><a class=\"ds-aba\" href=\"#\"><span class=\"ds-icone\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m21 21-4.3-4.3\"/></svg></span>Buscar</a><a class=\"ds-aba\" href=\"#\"><span class=\"ds-icone\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"20\" r=\"1.5\"/><circle cx=\"18\" cy=\"20\" r=\"1.5\"/><path d=\"M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h9.6a1 1 0 0 0 1-.8L21 7H6\"/></svg><b class=\"ds-contador\">3</b></span>Carrinho</a><a class=\"ds-aba\" href=\"#\"><span class=\"ds-icone\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M21 8 12 3 3 8v8l9 5 9-5z\"/><path d=\"m3 8 9 5 9-5M12 13v8\"/></svg></span>Pedidos</a><a class=\"ds-aba\" href=\"#\"><span class=\"ds-icone\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/></svg></span>Conta</a></nav>",
+      "css": ".ds-barra-inferior { display: grid; grid-template-columns: repeat(5, 1fr); width: 375px; height: 56px; font-family: var(--font-family); background: var(--surface-strong-bg); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-top: 1px solid var(--glass-border); } .ds-aba { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 44px; color: var(--text-muted); text-decoration: none; font-size: 0.7rem; font-weight: 600; } .ds-aba:hover { color: var(--text-primary); } .ds-aba:focus-visible { outline: 2px solid var(--cor-1); outline-offset: -2px; } .ds-aba.ds-ativa { color: var(--link); } .ds-icone { position: relative; display: grid; place-items: center; height: 24px; } .ds-contador { position: absolute; top: -6px; left: 55%; display: grid; place-items: center; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: linear-gradient(135deg, var(--cor-4), var(--cor-2)); color: var(--cor-texto); font-size: 0.65rem; font-weight: 800; }"
+    },
+    {
+      "name": "Linha do tempo do pedido",
+      "kind": "custom",
+      "refersTo": "chip-etapa",
+      "description": "Status do pedido em etapas: concluídas em degradê com tique, atual com anel.",
+      "html": "<ol class=\"ds-linha-tempo\"><li class=\"ds-feita\">Recebido<span>28/10, 14:02</span></li><li class=\"ds-atual\">Em produção<span>Arte aprovada, impressão hoje</span></li><li>Pronto</li><li>Entregue</li></ol>",
+      "css": ".ds-linha-tempo { list-style: none; padding: 0; margin: 0; width: 280px; font-family: var(--font-family); } .ds-linha-tempo li { position: relative; display: grid; gap: 2px; padding: 0 0 18px 30px; color: var(--text-muted); } .ds-linha-tempo li span { font-size: 0.85rem; font-weight: 400; color: var(--text-muted); } .ds-linha-tempo li::before { content: ''; position: absolute; left: 0; top: 2px; width: 18px; height: 18px; box-sizing: border-box; border-radius: 50%; border: 2px solid var(--glass-border); } .ds-linha-tempo li::after { content: ''; position: absolute; left: 8px; top: 22px; bottom: 2px; width: 2px; background: var(--glass-border); } .ds-linha-tempo li:last-child { padding-bottom: 0; } .ds-linha-tempo li:last-child::after { display: none; } .ds-linha-tempo li.ds-feita { color: var(--text-primary); } .ds-linha-tempo li.ds-feita::before { content: '✓'; display: grid; place-items: center; font-size: 0.7rem; font-weight: 800; color: var(--cor-texto); border-color: transparent; background: linear-gradient(135deg, var(--cor-4), var(--cor-2)); } .ds-linha-tempo li.ds-feita::after { background: var(--cor-1); } .ds-linha-tempo li.ds-atual { color: var(--text-primary); font-weight: 700; } .ds-linha-tempo li.ds-atual::before { border-color: var(--cor-1); background: var(--cor-1); box-shadow: 0 0 0 3px rgba(var(--cor-rgb), 0.25); }"
+    },
+    {
+      "name": "Botão flutuante de WhatsApp",
+      "kind": "button",
+      "refersTo": "whatsapp-flutuante",
+      "description": "Atalho permanente para o WhatsApp da loja; o único uso do verde WhatsApp.",
+      "html": "<a class=\"ds-whatsapp\" href=\"#\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 21l1.7-5A9 9 0 1 1 8 19.3z\"/></svg>Falar no WhatsApp</a>",
+      "css": ".ds-whatsapp { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 20px 0 16px; border-radius: 999px; background: #25d366; color: #052e16; font-family: var(--font-family); font-size: 0.95rem; font-weight: 800; text-decoration: none; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), background-color 300ms ease; } .ds-whatsapp:hover { background: #2fe073; transform: translateY(-2px); } .ds-whatsapp:focus-visible { outline: 2px solid var(--cor-1); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Vitrine Noturna",
+    "overview": "**Creative North Star: \"A Vitrine Noturna\"**\n\nA loja é uma vitrine iluminada por trás num fundo escuro. O fundo é quase preto, com um halo frio no topo; sobre ele, painéis de vidro translúcido deixam o fundo atravessar e seguram o conteúdo. O azul é a luz da vitrine: aparece forte no que pede ação (o botão principal, a aba ativa, a etapa atual do pedido) e quase some no resto. Produto, preço e status são as peças expostas; a moldura fica em segundo plano.\n\nO clima é **confiável e organizado, moderno e tecnológico**. Preço, etapa e próxima ação estão sempre legíveis, em hierarquia previsível, e o vidro com brilho sinaliza uma loja atual, não um catálogo impresso escaneado. A densidade é de comércio: grade compacta de seis cartões por linha no computador e dois no celular, títulos em duas linhas, preço em destaque. No celular a loja vira app: barra de topo de uma linha, barra inferior com cinco abas, menu lateral e transições de empurrar e recuar.\n\nA cor principal é do dono, não do código. O `/admin` troca o azul e o sistema recalcula as quatro variações a partir dela, então toda regra deste documento fala do papel \"Azul Vitrine\", não do matiz. O tema escuro é o padrão; o claro é um par completo, nunca um tema de segunda classe.",
+    "keyCharacteristics": [
+      "Fundo noturno com halo radial e painéis de vidro com desfoque de 20 px e saturação de 180%.",
+      "Um único acento, o Azul Vitrine, aplicado como degradê de 135° em tudo que é ativo ou principal.",
+      "Outfit com pesos altos (700 a 900) para títulos, marca e preço; texto corrido em 400.",
+      "Brilho azul só como resposta a estado: hover, foco, item ativo.",
+      "Casca de app no celular com alvos de toque de 44 px e áreas seguras respeitadas.",
+      "Tema escuro padrão e tema claro completo, com a escolha compartilhada com o ERP."
+    ],
+    "rules": [
+      {
+        "name": "The Owner's Blue Rule",
+        "body": "Nenhum azul é escrito direto no CSS ou no componente. Toda aplicação do acento passa por `--cor-1` a `--cor-4`, `--cor-rgb` e `--cor-rgb-2`, porque o dono troca a cor no `/admin` e o sistema inteiro tem de acompanhar.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Light Rule",
+        "body": "O degradê do Azul Vitrine marca só o que é ativo ou principal: o botão de ação, a aba ou chip selecionado, o item atual do menu, a etapa concluída. Se dois degradês competem na mesma área visível, um deles está errado.",
+        "section": "colors"
+      },
+      {
+        "name": "The Legible Light Rule",
+        "body": "Texto sobre o degradê usa `--cor-texto` e links usam `--link`, que vem de `--cor-link-claro` ou `--cor-link-escuro`. A loja calcula os três a partir da cor do dono para manter 4,5:1: o texto vira escuro quando a cor é clara demais, e o link escurece ou clareia até passar. Nunca escreva `#fff` sobre uma superfície em degradê.",
+        "section": "colors"
+      },
+      {
+        "name": "The Paired Token Rule",
+        "body": "Toda variável de cor nasce com valor nos dois temas, no bloco escuro e no bloco claro do topo de `src/styles.css`. Variável usada sem definição cai no fallback e quebra um dos temas.",
+        "section": "colors"
+      },
+      {
+        "name": "The Weight Carries Hierarchy Rule",
+        "body": "A hierarquia sobe pelo peso antes de subir pelo tamanho: preço em 800 num cartão de 0.86rem é o que o olho acha primeiro. Novos títulos usam 700 ou 800; o 500 fica para nomes de produto e chips.",
+        "section": "typography"
+      },
+      {
+        "name": "The Single Gradient Headline Rule",
+        "body": "O texto em degradê animado existe uma vez, no destaque do título da Início. Não replicar em títulos de página, preços ou seções.",
+        "section": "typography"
+      },
+      {
+        "name": "The Glow Is A Response Rule",
+        "body": "Superfícies ficam quietas em repouso. O brilho azul aparece só como resposta a hover, foco, seleção ou ao item principal da tela.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Glass Recipe Rule",
+        "body": "Vidro novo usa a mesma receita: fundo de vidro do tema, desfoque de 20 px com saturação de 180%, borda de 1 px e a sombra ambiente. Variações de desfoque ou opacidade criam um segundo material.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** aplicar o acento só pelas variáveis `--cor-1` a `--cor-4`, `--cor-rgb` e `--cor-rgb-2`, e o texto sobre ele por `--cor-texto`, para a cor do `/admin` valer em tudo.",
+      "**Do** criar toda cor nova com par escuro e claro no topo de `src/styles.css`.",
+      "**Do** usar a receita única de vidro: desfoque de 20 px com saturação de 180%, borda de 1 px e sombra ambiente.",
+      "**Do** mostrar todo valor a pagar no Verde Dinheiro e em peso 800.",
+      "**Do** manter alvos de toque de pelo menos 44 px e linhas de lista de 48 px no celular.",
+      "**Do** somar as variáveis de área segura em toda barra, menu ou folha presa à borda da tela.",
+      "**Do** desligar animações e transições sob `prefers-reduced-motion`, como as existentes já fazem.",
+      "**Do** usar a curva `cubic-bezier(0.16, 1, 0.3, 1)` para entradas e 300 ms com `ease` para mudanças de estado."
+    ],
+    "donts": [
+      "**Don't** escrever `#3b82f6` ou qualquer outro azul direto no código.",
+      "**Don't** usar o Verde WhatsApp fora de atalhos de WhatsApp.",
+      "**Don't** acender brilho azul em superfícies em repouso; ele é resposta a estado.",
+      "**Don't** repetir o texto em degradê animado fora do destaque do título da Início.",
+      "**Don't** usar variável de cor sem definição nos dois temas, como `--bg` ou `--text`.",
+      "**Don't** escrever vermelho direto no CSS; texto de erro, cancelamento e \"Sair\" usa `--erro`.",
+      "**Don't** pôr rótulo ou selo acima de um título; o selo do admin entra na linha de fatos abaixo dos botões.",
+      "**Don't** separar itens de uma lista agrupada com sombra; use o fio de 1 px da borda de vidro.",
+      "**Don't** criar um segundo material de vidro com outro desfoque ou outra opacidade."
+    ]
+  }
+}
