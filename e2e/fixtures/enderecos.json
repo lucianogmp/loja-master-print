@@ -1,0 +1,16 @@
+[
+  {
+    "id": "e1",
+    "apelido": "Casa",
+    "destinatario": "Ana Souza",
+    "telefone": "33999990000",
+    "cep": "39800000",
+    "rua": "Rua das Flores",
+    "numero": "10",
+    "complemento": "",
+    "bairro": "Centro",
+    "cidade": "Teófilo Otoni",
+    "uf": "MG",
+    "padrao": true
+  }
+]

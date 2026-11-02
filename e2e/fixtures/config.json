@@ -1,0 +1,16 @@
+{
+  "empresa": {
+    "nome": "Master Print",
+    "slogan": "Sua gráfica online",
+    "whatsapp": "5533998139539",
+    "horario": "Seg a Sex, 8h às 18h",
+    "mensagemWhatsApp": "Olá! Vim pelo site da Master Print.",
+    "email": "contato@masterprint.teste",
+    "endereco": "Rua das Gráficas, 100 — Centro",
+    "instagram": "",
+    "facebook": "",
+    "textoRodape": "Impressos e comunicação visual com atendimento de verdade."
+  },
+  "inicio": {},
+  "aparencia": { "logo": "", "logoEscuro": "", "favicon": "", "iconeApp": "", "cor": "", "tituloAba": "Master Print — Gráfica online" }
+}

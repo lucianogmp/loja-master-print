@@ -1,0 +1,4 @@
+[
+  { "slug": "privacidade", "titulo": "Política de Privacidade", "conteudo": "Usamos seus dados só para atender seus pedidos.", "no_rodape": true, "ordem": 1 },
+  { "slug": "trocas", "titulo": "Trocas e devoluções", "conteudo": "Fale com a gente pelo WhatsApp.", "no_rodape": true, "ordem": 2 }
+]

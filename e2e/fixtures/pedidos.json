@@ -1,0 +1,27 @@
+{
+  "pedidos": [
+    {
+      "numero": 42,
+      "data": "2026-10-20T14:00:00Z",
+      "total": 120.5,
+      "etapa": 2,
+      "situacao": "Em produção",
+      "recebimento": "Entrega",
+      "endereco": "Rua das Flores, 10 — Centro, Teófilo Otoni/MG",
+      "itens": [
+        { "descricao": "Cartão de visita", "quantidade": 500, "preco_unitario": 0.15, "total": 75 },
+        { "descricao": "Adesivo redondo", "quantidade": 100, "preco_unitario": 0.455, "total": 45.5 }
+      ]
+    },
+    {
+      "numero": 41,
+      "data": "2026-10-02T10:00:00Z",
+      "total": 80,
+      "etapa": 4,
+      "situacao": "Entregue",
+      "recebimento": "Retirar na gráfica",
+      "endereco": "",
+      "itens": [{ "descricao": "Banner 1x1", "quantidade": 1, "preco_unitario": 80, "total": 80 }]
+    }
+  ]
+}
