@@ -64,7 +64,7 @@ export const INICIO_PADRAO: Inicio = {
   tituloDestaque: 'uma boa impressão.',
   texto: 'Materiais gráficos e personalizados para sua marca, seu negócio e seus momentos especiais. Peça pelo site ou pelo WhatsApp',
   botaoPrincipal: 'Ver produtos',
-  botaoWhatsApp: 'Falar com a gráfica',
+  botaoWhatsApp: 'Falar no WhatsApp',
   imagem: '',
   beneficios: [
     { titulo: 'Atendimento humano', texto: 'Tire dúvidas e acerte detalhes pelo WhatsApp.' },
@@ -95,7 +95,8 @@ export function normalizarEmpresa(v: unknown): Empresa {
   ;(Object.keys(r) as (keyof Empresa)[]).forEach((k) => {
     r[k] = texto(o[k], r[k])
   })
-  r.whatsapp = r.whatsapp.replace(/\D/g, '') || EMPRESA_PADRAO.whatsapp
+  // Número vazio na configuração = sem WhatsApp (some o botão e os links); só a chave ausente usa o padrão
+  r.whatsapp = r.whatsapp.replace(/\D/g, '')
   return r
 }
 
@@ -160,19 +161,51 @@ export function brilho(hex: string) {
   return (0.299 * r + 0.587 * g + 0.114 * b) / 255
 }
 
+/** Contraste WCAG entre duas cores #rrggbb (1 a 21). */
+export function contraste(a: string, b: string) {
+  const lum = (hex: string) => {
+    const [r, g, b2] = rgbDe(hex).map((c) => {
+      const s = c / 255
+      return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4
+    })
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b2
+  }
+  const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m)
+  return (x + 0.05) / (y + 0.05)
+}
+
+/** Escurece (alvo 0) ou clareia (alvo 255) a cor até ela ter 4,5:1 sobre o fundo. */
+function legivelSobre(hex: string, fundo: string, alvo: 0 | 255) {
+  let cor = hex
+  for (let f = 0.05; contraste(cor, fundo) < 4.5 && f <= 1; f += 0.05) cor = misturar(hex, alvo, f)
+  return cor
+}
+
+// Fundos mais escuros (tema claro) e mais claros (tema escuro) onde links e abas ativas aparecem.
+const FUNDO_CLARO_MAIS_ESCURO = '#e8edf5'
+const FUNDO_ESCURO_MAIS_CLARO = '#1a2332'
+const TEXTO_ESCURO = '#0f172a'
+
 const CHAVE_CACHE = 'loja-aparencia'
 
 export function aplicarAparencia(a: Aparencia) {
   const raiz = document.documentElement
-  const vars = ['--cor-1', '--cor-2', '--cor-3', '--cor-4', '--cor-rgb', '--cor-rgb-2']
+  const vars = ['--cor-1', '--cor-2', '--cor-3', '--cor-4', '--cor-rgb', '--cor-rgb-2', '--cor-texto', '--cor-link-claro', '--cor-link-escuro']
   if (a.cor) {
     const c = a.cor
+    const c2 = misturar(c, 0, 0.3)
+    const c3 = misturar(c, 255, 0.3)
+    const c4 = misturar(c, 0, 0.15)
     raiz.style.setProperty('--cor-1', c)
-    raiz.style.setProperty('--cor-2', misturar(c, 0, 0.3))
-    raiz.style.setProperty('--cor-3', misturar(c, 255, 0.3))
-    raiz.style.setProperty('--cor-4', misturar(c, 0, 0.15))
+    raiz.style.setProperty('--cor-2', c2)
+    raiz.style.setProperty('--cor-3', c3)
+    raiz.style.setProperty('--cor-4', c4)
     raiz.style.setProperty('--cor-rgb', rgbDe(c).join(', '))
-    raiz.style.setProperty('--cor-rgb-2', rgbDe(misturar(c, 0, 0.15)).join(', '))
+    raiz.style.setProperty('--cor-rgb-2', rgbDe(c4).join(', '))
+    // O degradê ativo vai de --cor-4 a --cor-2: o texto é branco só se passar 4,5:1 na ponta mais clara.
+    raiz.style.setProperty('--cor-texto', contraste('#ffffff', c4) >= 4.5 ? '#ffffff' : TEXTO_ESCURO)
+    raiz.style.setProperty('--cor-link-claro', legivelSobre(c2, FUNDO_CLARO_MAIS_ESCURO, 0))
+    raiz.style.setProperty('--cor-link-escuro', legivelSobre(c3, FUNDO_ESCURO_MAIS_CLARO, 255))
   } else {
     vars.forEach((v) => raiz.style.removeProperty(v))
   }
@@ -184,14 +217,12 @@ export function aplicarAparencia(a: Aparencia) {
   }
   // Ícone usado ao adicionar à tela inicial (iPhone) — no Android/Chrome vale o manifesto
   let toque = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]')
-  if (a.iconeApp) {
-    if (!toque) {
-      toque = document.createElement('link')
-      toque.rel = 'apple-touch-icon'
-      document.head.appendChild(toque)
-    }
-    toque.href = a.iconeApp
-  } else toque?.remove()
+  if (!toque) {
+    toque = document.createElement('link')
+    toque.rel = 'apple-touch-icon'
+    document.head.appendChild(toque)
+  }
+  toque.href = a.iconeApp || '/icones/icone-180.png'
   try {
     localStorage.setItem(CHAVE_CACHE, JSON.stringify(a))
   } catch {

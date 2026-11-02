@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../components/Link'
+import { useShell } from '../components/LojaShell'
 import { linkWhatsApp } from '../config'
 import { brl } from '../lib/format'
 import { useCart } from '../lib/cart'
 import { useAuth } from '../lib/auth'
 import { useCatalogo } from '../lib/catalogo'
+import { useSite } from '../lib/site'
 import { ERP_URL } from '../lib/erp'
 import { limparCachePedidos } from '../lib/pedidos'
 import { calcularTotal } from '../lib/preco'
@@ -17,6 +19,7 @@ type Entrega = 'retirada' | 'entrega'
 export default function Checkout() {
   const { itens, subtotal, temSobConsulta, limpar } = useCart()
   const { produtoPorSlug } = useCatalogo()
+  const { empresa } = useSite()
   const { session, carregando } = useAuth()
   const [entregaEscolhida, setEntrega] = useState<Entrega>('retirada')
   const { lista: enderecos, indisponivel: semEnderecos } = useEnderecos()
@@ -27,6 +30,8 @@ export default function Checkout() {
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState('')
   const [feito, setFeito] = useState<{ numero: number; total: number } | null>(null)
+  const { ehMobile } = useShell()
+  const Titulo = ehMobile ? 'h2' : 'h1' // no celular o h1 é o da barra do topo
   const ref = useRef(crypto.randomUUID()) // evita pedido duplicado se clicar duas vezes
 
   // "Acorda" a função de pedidos ao abrir o checkout: o primeiro envio não paga a partida a frio
@@ -44,13 +49,16 @@ export default function Checkout() {
       `Pode confirmar e combinar o pagamento e a arte?`
     return (
       <div className="container secao centro">
-        <h1 className="titulo-pagina">Pedido nº {feito.numero} recebido!</h1>
+        <Titulo className="titulo-pagina">Pedido nº {feito.numero} recebido!</Titulo>
         <p className="subtitulo">
           Total dos produtos: {brl(feito.total)}. Falta combinar o pagamento{entrega === 'entrega' ? ', o frete' : ''} e a arte com a gente.
         </p>
-        <a className="btn btn-primario" href={linkWhatsApp(msg)} target="_blank" rel="noreferrer">
-          Continuar no WhatsApp
-        </a>
+        {empresa.whatsapp && (
+          <a className="btn btn-primario" href={linkWhatsApp(msg)} target="_blank" rel="noreferrer">
+            Continuar no WhatsApp
+          </a>
+        )}
+        <Link to="/pedidos" className="btn btn-secundario">Ver meus pedidos</Link>
         <p className="dica">
           <Link to="/produtos">Voltar aos produtos</Link>
         </p>
@@ -61,7 +69,8 @@ export default function Checkout() {
   if (itens.length === 0) {
     return (
       <div className="container secao centro">
-        <h1 className="titulo-pagina">Nada para finalizar</h1>
+        <Titulo className="titulo-pagina">Nada para finalizar</Titulo>
+        <p className="subtitulo">Seu carrinho está vazio. Escolha os produtos e volte aqui para enviar o pedido.</p>
         <Link to="/produtos" className="btn btn-primario">
           Ver produtos
         </Link>
@@ -74,7 +83,7 @@ export default function Checkout() {
   if (!session) {
     return (
       <div className="container secao centro">
-        <h1 className="titulo-pagina">Entre para finalizar</h1>
+        <Titulo className="titulo-pagina">Entre para finalizar</Titulo>
         <p className="subtitulo">Seu carrinho fica guardado. Entre ou crie uma conta para enviar o pedido.</p>
         <div className="acoes-produto">
           <Link to="/entrar?voltar=/checkout" className="btn btn-primario">Entrar</Link>
@@ -123,11 +132,15 @@ export default function Checkout() {
         body: JSON.stringify(corpo),
       })
       const dados = await r.json().catch(() => ({}))
+      if (r.status === 401) {
+        setErro('Sua sessão expirou. Entre novamente.')
+        return
+      }
       if (!r.ok) {
         setErro(dados.erro ?? 'Não foi possível enviar o pedido. Tente pelo WhatsApp.')
         return
       }
-      limparCachePedidos()
+      limparCachePedidos(session!.user.id)
       setFeito({ numero: dados.numero, total: dados.total })
       limpar()
       ref.current = crypto.randomUUID()
@@ -142,7 +155,7 @@ export default function Checkout() {
 
   return (
     <div className="container secao">
-      <h1 className="titulo-pagina">Finalizar pedido</h1>
+      <h1 className="titulo-pagina titulo-sub">Finalizar pedido</h1>
       <div className="carrinho-grade">
         <form className="form-checkout" onSubmit={enviar}>
           <h2>Seus dados</h2>

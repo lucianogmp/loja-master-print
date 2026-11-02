@@ -1,13 +1,15 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
-import { useAuth } from '../lib/auth'
+import { erroDeSessao, useAuth } from '../lib/auth'
 import { mascaraTelefone, so } from '../lib/enderecos'
 
 export default function ContaDados() {
-  const { session } = useAuth()
+  const { session, marcarSessaoExpirada } = useAuth()
   const [nome, setNome] = useState('')
   const [telefone, setTelefone] = useState('')
   const [msg, setMsg] = useState('')
+  const [salvando, setSalvando] = useState(false)
+  const ocupado = useRef(false) // duplo clique não repete o envio
 
   useEffect(() => {
     if (!session) return
@@ -20,21 +22,31 @@ export default function ContaDados() {
 
   async function salvar(e: FormEvent) {
     e.preventDefault()
+    if (ocupado.current) return
     setMsg('')
     if (nome.trim().length < 2) return setMsg('Informe seu nome.')
     if (so(telefone).length < 10) return setMsg('Informe o WhatsApp com DDD.')
     const tel = so(telefone)
-    const { error } = await supabase.from('perfis').upsert({ id: session!.user.id, nome: nome.trim(), telefone: tel })
-    // O pedido usa o nome e o telefone do login, então eles também são atualizados lá
-    const { error: e2 } = await supabase.auth.updateUser({ data: { nome: nome.trim(), telefone: tel } })
-    setMsg(error || e2 ? 'Não foi possível salvar.' : 'Dados salvos.')
+    ocupado.current = true
+    setSalvando(true)
+    try {
+      const { error } = await supabase.from('perfis').upsert({ id: session!.user.id, nome: nome.trim(), telefone: tel })
+      if (erroDeSessao(error)) return void (await marcarSessaoExpirada())
+      if (error) return setMsg('Não foi possível salvar.')
+      // O pedido usa o nome e o telefone do login, então eles também são atualizados lá
+      const { error: e2 } = await supabase.auth.updateUser({ data: { nome: nome.trim(), telefone: tel } })
+      setMsg(e2 ? 'Não foi possível salvar.' : 'Dados salvos.')
+    } finally {
+      ocupado.current = false
+      setSalvando(false)
+    }
   }
 
   const criada = session ? new Date(session.user.created_at).toLocaleDateString('pt-BR') : ''
 
   return (
     <form className="conta-bloco" onSubmit={salvar}>
-      <h2>Meus dados</h2>
+      <h1 className="titulo-pagina titulo-sub">Meus dados</h1>
       <div className="linha-campos">
         <div className="campo">
           <label htmlFor="c-nome">Nome</label>
@@ -53,7 +65,7 @@ export default function ContaDados() {
       <p className="dica">Conta criada em {criada}.</p>
       {msg && <p className="dica" role="status">{msg}</p>}
       <div>
-        <button className="btn btn-primario">Salvar</button>
+        <button className="btn btn-primario" disabled={salvando}>Salvar</button>
       </div>
     </form>
   )

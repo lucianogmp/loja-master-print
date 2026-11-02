@@ -16,6 +16,16 @@ Abra o endereço que aparecer no terminal (normalmente http://localhost:5173).
 
 Para conferir se tudo compila: `npm run build`.
 
+## Testes
+
+- `npm test` — testes de unidade e integração (Vitest + Testing Library), uma vez
+- `npm run test:watch` — os mesmos testes, rodando de novo a cada alteração
+- `npm run test:e2e` — testes no navegador (Playwright), no celular (Pixel 7) e no computador (1280×800).
+  Sobem o `vite` sozinhos e não usam internet: toda a rede é respondida por `e2e/rede.ts` com os dados de `e2e/fixtures/`.
+  Na primeira vez, instale o navegador: `npx playwright install chromium`
+
+Os testes ficam ao lado do código (`*.test.ts(x)`); o nome de cada caso começa com o ID do contrato de testes (ex.: `UT-001`).
+
 ## Visual (igual ao ERP)
 
 - Fonte Outfit (carregada do Google Fonts, como no ERP)
@@ -36,6 +46,8 @@ Para conferir se tudo compila: `npm run build`.
 - Carrinho (guardado no navegador) e tela de finalização
 - Finalizar abre o WhatsApp com o resumo do pedido
 - Botão flutuante de WhatsApp em todas as telas
+- Pedidos como destino próprio (`/pedidos`): lista que abre na hora (cache por comprador no navegador) e se atualiza sozinha, puxar para atualizar no celular, detalhe com linha do tempo (Recebido → Em produção → Pronto → Entregue)
+- Minha conta em telas separadas (`/conta`, `/conta/dados|enderecos|seguranca|privacidade`): menu de opções no celular e menu lateral no computador; links antigos `/conta?aba=…` continuam funcionando
 - Visual responsivo (celular e computador)
 
 ## O que ainda NÃO existe
@@ -56,3 +68,13 @@ Para conferir se tudo compila: `npm run build`.
 
 Crie um repositório novo e vazio para a loja (separado do ERP). A pasta já tem
 `.gitignore`, então `node_modules` e `dist` não vão junto.
+
+## Supabase (projeto dos compradores): URLs de redirecionamento
+
+Em **Authentication → URL Configuration → Redirect URLs**, libere o endereço do site com os caminhos `/redefinir-senha` e `/confirme-email` (e os de destino do `?voltar=`, como `/checkout`). Sem isso, os links de "Esqueci minha senha" e de confirmação de cadastro não voltam para a loja.
+
+## Ícone do aplicativo
+
+- Sem ícone configurado em `/admin`, o manifesto (`/api/manifest`) e o ícone do iPhone usam os PNGs de `public/icones/` (`icone-192`, `icone-512`, `icone-512-maskable`, `icone-180`), gerados do `public/favicon.svg` sobre `#3b82f6`.
+- Para regenerar depois de mudar o favicon: `npm run icones` e commite os PNGs (o build da Vercel não roda o script).
+- O ícone do aplicativo configurado em `/admin` (`iconeApp`) sempre substitui os padrões, no manifesto e no ícone de toque.

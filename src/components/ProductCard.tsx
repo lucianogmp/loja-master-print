@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
+import { Link } from './Link'
 import type { Produto } from '../lib/tipos'
-import { brl } from '../lib/format'
+import { brl, diasUteis } from '../lib/format'
 import ProductArt from './ProductArt'
 
 // Preço no cartão: rótulo pequeno + valor em destaque (estilo marketplace)
@@ -12,14 +12,18 @@ function precoPartes(p: Produto): { rotulo?: string; valor: string; sufixo?: str
   return { valor: brl(menor), sufixo: ' / un.' }
 }
 
-export default function ProductCard({ produto }: { produto: Produto }) {
+// nivel: h3 sob uma seção com h2 (Início); h2 direto sob o título da página (catálogo no computador)
+export default function ProductCard({ produto, nivel = 'h3' }: { produto: Produto; nivel?: 'h2' | 'h3' }) {
+  const Nome = nivel
   return (
     <Link to={`/produto/${produto.slug}`} className="card-produto">
       <div className="card-imagem">
         {produto.imagens[0] ? <img src={produto.imagens[0]} alt={produto.nome} loading="lazy" /> : <ProductArt tipo={produto.arte} />}
+        {produto.arteFixa && <span className="card-selo">Arte pronta</span>}
       </div>
       <div className="card-corpo">
-        <h3>{produto.nome}</h3>
+        <Nome>{produto.nome}</Nome>
+        {produto.prazoDias && <span className="card-prazo">Produção em {diasUteis(produto.prazoDias)}</span>}
         <div className="card-preco">
           {(() => {
             const pr = precoPartes(produto)

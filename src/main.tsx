@@ -1,6 +1,5 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { CatalogoProvider } from './lib/catalogo'
 import { CartProvider } from './lib/cart'
@@ -20,10 +19,8 @@ document.addEventListener(
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider><SiteProvider><CatalogoProvider><CartProvider>
-        <App />
-      </CartProvider></CatalogoProvider></SiteProvider></AuthProvider>
-    </BrowserRouter>
+    <AuthProvider><SiteProvider><CatalogoProvider><CartProvider>
+      <App />
+    </CartProvider></CatalogoProvider></SiteProvider></AuthProvider>
   </StrictMode>,
 )
