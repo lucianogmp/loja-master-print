@@ -24,11 +24,16 @@ export default async function handler(req, res) {
         { src: icone, sizes: '192x192', type: 'image/png', purpose: 'any' },
         { src: icone, sizes: '512x512', type: 'image/png', purpose: 'any' },
       ]
-    : [{ src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }]
+    : [
+        { src: '/icones/icone-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: '/icones/icone-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: '/icones/icone-512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      ]
   res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8')
   res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=600')
   res.status(200).send(
     JSON.stringify({
+      id: '/',
       name: nome,
       short_name: nome.slice(0, 12),
       start_url: '/',
