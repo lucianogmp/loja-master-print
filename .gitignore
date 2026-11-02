@@ -4,3 +4,9 @@ dist
 .env.*
 *.local
 !.env.example
+test-results
+playwright-report
+.compozy
+.vitest
+# Impeccable: cache local do hook de design (PRODUCT.md, DESIGN.md e o resto de .impeccable/ são versionados)
+.impeccable/hook.cache.json
