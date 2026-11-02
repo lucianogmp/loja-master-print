@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavegar } from '../components/Link'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
-import { buscarPedidos } from '../lib/pedidos'
+import { buscarPedidos, limparCachePedidos } from '../lib/pedidos'
 import { useSite } from '../lib/site'
 
 export default function ContaPrivacidade() {
@@ -13,6 +13,7 @@ export default function ContaPrivacidade() {
   const [msg, setMsg] = useState('')
   const [apagando, setApagando] = useState(false)
   const email = session?.user.email ?? ''
+  const navegar = useNavegar()
 
   async function baixar() {
     setMsg('')
@@ -39,13 +40,13 @@ export default function ContaPrivacidade() {
     setApagando(false)
     if (error) return setMsg('Não foi possível excluir a conta agora. Fale com a gente pelo WhatsApp.')
     await supabase.auth.signOut({ scope: 'local' })
-    alert('Sua conta foi excluída.')
-    window.location.href = '/'
+    limparCachePedidos()
+    navegar('/', { replace: true, state: { aviso: 'Conta excluída' } })
   }
 
   return (
     <div className="conta-bloco">
-      <h2>Meus dados</h2>
+      <h1 className="titulo-pagina titulo-sub">Privacidade</h1>
       <p className="dica">
         Você pode baixar uma cópia dos seus dados (cadastro, endereços e pedidos) ou excluir sua conta.{' '}
         {paginas.some((p) => p.slug === 'privacidade') && <Link to="/pagina/privacidade">Ler a Política de Privacidade</Link>}

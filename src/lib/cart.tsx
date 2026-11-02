@@ -29,7 +29,8 @@ const CHAVE = 'master-print-carrinho'
 function carregar(): ItemCarrinho[] {
   try {
     const bruto = localStorage.getItem(CHAVE)
-    return bruto ? (JSON.parse(bruto) as ItemCarrinho[]) : []
+    const itens: unknown = bruto ? JSON.parse(bruto) : []
+    return Array.isArray(itens) ? (itens as ItemCarrinho[]) : []
   } catch {
     return []
   }
