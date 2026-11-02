@@ -1,11 +1,14 @@
 import { linkWhatsApp } from '../config'
 import { useSite } from '../lib/site'
+import { useShell } from '../components/LojaShell'
 
 export default function Atendimento() {
   const { empresa } = useSite()
+  const { ehMobile } = useShell()
   return (
     <div className="container secao texto-pagina">
-      <h1 className="titulo-pagina">Atendimento e informações</h1>
+      {/* No celular o título mora na barra de topo (h1) */}
+      {!ehMobile && <h1 className="titulo-pagina">Atendimento e informações</h1>}
 
       <h2>Como funciona</h2>
       <ol>
@@ -29,9 +32,11 @@ export default function Atendimento() {
 
       <h2>Fale com a gente</h2>
       <p>Atendimento: {empresa.horario}.</p>
-      <a className="btn btn-primario" href={linkWhatsApp()} target="_blank" rel="noreferrer">
-        Chamar no WhatsApp
-      </a>
+      {empresa.whatsapp && (
+        <a className="btn btn-primario" href={linkWhatsApp()} target="_blank" rel="noreferrer">
+          Chamar no WhatsApp
+        </a>
+      )}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { ArteTipo, Categoria, Produto } from './tipos'
 import { erp } from './erp'
 
@@ -65,6 +65,7 @@ function paraProduto(l: Linha): Produto {
     variacoes: [{ id: 'unico', label: l.nome, preco: l.preco ?? 0 }],
     rotuloVariacao: 'Produto',
     prazo: l.prazo_entrega_dias ? `${l.prazo_entrega_dias} dia(s) úteis` : 'a combinar',
+    prazoDias: l.prazo_entrega_dias ? Number(l.prazo_entrega_dias) : undefined,
     precisaArte: !l.derivado_id,
     derivadoId: l.derivado_id ?? undefined,
     arteFixa: !!l.derivado_id,
@@ -78,6 +79,7 @@ type Ctx = {
   categorias: Categoria[]
   carregando: boolean
   erro: boolean
+  recarregar: () => void
   produtoPorSlug: (slug: string) => Produto | undefined
   categoriaPorSlug: (slug: string) => Categoria | undefined
 }
@@ -88,13 +90,19 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
 
-  useEffect(() => {
+  const recarregar = useCallback(() => {
+    setErro(false)
+    setCarregando(true)
     erp.rpc('loja_catalogo_v2').then(({ data, error }) => {
       if (error) setErro(true)
       else setLinhas((data ?? []) as Linha[])
       setCarregando(false)
     })
   }, [])
+
+  useEffect(() => {
+    recarregar()
+  }, [recarregar])
 
   const valor = useMemo<Ctx>(() => {
     const produtos = linhas.map(paraProduto)
@@ -116,10 +124,11 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
       categorias,
       carregando,
       erro,
+      recarregar,
       produtoPorSlug: (slug) => produtos.find((p) => p.slug === slug),
       categoriaPorSlug: (slug) => categorias.find((c) => c.slug === slug),
     }
-  }, [linhas, carregando, erro])
+  }, [linhas, carregando, erro, recarregar])
 
   return <CatalogoCtx.Provider value={valor}>{children}</CatalogoCtx.Provider>
 }

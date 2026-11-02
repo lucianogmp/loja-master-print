@@ -52,7 +52,7 @@ export default function AdminInicio() {
       <h2 className="admin-sub">Destaque (topo da página)</h2>
       <div className="admin-linha">
         <div className="campo">
-          <label htmlFor="i-selo">Selo</label>
+          <label htmlFor="i-selo">Selo (primeiro destaque, abaixo dos botões)</label>
           <input id="i-selo" value={f.selo} onChange={(e) => set('selo', e.target.value)} />
         </div>
         <div className="campo">

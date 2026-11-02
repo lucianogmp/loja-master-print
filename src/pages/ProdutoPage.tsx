@@ -1,20 +1,28 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link, useNavegar } from '../components/Link'
 import { useCatalogo } from '../lib/catalogo'
+import { useSite } from '../lib/site'
 import { linkWhatsApp } from '../config'
 import { brl } from '../lib/format'
 import { useCart } from '../lib/cart'
 import { areaM2, calcularTotal, rotuloArte, type OpcaoArte } from '../lib/preco'
 import ProductArt from '../components/ProductArt'
+import { useShell } from '../components/LojaShell'
+import { useTitulo } from '../lib/telas'
 
 export default function ProdutoPage() {
   const { slug = '' } = useParams()
   const { produtoPorSlug, categoriaPorSlug, carregando } = useCatalogo()
   const produto = produtoPorSlug(slug)
   const { adicionar } = useCart()
-  const navigate = useNavigate()
+  const { empresa } = useSite()
+  const navegar = useNavegar()
+  const { ehMobile } = useShell()
+  useTitulo(produto?.nome ?? 'Produto')
 
-  const [variacaoId, setVariacaoId] = useState(produto?.variacoes[0]?.id ?? '')
+  // A escolha vale só se existir no produto: aberto por link, o produto chega depois do primeiro render.
+  const [variacaoEscolhida, setVariacaoId] = useState('')
   const [quantidade, setQuantidade] = useState(1)
   const [largura, setLargura] = useState('')
   const [altura, setAltura] = useState('')
@@ -26,12 +34,15 @@ export default function ProdutoPage() {
   if (!produto) {
     return (
       <div className="container secao">
-        <h1 className="titulo-pagina">Produto não encontrado</h1>
+        {ehMobile ? <h2 className="titulo-pagina">Produto não encontrado</h2> : <h1 className="titulo-pagina">Produto não encontrado</h1>}
         <Link to="/produtos">Voltar ao catálogo</Link>
       </div>
     )
   }
 
+  const variacaoId = produto.variacoes.some((v) => v.id === variacaoEscolhida)
+    ? variacaoEscolhida
+    : (produto.variacoes[0]?.id ?? '')
   const larguraCm = Number(largura.replace(',', '.')) || undefined
   const alturaCm = Number(altura.replace(',', '.')) || undefined
   const ehM2 = produto.tipoPreco === 'm2'
@@ -40,10 +51,12 @@ export default function ProdutoPage() {
   const variacao = produto.variacoes.find((v) => v.id === variacaoId)
   const categoria = categoriaPorSlug(produto.categoria)
   const faltaMedida = ehM2 && (!larguraCm || !alturaCm)
+  const motivoBloqueio =
+    total !== null ? null : faltaMedida ? 'Informe a largura e a altura para calcular o total.' : 'Escolha as opções do produto para calcular o total.'
 
   function adicionarAoCarrinho() {
     adicionar({ slug: produto!.slug, variacaoId, quantidade, larguraCm, alturaCm, arte: produto!.arteFixa ? 'modelo' : arte, observacao })
-    navigate('/carrinho')
+    navegar('/carrinho')
   }
 
   const mensagemConsulta =
@@ -77,7 +90,7 @@ export default function ProdutoPage() {
         </div>
 
         <div className="produto-info">
-          <h1>{produto.nome}</h1>
+          {ehMobile ? <h2>{produto.nome}</h2> : <h1>{produto.nome}</h1>}
           <p className="produto-descricao">{produto.descricao}</p>
           {produto.entregaModo === 'so_retirada' && <p className="dica">Este produto é somente para retirada na gráfica.</p>}
 
@@ -180,7 +193,6 @@ export default function ProdutoPage() {
               <>
                 <span>Total</span>
                 <strong>—</strong>
-                {faltaMedida && <span className="dica">Informe largura e altura para calcular.</span>}
               </>
             )}
             <span className="prazo">Prazo de produção: {produto.prazo}</span>
@@ -188,21 +200,35 @@ export default function ProdutoPage() {
 
           <div className="acoes-produto">
             {sobConsulta ? (
-              <a className="btn btn-primario" href={linkWhatsApp(mensagemConsulta)} target="_blank" rel="noreferrer">
-                Pedir orçamento pelo WhatsApp
-              </a>
+              empresa.whatsapp && (
+                <a className="btn btn-primario" href={linkWhatsApp(mensagemConsulta)} target="_blank" rel="noreferrer">
+                  Pedir orçamento no WhatsApp
+                </a>
+              )
             ) : (
               <>
-                <button className="btn btn-primario" onClick={adicionarAoCarrinho} disabled={total === null}>
+                <button
+                  className="btn btn-primario"
+                  onClick={adicionarAoCarrinho}
+                  disabled={total === null}
+                  aria-describedby={motivoBloqueio ? 'motivo-bloqueio' : undefined}
+                >
                   Adicionar ao carrinho
                 </button>
-                <a className="btn btn-secundario" href={linkWhatsApp(mensagemConsulta)} target="_blank" rel="noreferrer">
-                  Tirar dúvida
-                </a>
+                {empresa.whatsapp && (
+                  <a className="btn btn-secundario" href={linkWhatsApp(mensagemConsulta)} target="_blank" rel="noreferrer">
+                    Tirar dúvida no WhatsApp
+                  </a>
+                )}
               </>
             )}
           </div>
-          <p className="aviso-exemplo">Preço de exemplo. O valor final será confirmado pela gráfica.</p>
+          {!sobConsulta && motivoBloqueio && (
+            <p id="motivo-bloqueio" className="dica motivo-bloqueio">
+              {motivoBloqueio}
+            </p>
+          )}
+          <p className="aviso-exemplo">O valor final é confirmado pela gráfica no WhatsApp, junto com o pagamento e a entrega.</p>
         </div>
       </div>
     </div>

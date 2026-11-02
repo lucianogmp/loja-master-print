@@ -38,6 +38,8 @@ export type Produto = {
   // Para tipoPreco 'pacote': quantidade fechada de cada variação (ex.: 500 cartões)
   quantidadeFechada?: number
   prazo: string
+  // Dias úteis de produção vindos do ERP; ausente = a combinar
+  prazoDias?: number
   precisaArte: boolean
   destaque?: boolean
   maisVendido?: boolean // só vem do banco quando há venda real
