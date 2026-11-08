@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { erp } from './erp'
 import { LOJA } from '../config'
+import { BANNERS_PADRAO, normalizarBanners, type Banners } from './banners'
 
 // Textos e ordem do site, editáveis em /admin. Vêm do banco do ERP pela função pública loja_config().
 // Se algo faltar ou o banco não responder, valem os padrões abaixo (o site nunca fica em branco).
@@ -29,7 +30,7 @@ export type Aparencia = {
 
 export type Pagina = { slug: string; titulo: string; conteudo: string; no_rodape: boolean; ordem: number }
 
-export type SecaoId = 'beneficios' | 'mais_vendidos' | 'produtos'
+export type SecaoId = 'destaques' | 'ofertas' | 'beneficios' | 'mais_vendidos' | 'produtos'
 export type Secao = { id: SecaoId; titulo: string; visivel: boolean }
 export type Beneficio = { titulo: string; texto: string }
 
@@ -72,6 +73,8 @@ export const INICIO_PADRAO: Inicio = {
     { titulo: 'Ajuda com a arte', texto: 'Não tem arte pronta? A gente te ajuda.' },
   ],
   secoes: [
+    { id: 'destaques', titulo: 'Destaques', visivel: true },
+    { id: 'ofertas', titulo: 'Ofertas', visivel: true },
     { id: 'beneficios', titulo: 'Vantagens', visivel: true },
     { id: 'mais_vendidos', titulo: 'Mais vendidos', visivel: true },
     { id: 'produtos', titulo: 'Produtos', visivel: true },
@@ -116,9 +119,11 @@ export function normalizarInicio(v: unknown): Inicio {
     if (base && !secoes.some((x) => x.id === base.id))
       secoes.push({ id: base.id, titulo: texto(s.titulo, base.titulo), visivel: s.visivel !== false })
   })
-  p.secoes.forEach((b) => {
-    if (!secoes.some((x) => x.id === b.id)) secoes.push({ ...b })
-  })
+  // Seções novas: Destaques e Ofertas entram no começo (é o que o visitante deve ver logo); as demais, no fim
+  const novas = p.secoes.filter((b) => !secoes.some((x) => x.id === b.id))
+  const noTopo = novas.filter((b) => b.id === 'destaques' || b.id === 'ofertas')
+  secoes.unshift(...noTopo.map((b) => ({ ...b })))
+  novas.filter((b) => !noTopo.includes(b)).forEach((b) => secoes.push({ ...b }))
   return {
     selo: texto(o.selo, p.selo),
     titulo: texto(o.titulo, p.titulo),
@@ -240,7 +245,7 @@ function aparenciaInicial(): Aparencia {
   return APARENCIA_PADRAO
 }
 
-type Ctx = { empresa: Empresa; inicio: Inicio; aparencia: Aparencia; paginas: Pagina[]; paginasCarregadas: boolean; recarregar: () => Promise<void> }
+type Ctx = { empresa: Empresa; inicio: Inicio; banners: Banners; aparencia: Aparencia; paginas: Pagina[]; paginasCarregadas: boolean; recarregar: () => Promise<void> }
 const SiteCtx = createContext<Ctx | null>(null)
 
 function aplicarEmpresa(e: Empresa) {
@@ -255,6 +260,7 @@ function aplicarEmpresa(e: Empresa) {
 export function SiteProvider({ children }: { children: ReactNode }) {
   const [empresa, setEmpresa] = useState<Empresa>(EMPRESA_PADRAO)
   const [inicio, setInicio] = useState<Inicio>(INICIO_PADRAO)
+  const [banners, setBanners] = useState<Banners>(BANNERS_PADRAO)
   const [aparencia, setAparencia] = useState<Aparencia>(aparenciaInicial)
   const [paginas, setPaginas] = useState<Pagina[]>([])
   const [paginasCarregadas, setPaginasCarregadas] = useState(false)
@@ -270,6 +276,7 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     aplicarEmpresa(e)
     setEmpresa(e)
     setInicio(normalizarInicio((data as Record<string, unknown>).inicio))
+    setBanners(normalizarBanners((data as Record<string, unknown>).banners))
     const a = normalizarAparencia((data as Record<string, unknown>).aparencia)
     aplicarAparencia(a)
     setAparencia(a)
@@ -283,8 +290,8 @@ export function SiteProvider({ children }: { children: ReactNode }) {
   }, [recarregar])
 
   const valor = useMemo(
-    () => ({ empresa, inicio, aparencia, paginas, paginasCarregadas, recarregar }),
-    [empresa, inicio, aparencia, paginas, paginasCarregadas, recarregar],
+    () => ({ empresa, inicio, banners, aparencia, paginas, paginasCarregadas, recarregar }),
+    [empresa, inicio, banners, aparencia, paginas, paginasCarregadas, recarregar],
   )
   return <SiteCtx.Provider value={valor}>{children}</SiteCtx.Provider>
 }

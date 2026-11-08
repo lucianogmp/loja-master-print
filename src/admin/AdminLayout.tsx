@@ -9,6 +9,8 @@ import AdminMenu, { type Aba } from './AdminMenu'
 import AdminProdutos from './AdminProdutos'
 import AdminCategorias from './AdminCategorias'
 import AdminInicio from './AdminInicio'
+import AdminBanners from './AdminBanners'
+import AdminOfertas from './AdminOfertas'
 import AdminEmpresa from './AdminEmpresa'
 import AdminAparencia from './AdminAparencia'
 import AdminPaginas from './AdminPaginas'
@@ -65,6 +67,8 @@ export default function AdminLayout() {
           {aba === 'derivados' && <AdminDerivados />}
           {aba === 'categorias' && <AdminCategorias />}
           {aba === 'inicio' && <AdminInicio />}
+          {aba === 'banners' && <AdminBanners />}
+          {aba === 'ofertas' && <AdminOfertas />}
           {aba === 'empresa' && <AdminEmpresa />}
           {aba === 'aparencia' && <AdminAparencia />}
           {aba === 'paginas' && <AdminPaginas />}

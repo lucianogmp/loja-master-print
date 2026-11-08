@@ -10,6 +10,8 @@ export const SECOES = [
   { id: 'derivados', rotulo: 'Derivados' },
   { id: 'categorias', rotulo: 'Categorias' },
   { id: 'inicio', rotulo: 'Página inicial' },
+  { id: 'banners', rotulo: 'Banners' },
+  { id: 'ofertas', rotulo: 'Ofertas' },
   { id: 'empresa', rotulo: 'Dados da empresa' },
   { id: 'aparencia', rotulo: 'Aparência' },
   { id: 'paginas', rotulo: 'Páginas de texto' },

@@ -25,6 +25,7 @@ import ContaEnderecos from './conta/ContaEnderecos'
 import ContaSeguranca from './conta/ContaSeguranca'
 import ContaPrivacidade from './conta/ContaPrivacidade'
 import PaginaTexto from './pages/PaginaTexto'
+import Oferta from './pages/Oferta'
 import NaoEncontrada from './pages/NaoEncontrada'
 
 const AdminLayout = lazy(() => import('./admin/AdminLayout'))
@@ -43,6 +44,7 @@ export const rotas: RouteObject[] = [
           { path: 'buscar', element: <Buscar />, handle: h({ nivel: 'raiz', aba: 'buscar' }) },
           { path: 'produtos', element: <Catalogo />, handle: h({ nivel: 'sub', aba: 'buscar', titulo: 'Produtos', chips: true }) },
           { path: 'produto/:slug', element: <ProdutoPage />, handle: h({ nivel: 'sub', aba: 'buscar', titulo: 'Produto', semWhatsApp: true }) },
+          { path: 'oferta/:slug', element: <Oferta />, handle: h({ nivel: 'sub', aba: 'inicio', titulo: 'Ofertas' }) },
           { path: 'carrinho', element: <Carrinho />, handle: h({ nivel: 'raiz', aba: 'carrinho' }) },
           { path: 'checkout', element: <Checkout />, handle: h({ nivel: 'sub', aba: 'carrinho', titulo: 'Finalizar pedido', semBarra: true }) },
           {

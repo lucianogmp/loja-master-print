@@ -13,13 +13,13 @@ function precoPartes(p: Produto): { rotulo?: string; valor: string; sufixo?: str
 }
 
 // nivel: h3 sob uma seção com h2 (Início); h2 direto sob o título da página (catálogo no computador)
-export default function ProductCard({ produto, nivel = 'h3' }: { produto: Produto; nivel?: 'h2' | 'h3' }) {
+export default function ProductCard({ produto, nivel = 'h3', selo }: { produto: Produto; nivel?: 'h2' | 'h3'; selo?: string }) {
   const Nome = nivel
   return (
     <Link to={`/produto/${produto.slug}`} className="card-produto">
       <div className="card-imagem">
         {produto.imagens[0] ? <img src={produto.imagens[0]} alt={produto.nome} loading="lazy" /> : <ProductArt tipo={produto.arte} />}
-        {produto.arteFixa && <span className="card-selo">Arte pronta</span>}
+        {selo ? <span className="card-selo card-selo-destaque">{selo}</span> : produto.arteFixa && <span className="card-selo">Arte pronta</span>}
       </div>
       <div className="card-corpo">
         <Nome>{produto.nome}</Nome>

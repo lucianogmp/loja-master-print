@@ -8,6 +8,9 @@ import ProductArt from '../components/ProductArt'
 import MensagemAtendimento from '../components/MensagemAtendimento'
 import ChipsCategorias from '../components/ChipsCategorias'
 import SobMedida from '../components/SobMedida'
+import BannerCarrossel from '../components/BannerCarrossel'
+import SecaoOferta from '../components/SecaoOferta'
+import { diasParaOferta, useOfertas } from '../lib/ofertas'
 import { diasUteis } from '../lib/format'
 import { useShell } from '../components/LojaShell'
 
@@ -15,8 +18,19 @@ export default function Home() {
   const { ehMobile, handle } = useShell()
   const { produtos, carregando } = useCatalogo()
   const { inicio, empresa } = useSite()
-  // Destaques marcados na administração vêm primeiro; o resto segue a ordem do catálogo.
-  const lista = [...produtos].sort((a, b) => Number(!!b.destaque) - Number(!!a.destaque))
+  const { ofertas } = useOfertas()
+  // Destaques marcados na administração ganham um bloco logo no topo; com o bloco ligado, não se repetem na lista geral.
+  const destaques = produtos.filter((p) => p.destaque && !p.derivadoId)
+  const blocoDestaques = inicio.secoes.some((s) => s.id === 'destaques' && s.visivel) && destaques.length > 0
+  const lista = blocoDestaques ? produtos.filter((p) => !destaques.includes(p)) : produtos
+  // Ofertas no ar (data comercial dentro da janela e com produtos no catálogo), a mais próxima primeiro
+  const ofertasNoAr = ofertas
+    .map((o) => {
+      const ids = new Set(o.produtos)
+      return { oferta: o, dias: diasParaOferta(o), produtos: produtos.filter((p) => ids.has(p.id) && !p.derivadoId) }
+    })
+    .filter((x): x is typeof x & { dias: number } => x.dias !== null && x.produtos.length > 0)
+    .sort((a, b) => a.dias - b.dias)
   const maisVendidos = produtos.filter((p) => p.maisVendido)
 
   // Fatos do destaque: só o que os dados sustentam (selo do admin, menor prazo do ERP, modo de entrega).
@@ -34,6 +48,7 @@ export default function Home() {
     <>
       {ehMobile && <MensagemAtendimento />}
       {ehMobile && handle?.chips && <ChipsCategorias atual={null} />}
+      <BannerCarrossel />
       <section className="hero">
         <div className="container hero-grade">
           <div>
@@ -82,6 +97,27 @@ export default function Home() {
       {inicio.secoes
         .filter((s) => s.visivel)
         .map((s) => {
+          if (s.id === 'destaques')
+            return blocoDestaques ? (
+              <section key={s.id} className="secao container bloco-destaques" aria-label={s.titulo}>
+                <div className="secao-topo">
+                  <h2>{s.titulo}</h2>
+                </div>
+                <div className="grade-produtos">
+                  {destaques.map((p) => (
+                    <ProductCard key={p.slug} produto={p} selo="Destaque" />
+                  ))}
+                </div>
+              </section>
+            ) : null
+          if (s.id === 'ofertas')
+            return (
+              <div key={s.id}>
+                {ofertasNoAr.map((x) => (
+                  <SecaoOferta key={x.oferta.id} oferta={x.oferta} dias={x.dias} produtos={x.produtos} limite={8} />
+                ))}
+              </div>
+            )
           if (s.id === 'beneficios')
             return (
               <section key={s.id} className="faixa-beneficios">
@@ -118,7 +154,7 @@ export default function Home() {
               </div>
               {carregando ? (
                 <p className="vazio">Carregando produtos...</p>
-              ) : lista.length === 0 ? (
+              ) : lista.length === 0 && blocoDestaques ? null : lista.length === 0 ? (
                 <p className="vazio">Em breve novos produtos. Fale com a gente pelo WhatsApp.</p>
               ) : (
                 <div className="grade-produtos">

@@ -4,7 +4,7 @@ import { renderComTudo } from '../test/render'
 import { definirMidia } from '../test/matchMedia'
 import { erpFake, sessaoFake } from '../test/fakes'
 
-const ROTULOS_SECOES = ['Produtos', 'Derivados', 'Categorias', 'Página inicial', 'Dados da empresa', 'Aparência', 'Páginas de texto']
+const ROTULOS_SECOES = ['Produtos', 'Derivados', 'Categorias', 'Página inicial', 'Banners', 'Ofertas', 'Dados da empresa', 'Aparência', 'Páginas de texto']
 
 async function abrirAdmin(opcoes: { mobile?: boolean; papel?: string | null } = {}) {
   const { mobile = true, papel = 'dono' } = opcoes
@@ -37,7 +37,7 @@ describe('AdminLayout e AdminMenu', () => {
     expect(container.querySelector('.filtros')).toBeNull()
   })
 
-  it('UT-340 gaveta com as sete seções em ordem (a atual com aria-current), Tema, Voltar à loja e Sair', async () => {
+  it('UT-340 gaveta com as nove seções em ordem (a atual com aria-current), Tema, Voltar à loja e Sair', async () => {
     const { usuario, container } = await abrirAdmin({ mobile: true })
     const dialogo = await abrirGaveta(usuario)
     const nav = within(dialogo).getByRole('navigation', { name: 'Administração' })
@@ -114,14 +114,14 @@ describe('AdminLayout e AdminMenu', () => {
     expect(within(linha).getByRole('button', { name: /Ativar tema/ })).toBeInTheDocument()
   })
 
-  it('UT-396 ordem de tabulação: as sete seções na ordem, depois Tema, Voltar à loja e Sair', async () => {
+  it('UT-396 ordem de tabulação: as nove seções na ordem, depois Tema, Voltar à loja e Sair', async () => {
     const { usuario } = await abrirAdmin({ mobile: true })
     const dialogo = await abrirGaveta(usuario)
     const nav = within(dialogo).getByRole('navigation', { name: 'Administração' })
     const ordem = ordemDoMenu(nav)
-    expect(ordem.slice(0, 7)).toEqual(ROTULOS_SECOES)
-    expect(ordem[7]).toMatch(/Ativar tema/)
-    expect(ordem.slice(8)).toEqual(['Voltar à loja', 'Sair'])
+    expect(ordem.slice(0, 9)).toEqual(ROTULOS_SECOES)
+    expect(ordem[9]).toMatch(/Ativar tema/)
+    expect(ordem.slice(10)).toEqual(['Voltar à loja', 'Sair'])
   })
 
   it('IT-024 gaveta → seção → computador (menu fixo) → celular (botão de volta)', async () => {

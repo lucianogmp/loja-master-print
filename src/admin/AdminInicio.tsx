@@ -122,7 +122,9 @@ export default function AdminInicio() {
             </label>
             <input
               aria-label="Título da seção"
-              value={s.titulo}
+              disabled={s.id === 'ofertas'}
+              title={s.id === 'ofertas' ? 'Cada oferta usa o título definido na aba Ofertas' : undefined}
+              value={s.id === 'ofertas' ? 'Ofertas (título de cada data na aba Ofertas)' : s.titulo}
               onChange={(e) => set('secoes', f.secoes.map((x, j) => (j === i ? { ...x, titulo: e.target.value } : x)))}
             />
             <button type="button" className="icone-btn" aria-label="Subir" disabled={i === 0} onClick={() => mover(i, -1)}>

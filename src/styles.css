@@ -2157,3 +2157,214 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
     top: 16px;
   }
 }
+
+/* ---------- Banners do topo ---------- */
+.banner-carrossel {
+  padding-top: 16px;
+  padding-bottom: 4px;
+}
+
+.banner-palco {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  aspect-ratio: 2 / 1;
+  background: var(--surface-soft-bg);
+}
+
+.banner-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 500ms ease, visibility 0s linear 500ms;
+}
+
+.banner-slide.ativo {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 500ms ease;
+}
+
+.banner-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.banner-link img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Computador: faixa mais baixa (16:6); a arte 2:1 perde só um pouco em cima e embaixo */
+@media (min-width: 768px) {
+  .banner-palco {
+    aspect-ratio: 16 / 6;
+  }
+}
+
+.banner-seta {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--surface-strong-bg);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.banner-seta-ant { left: 10px; }
+.banner-seta-prox { right: 10px; }
+
+@media (hover: hover) and (min-width: 768px) {
+  .banner-seta { display: flex; }
+}
+
+.banner-pontos {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+/* Área de toque de 24px com a bolinha visível menor */
+.banner-ponto {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.banner-ponto::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-subtle);
+  transition: width 200ms ease, background 200ms ease;
+}
+
+.banner-ponto.ativo::before {
+  width: 22px;
+  border-radius: 999px;
+  background: var(--cor-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner-slide,
+  .banner-slide.ativo,
+  .banner-ponto::before {
+    transition: none;
+  }
+}
+
+/* ---------- Destaques e ofertas ---------- */
+.bloco-destaques {
+  position: relative;
+}
+
+.bloco-destaques::before {
+  content: '';
+  position: absolute;
+  inset: 0 8px;
+  border-radius: 20px;
+  background: radial-gradient(70% 100% at 50% 0%, var(--glass-glow), transparent 75%);
+  border: 1px solid var(--glass-border);
+  z-index: -1;
+}
+
+.card-selo-destaque {
+  background: linear-gradient(135deg, var(--cor-4), var(--cor-2));
+  color: var(--cor-texto);
+  border-color: transparent;
+}
+
+.oferta-bloco {
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 20px 16px 24px;
+  background: radial-gradient(60% 80% at 100% 0%, var(--glass-glow), transparent 70%), var(--surface-soft-bg);
+}
+
+.oferta-cabeca {
+  margin-bottom: 18px;
+}
+
+.oferta-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--cor-4), var(--cor-2));
+  color: var(--cor-texto);
+}
+
+.oferta-titulo {
+  margin: 10px 0 4px;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  font-weight: 800;
+}
+
+.oferta-texto {
+  margin: 0;
+  color: var(--text-muted);
+  max-width: 560px;
+}
+
+.oferta-mais {
+  margin-top: 18px;
+}
+
+/* ---------- Admin: banners e ofertas ---------- */
+.banner-admin,
+.oferta-admin {
+  list-style: none;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.banner-admin-topo,
+.oferta-admin-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.banner-admin-acoes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.banner-admin-thumb {
+  width: 160px;
+  max-width: 100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+}
