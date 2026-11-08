@@ -127,6 +127,12 @@ function Conteudo({ p, whatsapp, aviso, onRecarregar }: { p: Pedido; whatsapp: b
             {receb.detalhe && <span className="dica">{receb.detalhe}</span>}
           </p>
         )}
+        {typeof p.desconto === 'number' && p.desconto > 0 && (
+          <div className="linha-resumo">
+            <span>Desconto da promoção</span>
+            <strong>− {brl(p.desconto)}</strong>
+          </div>
+        )}
         <div className="linha-resumo">
           <span>Total</span>
           <strong>{totalFormatado(p.total)}</strong>

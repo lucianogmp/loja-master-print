@@ -2,6 +2,7 @@ import { Link } from './Link'
 import type { Produto } from '../lib/tipos'
 import { brl, diasUteis } from '../lib/format'
 import ProductArt from './ProductArt'
+import { percentualDesconto } from '../lib/promocao'
 
 // Preço no cartão: rótulo pequeno + valor em destaque (estilo marketplace)
 function precoPartes(p: Produto): { rotulo?: string; valor: string; sufixo?: string } | null {
@@ -20,11 +21,19 @@ export default function ProductCard({ produto, nivel = 'h3', selo }: { produto: 
       <div className="card-imagem">
         {produto.imagens[0] ? <img src={produto.imagens[0]} alt={produto.nome} loading="lazy" /> : <ProductArt tipo={produto.arte} />}
         {selo ? <span className="card-selo card-selo-destaque">{selo}</span> : produto.arteFixa && <span className="card-selo">Arte pronta</span>}
+        {produto.precoOriginal && produto.tipoPreco !== 'consulta' && (
+          <span className="card-desconto">-{percentualDesconto(produto.precoOriginal, Math.min(...produto.variacoes.map((v) => v.preco)))}%</span>
+        )}
       </div>
       <div className="card-corpo">
         <Nome>{produto.nome}</Nome>
         {produto.prazoDias && <span className="card-prazo">Produção em {diasUteis(produto.prazoDias)}</span>}
         <div className="card-preco">
+          {produto.precoOriginal && produto.tipoPreco !== 'consulta' && (
+            <s className="preco-de" aria-label={`de ${brl(produto.precoOriginal)}`}>
+              {brl(produto.precoOriginal)}
+            </s>
+          )}
           {(() => {
             const pr = precoPartes(produto)
             if (!pr) return <span className="sob-consulta">Sob consulta</span>

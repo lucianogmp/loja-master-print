@@ -2368,3 +2368,76 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
   border-radius: 8px;
   border: 1px solid var(--glass-border);
 }
+
+/* ---------- Promoção: preço de tabela riscado e preço atual em destaque ---------- */
+.preco-de {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-subtle);
+  text-decoration: line-through;
+}
+
+.card-desconto {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #15803d;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.badge-promo {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #15803d;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.caixa-preco .preco-de {
+  font-size: 0.95rem;
+}
+
+.item-valor .preco-de {
+  text-align: right;
+}
+
+/* ---------- Admin: tela própria de edição do produto ---------- */
+.ed-produto { display: grid; gap: 10px; padding-top: 4px; }
+.ed-barra {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  background: var(--surface-strong-bg);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--glass-border);
+}
+.ed-voltar { display: inline-flex; align-items: center; gap: 4px; flex: none; }
+.ed-titulo { flex: 1; min-width: 0; }
+.ed-titulo h2 { margin: 0; font-size: 1.05rem; overflow-wrap: anywhere; }
+.ed-titulo small { color: var(--text-muted); }
+.ed-grade { display: grid; gap: 10px; grid-template-columns: 1fr; }
+.ed-card { border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px 12px; display: grid; gap: 6px; align-content: start; }
+.ed-card h3 { margin: 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+.ed-foto img { width: 84px; height: 84px; }
+.ed-foto { width: 84px; position: relative; }
+.ed-principal { position: absolute; top: 4px; left: 4px; padding: 1px 6px; border-radius: 999px; background: var(--surface-strong-bg); font-size: 0.65rem; font-weight: 700; }
+.ed-select { padding: 6px 8px; font-size: 0.9rem; }
+.ed-previa { margin: 0; display: flex; align-items: baseline; gap: 10px; }
+.ed-previa s { color: var(--text-subtle); }
+.ed-previa strong { font-size: 1.25rem; }
+@media (min-width: 900px) {
+  .ed-grade { grid-template-columns: 1fr 1fr; }
+  .ed-fotos, .ed-descricao { grid-column: 1 / -1; }
+}

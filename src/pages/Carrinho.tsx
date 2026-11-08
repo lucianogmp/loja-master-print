@@ -60,7 +60,14 @@ export default function Carrinho() {
                     Remover
                   </button>
                 </div>
-                <div className="item-valor">{total === null ? 'Sob consulta' : brl(total)}</div>
+                <div className="item-valor">
+                  {total !== null && produto.precoOriginal && (
+                    <s className="preco-de" aria-label={`de ${brl(produto.precoOriginal * item.quantidade)}`}>
+                      {brl(produto.precoOriginal * item.quantidade)}
+                    </s>
+                  )}
+                  {total === null ? 'Sob consulta' : brl(total)}
+                </div>
               </li>
             )
           })}

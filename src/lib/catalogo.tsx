@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { ArteTipo, Categoria, Produto } from './tipos'
 import { erp } from './erp'
+import { precoComPromocao, type Promocao } from './promocao'
 
 // Catálogo vem do banco do ERP, SOMENTE pela função pública loja_catalogo()
 // (só produtos ativos e marcados "aparece no site"; sem custo, margem ou cliente).
@@ -74,6 +75,17 @@ function paraProduto(l: Linha): Produto {
   }
 }
 
+type LinhaPromo = { produto_id: string; tipo: Promocao['tipo']; valor: number }
+
+/** Aplica a promoção: o preço da variação vira o promocional e o de tabela fica em precoOriginal. */
+function comPromocao(p: Produto, promo?: Promocao): Produto {
+  if (!promo || p.tipoPreco !== 'unidade') return p
+  const de = p.variacoes[0]?.preco ?? 0
+  const por = precoComPromocao(de, promo)
+  if (por >= de) return p
+  return { ...p, precoOriginal: de, variacoes: p.variacoes.map((v) => ({ ...v, preco: por })) }
+}
+
 type Ctx = {
   produtos: Produto[]
   categorias: Categoria[]
@@ -87,15 +99,27 @@ const CatalogoCtx = createContext<Ctx | null>(null)
 
 export function CatalogoProvider({ children }: { children: ReactNode }) {
   const [linhas, setLinhas] = useState<Linha[]>([])
+  const [promos, setPromos] = useState<Map<string, Promocao>>(new Map())
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
 
   const recarregar = useCallback(() => {
     setErro(false)
     setCarregando(true)
-    erp.rpc('loja_catalogo_v2').then(({ data, error }) => {
+    // Promoções vêm à parte: se falharem, o catálogo aparece com os preços normais
+    const promocoes = erp
+      .rpc('loja_promocoes')
+      .then(({ data, error }) =>
+        error || !Array.isArray(data)
+          ? new Map<string, Promocao>()
+          : new Map((data as LinhaPromo[]).map((x) => [x.produto_id, { tipo: x.tipo, valor: Number(x.valor) }] as const)),
+      )
+    Promise.all([erp.rpc('loja_catalogo_v2'), promocoes]).then(([{ data, error }, mapa]) => {
       if (error) setErro(true)
-      else setLinhas((data ?? []) as Linha[])
+      else {
+        setPromos(mapa)
+        setLinhas((data ?? []) as Linha[])
+      }
       setCarregando(false)
     })
   }, [])
@@ -105,7 +129,7 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
   }, [recarregar])
 
   const valor = useMemo<Ctx>(() => {
-    const produtos = linhas.map(paraProduto)
+    const produtos = linhas.map((l) => comPromocao(paraProduto(l), promos.get(l.id)))
     const vistas = new Map<string, Categoria>()
     linhas.forEach((l, i) => {
       const c = produtos[i].categoria
@@ -128,7 +152,7 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
       produtoPorSlug: (slug) => produtos.find((p) => p.slug === slug),
       categoriaPorSlug: (slug) => categorias.find((c) => c.slug === slug),
     }
-  }, [linhas, carregando, erro, recarregar])
+  }, [linhas, promos, carregando, erro, recarregar])
 
   return <CatalogoCtx.Provider value={valor}>{children}</CatalogoCtx.Provider>
 }

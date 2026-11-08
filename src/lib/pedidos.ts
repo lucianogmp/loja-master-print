@@ -9,6 +9,7 @@ export type Pedido = {
   numero: number
   data: string
   total: number
+  desconto?: number // R$ de promoção do site já abatidos do total
   etapa: number // 0 cancelado · 1 recebido · 2 em produção · 3 pronto · 4 entregue
   situacao: string
   recebimento: string

@@ -5,6 +5,7 @@ import { useCatalogo } from '../lib/catalogo'
 import { useSite } from '../lib/site'
 import { linkWhatsApp } from '../config'
 import { brl } from '../lib/format'
+import { percentualDesconto } from '../lib/promocao'
 import { useCart } from '../lib/cart'
 import { areaM2, calcularTotal, rotuloArte, type OpcaoArte } from '../lib/preco'
 import ProductArt from '../components/ProductArt'
@@ -186,7 +187,15 @@ export default function ProdutoPage() {
               </>
             ) : total !== null ? (
               <>
-                <span>Total</span>
+                <span>
+                  Total
+                  {produto.precoOriginal && <span className="badge-promo">-{percentualDesconto(produto.precoOriginal, variacao?.preco ?? 0)}%</span>}
+                </span>
+                {produto.precoOriginal && (
+                  <s className="preco-de" aria-label={`de ${brl(produto.precoOriginal * quantidade)}`}>
+                    {brl(produto.precoOriginal * quantidade)}
+                  </s>
+                )}
                 <strong>{brl(total)}</strong>
               </>
             ) : (

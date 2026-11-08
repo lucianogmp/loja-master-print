@@ -16,3 +16,14 @@ describe('Cartão de produto', () => {
     expect(screen.getByText('Produção em 1 dia útil')).toBeInTheDocument()
   })
 })
+
+describe('Cartão de produto em promoção', () => {
+  it('UT-promo mostra o preço de tabela riscado, o atual em destaque e o selo de desconto', async () => {
+    definirRpc('loja_catalogo_v2', linhasCatalogo([{ slug: 'cartoes', nome: 'Cartões' }]))
+    definirRpc('loja_promocoes', [{ produto_id: 'p0', tipo: 'percentual', valor: 20 }])
+    renderComTudo({ rota: '/produtos' })
+    expect(await screen.findByText('-20%')).toBeInTheDocument()
+    expect(screen.getByLabelText(/de R\$\s*10,00/)).toBeInTheDocument()
+    expect(screen.getByText(/R\$\s*8,00/)).toBeInTheDocument()
+  })
+})

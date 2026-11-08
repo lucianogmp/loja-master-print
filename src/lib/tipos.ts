@@ -42,6 +42,8 @@ export type Produto = {
   prazoDias?: number
   precisaArte: boolean
   destaque?: boolean
+  // Promoção do site: preço de tabela ("de"). O preço das variações já é o promocional ("por").
+  precoOriginal?: number
   maisVendido?: boolean // só vem do banco quando há venda real
   // Produto derivado: usa preço, prazo e produção de um produto do ERP, mas com arte pronta própria
   derivadoId?: string
