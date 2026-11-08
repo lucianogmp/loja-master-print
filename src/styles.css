@@ -2441,3 +2441,16 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
   .ed-grade { grid-template-columns: 1fr 1fr; }
   .ed-fotos, .ed-descricao { grid-column: 1 / -1; }
 }
+
+/* No celular a barra do produto gruda logo abaixo da barra do admin, sem ficar escondida atrás dela */
+@media (max-width: 767.98px) {
+  .ed-barra {
+    top: calc(var(--barra-topo) + var(--safe-top));
+    margin: 0 -4px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .ed-titulo h2 { font-size: 0.95rem; }
+  .ed-card { padding: 10px; }
+  .medidas-linha input:not([type='checkbox']) { width: 4.6rem; }
+}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { erp } from '../lib/erp'
 import { brl } from '../lib/format'
@@ -105,6 +105,11 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
   const [promoValor, setPromoValor] = useState(item.lp?.promo_valor != null ? String(item.lp.promo_valor).replace('.', ',') : '')
   const [msg, setMsg] = useState('')
   const [enviando, setEnviando] = useState(false)
+
+  // A tela do produto sempre abre no topo (a lista pode ter sido rolada até o produto clicado)
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [])
 
   async function subir(e: ChangeEvent<HTMLInputElement>) {
     const arquivos = [...(e.target.files ?? [])]
