@@ -2458,3 +2458,28 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
 .oferta-produto { list-style: none; display: grid; gap: 4px; padding: 6px 0; border-bottom: 1px solid var(--glass-border); }
 .oferta-produto-nome small { color: var(--text-muted); margin-left: 6px; }
 .oferta-produto .medidas-linha input:not([type='checkbox']) { width: 5rem; }
+
+/* Faixa de categorias do cabeçalho: recolhe ao rolar a página para baixo */
+.categorias-recolhe {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 220ms ease, opacity 180ms ease;
+}
+.categorias-recolhe > div { overflow: hidden; min-height: 0; }
+.header-recolhido .categorias-recolhe { grid-template-rows: 0fr; opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .categorias-recolhe { transition: none; } }
+
+/* Compartilhar produto */
+.compartilhar { position: relative; display: inline-block; }
+.compartilhar-menu {
+  position: absolute; z-index: 15; top: calc(100% + 6px); left: 0; min-width: 220px;
+  display: grid; padding: 6px; border-radius: 0.8rem;
+  background: var(--surface-strong-bg); border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+.compartilhar-menu a, .compartilhar-menu button {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 0; border-radius: 0.5rem;
+  background: none; color: var(--text-primary); font: inherit; font-size: 0.92rem; text-align: left;
+  text-decoration: none; cursor: pointer;
+}
+.compartilhar-menu a:hover, .compartilhar-menu button:hover { background: rgba(var(--cor-rgb), 0.12); }

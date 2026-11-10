@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Search, Settings, ShoppingCart, User } from 'lucide-react'
 import { Link, useNavegar } from './Link'
@@ -20,6 +20,14 @@ export default function Header() {
   const navegar = useNavegar()
   const { pathname, search } = useLocation()
   const [busca, setBusca] = useState('')
+  // Rolando para baixo, a faixa de categorias recolhe para não tampar os produtos; volta ao chegar ao topo
+  const [recolhido, setRecolhido] = useState(false)
+  useEffect(() => {
+    const aoRolar = () => setRecolhido((r) => (r ? window.scrollY > 24 : window.scrollY > 80))
+    aoRolar()
+    window.addEventListener('scroll', aoRolar, { passive: true })
+    return () => window.removeEventListener('scroll', aoRolar)
+  }, [])
 
   // O destaque da aba depende do ?categoria= da URL, não só do caminho
   const noCatalogo = pathname === '/produtos'
@@ -32,7 +40,7 @@ export default function Header() {
   }
 
   return (
-    <header className="header">
+    <header className={`header${recolhido ? ' header-recolhido' : ''}`}>
       <div className="barra-topo">
         <div className="container barra-topo-conteudo">
           <span>{empresa.horario}</span>
@@ -76,7 +84,11 @@ export default function Header() {
         </div>
       </div>
 
-      <ChipsCategorias faixa atual={noCatalogo ? categoriaAtual ?? undefined : null} />
+      <div className="categorias-recolhe" inert={recolhido}>
+        <div>
+          <ChipsCategorias faixa atual={noCatalogo ? categoriaAtual ?? undefined : null} />
+        </div>
+      </div>
     </header>
   )
 }

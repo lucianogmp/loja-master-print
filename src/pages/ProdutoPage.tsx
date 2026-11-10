@@ -8,6 +8,7 @@ import { brl } from '../lib/format'
 import { percentualDesconto } from '../lib/promocao'
 import { useCart } from '../lib/cart'
 import { areaM2, calcularTotal, rotuloArte, type OpcaoArte } from '../lib/preco'
+import Compartilhar from '../components/Compartilhar'
 import ProductArt from '../components/ProductArt'
 import { useShell } from '../components/LojaShell'
 import { useTitulo } from '../lib/telas'
@@ -93,6 +94,7 @@ export default function ProdutoPage() {
         <div className="produto-info">
           {ehMobile ? <h2>{produto.nome}</h2> : <h1>{produto.nome}</h1>}
           <p className="produto-descricao">{produto.descricao}</p>
+          <Compartilhar titulo={produto.nome} />
           {produto.entregaModo === 'so_retirada' && <p className="dica">Este produto é somente para retirada na gráfica.</p>}
 
           <div className="campo">

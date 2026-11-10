@@ -94,6 +94,12 @@ export default function Home() {
         </section>
       )}
 
+      {/* Ofertas vêm sempre logo abaixo do destaque do topo, antes de Destaques e Mais vendidos */}
+      {inicio.secoes.some((s) => s.id === 'ofertas' && s.visivel) &&
+        ofertasNoAr.map((x) => (
+          <SecaoOferta key={x.oferta.id} oferta={x.oferta} dias={x.dias} produtos={x.produtos} limite={8} />
+        ))}
+
       {inicio.secoes
         .filter((s) => s.visivel)
         .map((s) => {
@@ -110,14 +116,7 @@ export default function Home() {
                 </div>
               </section>
             ) : null
-          if (s.id === 'ofertas')
-            return (
-              <div key={s.id}>
-                {ofertasNoAr.map((x) => (
-                  <SecaoOferta key={x.oferta.id} oferta={x.oferta} dias={x.dias} produtos={x.produtos} limite={8} />
-                ))}
-              </div>
-            )
+          if (s.id === 'ofertas') return null
           if (s.id === 'beneficios')
             return (
               <section key={s.id} className="faixa-beneficios">
