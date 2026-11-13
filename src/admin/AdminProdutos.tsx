@@ -277,6 +277,11 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
                   × <input inputMode="decimal" value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="A" aria-label="Altura em cm" /> cm</label>
               </div>
               <span className="dica">Pacote já embalado (comprimento × largura × altura). Usado no frete.</span>
+              {[peso, comp, larg, alt].every((v) => num(v) !== null && (num(v) ?? 0) > 0) ? (
+                <span className="dica">✅ Envio pelos Correios liberado para este produto.</span>
+              ) : (
+                <span className="dica">⚠️ Sem peso e medidas completos, este produto fica só para retirada quando o frete online estiver ligado.</span>
+              )}
             </>
           )}
         </section>

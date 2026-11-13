@@ -8,6 +8,8 @@ import { useAuth } from '../lib/auth'
 import { useCatalogo } from '../lib/catalogo'
 import { useSite } from '../lib/site'
 import { ERP_URL } from '../lib/erp'
+import { useAjustes } from '../lib/ajustes'
+import { consultarFrete, envioPronto, type OpcaoFrete } from '../lib/envio'
 import { limparCachePedidos } from '../lib/pedidos'
 import { calcularTotal } from '../lib/preco'
 import { supabase } from '../lib/supabase'
@@ -29,7 +31,12 @@ export default function Checkout() {
   const [observacao, setObservacao] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState('')
-  const [feito, setFeito] = useState<{ numero: number; total: number } | null>(null)
+  const [feito, setFeito] = useState<{ numero: number; total: number; semLink?: boolean } | null>(null)
+  const { ajustes } = useAjustes()
+  const [opcoesFrete, setOpcoesFrete] = useState<OpcaoFrete[]>([])
+  const [freteCodigo, setFreteCodigo] = useState('')
+  const [carregandoFrete, setCarregandoFrete] = useState(false)
+  const [erroFrete, setErroFrete] = useState('')
   const { ehMobile } = useShell()
   const Titulo = ehMobile ? 'h2' : 'h1' // no celular o h1 é o da barra do topo
   const ref = useRef(crypto.randomUUID()) // evita pedido duplicado se clicar duas vezes
@@ -41,7 +48,56 @@ export default function Checkout() {
 
   // Se algum produto do carrinho é só para retirada, a entrega fica indisponível.
   const soRetirada = itens.some((i) => produtoPorSlug(i.slug)?.entregaModo === 'so_retirada')
-  const entrega: Entrega = soRetirada ? 'retirada' : entregaEscolhida
+  // Com o frete online ligado, só produto com peso e medidas do pacote cadastrados pode ser enviado
+  const freteOnline = ajustes.frete.ligado
+  const semEnvio = freteOnline
+    ? [...new Set(itens.map((i) => produtoPorSlug(i.slug)).filter((p) => p && !envioPronto(p)).map((p) => p!.nome))]
+    : []
+  const entregaBloqueada = soRetirada || semEnvio.length > 0
+  const entrega: Entrega = entregaBloqueada ? 'retirada' : entregaEscolhida
+  const pagarOnline = ajustes.pagamento.ligado
+
+  // CEP do endereço de entrega escolhido (salvo ou digitado)
+  const idPadrao = escolhido || enderecos.find((x) => x.padrao)?.id || enderecos[0]?.id || 'novo'
+  const cepEntrega = so((enderecos.find((x) => x.id === idPadrao) ?? novo).cep)
+  const chaveItens = itens.map((i) => `${i.slug}:${i.quantidade}`).join('|')
+
+  // Calcula o frete quando o CEP está completo
+  useEffect(() => {
+    if (!(entrega === 'entrega' && freteOnline) || cepEntrega.length !== 8) {
+      setOpcoesFrete([])
+      setFreteCodigo('')
+      setErroFrete('')
+      return
+    }
+    let vivo = true
+    setCarregandoFrete(true)
+    setErroFrete('')
+    const lista = itens
+      .map((i) => {
+        const p = produtoPorSlug(i.slug)
+        return p ? { produto_id: p.id, quantidade: i.quantidade } : null
+      })
+      .filter((x): x is { produto_id: string; quantidade: number } => !!x)
+    consultarFrete(cepEntrega, lista).then((r) => {
+      if (!vivo) return
+      setCarregandoFrete(false)
+      if (r.ok) {
+        setOpcoesFrete(r.opcoes)
+        setFreteCodigo(r.opcoes[0]?.codigo ?? '')
+      } else {
+        setOpcoesFrete([])
+        setFreteCodigo('')
+        setErroFrete(r.erro)
+      }
+    })
+    return () => {
+      vivo = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entrega, freteOnline, cepEntrega, chaveItens])
+  const freteEscolhido = opcoesFrete.find((o) => o.codigo === freteCodigo)
+  const valorFrete = freteEscolhido?.valor ?? 0
 
   if (feito) {
     const msg =
@@ -51,7 +107,12 @@ export default function Checkout() {
       <div className="container secao centro">
         <Titulo className="titulo-pagina">Pedido nº {feito.numero} recebido!</Titulo>
         <p className="subtitulo">
-          Total dos produtos: {brl(feito.total)}. Falta combinar o pagamento{entrega === 'entrega' ? ', o frete' : ''} e a arte com a gente.
+          {freteOnline && entrega === 'entrega'
+            ? `Total com frete: ${brl(feito.total)}. `
+            : `Total dos produtos: ${brl(feito.total)}. `}
+          {feito.semLink
+            ? 'Não conseguimos abrir o pagamento online agora: combine o pagamento com a gente pelo WhatsApp.'
+            : `Falta combinar o pagamento${entrega === 'entrega' && !freteOnline ? ', o frete' : ''} e a arte com a gente.`}
         </p>
         {empresa.whatsapp && (
           <a className="btn btn-primario" href={linkWhatsApp(msg)} target="_blank" rel="noreferrer">
@@ -94,7 +155,7 @@ export default function Checkout() {
   }
 
   // Sem escolha explícita: usa o endereço padrão (ou o primeiro); sem nenhum salvo, o formulário novo
-  const idEfetivo = escolhido || enderecos.find((x) => x.padrao)?.id || enderecos[0]?.id || 'novo'
+  const idEfetivo = idPadrao
   const salvoEscolhido = enderecos.find((x) => x.id === idEfetivo)
 
   async function enviar(e: FormEvent) {
@@ -108,6 +169,9 @@ export default function Checkout() {
       const problema = validarEndereco(endereco)
       if (problema) return setErro(problema)
     }
+    if (entrega === 'entrega' && freteOnline && !freteEscolhido) {
+      return setErro(carregandoFrete ? 'Aguarde o cálculo do frete.' : erroFrete || 'Escolha a forma de envio.')
+    }
     setEnviando(true)
     try {
       if (endereco && !salvoEscolhido && salvarNovo && !semEnderecos && enderecos.length < 5) {
@@ -118,6 +182,8 @@ export default function Checkout() {
         ref: ref.current,
         entrega,
         endereco: endereco && { ...endereco, cep: so(endereco.cep) },
+        frete_codigo: entrega === 'entrega' && freteOnline ? freteEscolhido?.codigo : undefined,
+        pagar: pagarOnline,
         observacao,
         itens: itens
           .map((i) => {
@@ -141,9 +207,14 @@ export default function Checkout() {
         return
       }
       limparCachePedidos(session!.user.id)
-      setFeito({ numero: dados.numero, total: dados.total })
       limpar()
       ref.current = crypto.randomUUID()
+      // Pagamento online: leva direto para a página segura de pagamento
+      if (typeof dados.pagamento_url === 'string' && dados.pagamento_url.startsWith('https://')) {
+        window.location.assign(dados.pagamento_url)
+        return
+      }
+      setFeito({ numero: dados.numero, total: dados.total, semLink: !!dados.pagamento_erro })
     } catch {
       setErro('Sem conexão. Tente de novo em instantes.')
     } finally {
@@ -169,13 +240,16 @@ export default function Checkout() {
             {soRetirada && (
               <span className="dica">Há produto no carrinho que só pode ser retirado na gráfica.</span>
             )}
+            {!soRetirada && semEnvio.length > 0 && (
+              <span className="dica">Envio indisponível para: {semEnvio.join(', ')}. Para receber em casa, tire esse item do carrinho ou combine o envio pelo WhatsApp.</span>
+            )}
             <label className="radio">
               <input type="radio" name="entrega" checked={entrega === 'retirada'} onChange={() => setEntrega('retirada')} />
               Retirar na gráfica
             </label>
             <label className="radio">
-              <input type="radio" name="entrega" checked={entrega === 'entrega'} disabled={soRetirada} onChange={() => setEntrega('entrega')} />
-              Receber em casa (frete combinado)
+              <input type="radio" name="entrega" checked={entrega === 'entrega'} disabled={entregaBloqueada} onChange={() => setEntrega('entrega')} />
+              {freteOnline ? 'Receber em casa (Correios)' : 'Receber em casa (frete combinado)'}
             </label>
           </fieldset>
 
@@ -209,7 +283,26 @@ export default function Checkout() {
                   )}
                 </>
               )}
-              <span className="dica">O valor e o prazo do frete são confirmados pela gráfica.</span>
+              {!freteOnline && <span className="dica">O valor e o prazo do frete são confirmados pela gráfica.</span>}
+            </fieldset>
+          )}
+
+          {entrega === 'entrega' && freteOnline && (
+            <fieldset className="campo opcoes-arte">
+              <legend>Forma de envio</legend>
+              {cepEntrega.length !== 8 && <span className="dica">Informe o CEP do endereço para calcular o frete.</span>}
+              {carregandoFrete && <span className="dica">Calculando o frete nos Correios...</span>}
+              {erroFrete && <span className="dica" role="alert">{erroFrete}</span>}
+              {opcoesFrete.map((o) => (
+                <label key={o.codigo} className="radio">
+                  <input type="radio" name="frete" checked={freteCodigo === o.codigo} onChange={() => setFreteCodigo(o.codigo)} />
+                  <span>
+                    <strong>{o.nome}</strong> — {o.valor === 0 ? 'Frete grátis' : brl(o.valor)}
+                    {o.prazo ? <small> · {o.prazo} dia(s) úteis após a postagem</small> : null}
+                  </span>
+                </label>
+              ))}
+              {opcoesFrete.length > 0 && <span className="dica">O prazo de envio conta depois que o pedido fica pronto.</span>}
             </fieldset>
           )}
 
@@ -223,10 +316,12 @@ export default function Checkout() {
           )}
           {erro && <p className="dica" role="alert">{erro}</p>}
           <button type="submit" className="btn btn-primario btn-bloco" disabled={enviando}>
-            {enviando ? 'Enviando...' : 'Enviar pedido'}
+            {enviando ? 'Enviando...' : pagarOnline ? 'Ir para o pagamento' : 'Enviar pedido'}
           </button>
           <p className="aviso-exemplo">
-            O pagamento é combinado com a gráfica depois do envio. O valor final é confirmado por ela.
+            {pagarOnline
+              ? 'Você paga em uma página segura da InfinitePay (cartão ou Pix). A gráfica confirma a arte depois.'
+              : 'O pagamento é combinado com a gráfica depois do envio. O valor final é confirmado por ela.'}
           </p>
         </form>
 
@@ -253,8 +348,22 @@ export default function Checkout() {
           </div>
           <div className="linha-resumo">
             <span>Frete</span>
-            <span>{entrega === 'retirada' ? 'Grátis (retirada)' : 'A combinar'}</span>
+            <span>
+              {entrega === 'retirada'
+                ? 'Grátis (retirada)'
+                : !freteOnline
+                  ? 'A combinar'
+                  : freteEscolhido
+                    ? freteEscolhido.valor === 0 ? 'Grátis' : brl(freteEscolhido.valor)
+                    : 'Informe o CEP'}
+            </span>
           </div>
+          {freteOnline && entrega === 'entrega' && freteEscolhido && (
+            <div className="linha-resumo">
+              <span>Total</span>
+              <strong>{brl(subtotal + valorFrete)}</strong>
+            </div>
+          )}
         </aside>
       </div>
     </div>

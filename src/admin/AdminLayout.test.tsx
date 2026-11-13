@@ -4,7 +4,7 @@ import { renderComTudo } from '../test/render'
 import { definirMidia } from '../test/matchMedia'
 import { erpFake, sessaoFake } from '../test/fakes'
 
-const ROTULOS_SECOES = ['Produtos', 'Derivados', 'Categorias', 'Página inicial', 'Banners', 'Ofertas', 'Dados da empresa', 'Aparência', 'Páginas de texto']
+const ROTULOS_SECOES = ['Produtos', 'Derivados', 'Categorias', 'Página inicial', 'Banners', 'Ofertas', 'Pagamento e frete', 'Dados da empresa', 'Aparência', 'Páginas de texto']
 
 async function abrirAdmin(opcoes: { mobile?: boolean; papel?: string | null } = {}) {
   const { mobile = true, papel = 'dono' } = opcoes
@@ -119,9 +119,9 @@ describe('AdminLayout e AdminMenu', () => {
     const dialogo = await abrirGaveta(usuario)
     const nav = within(dialogo).getByRole('navigation', { name: 'Administração' })
     const ordem = ordemDoMenu(nav)
-    expect(ordem.slice(0, 9)).toEqual(ROTULOS_SECOES)
-    expect(ordem[9]).toMatch(/Ativar tema/)
-    expect(ordem.slice(10)).toEqual(['Voltar à loja', 'Sair'])
+    expect(ordem.slice(0, 10)).toEqual(ROTULOS_SECOES)
+    expect(ordem[10]).toMatch(/Ativar tema/)
+    expect(ordem.slice(11)).toEqual(['Voltar à loja', 'Sair'])
   })
 
   it('IT-024 gaveta → seção → computador (menu fixo) → celular (botão de volta)', async () => {

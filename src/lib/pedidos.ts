@@ -15,6 +15,8 @@ export type Pedido = {
   recebimento: string
   endereco: string
   itens: PedidoItem[]
+  // Pagamento online (InfinitePay), quando o pedido foi feito com ele; `link` só existe enquanto falta pagar
+  pagamento?: { status: 'aguardando' | 'pago' | 'cancelado'; link: string | null; metodo?: string | null; parcelas?: number | null } | null
 }
 
 export const ETAPAS = ['Recebido', 'Em produção', 'Pronto', 'Entregue']

@@ -137,6 +137,17 @@ function Conteudo({ p, whatsapp, aviso, onRecarregar }: { p: Pedido; whatsapp: b
           <span>Total</span>
           <strong>{totalFormatado(p.total)}</strong>
         </div>
+        {p.pagamento?.status === 'pago' && (
+          <p className="recebimento"><strong>Pagamento confirmado</strong>{p.pagamento.metodo === 'pix' ? <span className="dica">Pix</span> : p.pagamento.metodo ? <span className="dica">Cartão{p.pagamento.parcelas && p.pagamento.parcelas > 1 ? ` em ${p.pagamento.parcelas}x` : ''}</span> : null}</p>
+        )}
+        {p.pagamento?.status === 'aguardando' && (
+          <p className="recebimento">
+            <strong>Aguardando pagamento</strong>
+            {p.pagamento.link && (
+              <a className="btn btn-primario" href={p.pagamento.link}>Pagar agora</a>
+            )}
+          </p>
+        )}
       </section>
 
       {whatsapp && (

@@ -8,6 +8,8 @@ import { brl } from '../lib/format'
 import { percentualDesconto } from '../lib/promocao'
 import { useCart } from '../lib/cart'
 import { areaM2, calcularTotal, rotuloArte, type OpcaoArte } from '../lib/preco'
+import { useAjustes } from '../lib/ajustes'
+import { envioPronto } from '../lib/envio'
 import Compartilhar from '../components/Compartilhar'
 import ProductArt from '../components/ProductArt'
 import { useShell } from '../components/LojaShell'
@@ -20,6 +22,7 @@ export default function ProdutoPage() {
   const { adicionar } = useCart()
   const { empresa } = useSite()
   const navegar = useNavegar()
+  const { ajustes } = useAjustes()
   const { ehMobile } = useShell()
   useTitulo(produto?.nome ?? 'Produto')
 
@@ -96,6 +99,9 @@ export default function ProdutoPage() {
           <p className="produto-descricao">{produto.descricao}</p>
           <Compartilhar titulo={produto.nome} />
           {produto.entregaModo === 'so_retirada' && <p className="dica">Este produto é somente para retirada na gráfica.</p>}
+          {produto.entregaModo !== 'so_retirada' && ajustes.frete.ligado && !envioPronto(produto) && (
+            <p className="dica">Envio pelos Correios indisponível para este produto: retirada na gráfica.</p>
+          )}
 
           <div className="campo">
             <label htmlFor="variacao">{produto.rotuloVariacao}</label>

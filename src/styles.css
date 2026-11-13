@@ -2483,3 +2483,7 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
   text-decoration: none; cursor: pointer;
 }
 .compartilhar-menu a:hover, .compartilhar-menu button:hover { background: rgba(var(--cor-rgb), 0.12); }
+
+/* Integrações (pagamento e frete) */
+.admin-bloco-int { display: grid; gap: 10px; padding: 16px; margin-bottom: 14px; }
+.admin-acoes { display: flex; flex-wrap: wrap; gap: 8px; }

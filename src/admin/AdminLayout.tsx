@@ -12,6 +12,7 @@ import AdminInicio from './AdminInicio'
 import AdminBanners from './AdminBanners'
 import AdminOfertas from './AdminOfertas'
 import AdminEmpresa from './AdminEmpresa'
+import AdminIntegracoes from './AdminIntegracoes'
 import AdminAparencia from './AdminAparencia'
 import AdminPaginas from './AdminPaginas'
 import AdminDerivados from './AdminDerivados'
@@ -69,6 +70,7 @@ export default function AdminLayout() {
           {aba === 'inicio' && <AdminInicio />}
           {aba === 'banners' && <AdminBanners />}
           {aba === 'ofertas' && <AdminOfertas />}
+          {aba === 'integracoes' && <AdminIntegracoes />}
           {aba === 'empresa' && <AdminEmpresa />}
           {aba === 'aparencia' && <AdminAparencia />}
           {aba === 'paginas' && <AdminPaginas />}
