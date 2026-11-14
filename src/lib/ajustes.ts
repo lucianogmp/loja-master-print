@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { erp } from './erp'
 
 // Ajustes públicos (sem segredo) de pagamento online e frete. Vêm da função pública loja_ajustes().
-// Desligados por padrão: sem ligar na aba "Pagamento e frete" do /admin, o site segue pelo WhatsApp.
+// Desligados por padrão: sem ligar na abas "Pagamento" e "Frete" do /admin, o site segue pelo WhatsApp.
 export type ServicoEnvio = { codigo: string; nome: string; ativo: boolean }
 export type Ajustes = {
   pagamento: { ligado: boolean }

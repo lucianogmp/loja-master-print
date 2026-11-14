@@ -2487,3 +2487,16 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
 /* Integrações (pagamento e frete) */
 .admin-bloco-int { display: grid; gap: 10px; padding: 16px; margin-bottom: 14px; }
 .admin-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Admin: Pagamento e Frete usam a largura toda, em duas colunas, compactos */
+.admin-integ .conta-bloco { max-width: none; }
+.admin-integ .admin-bloco-int { gap: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.admin-integ .admin-sub { margin: 0 0 2px; }
+@media (min-width: 960px) {
+  .admin-integ .admin-bloco-int { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; align-items: start; }
+  .admin-integ .admin-bloco-int > .admin-sub,
+  .admin-integ .admin-bloco-int > .radio,
+  .admin-integ .admin-bloco-int > .dica,
+  .admin-integ .admin-bloco-int > .admin-acoes,
+  .admin-integ .admin-bloco-int > fieldset { grid-column: 1 / -1; }
+}

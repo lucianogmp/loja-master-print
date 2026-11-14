@@ -31,7 +31,7 @@ const paraNumero = (s: string) => {
 }
 const paraTexto = (n: number) => (n ? String(n).replace('.', ',') : '')
 
-export default function AdminIntegracoes() {
+export default function AdminIntegracoes({ parte }: { parte: 'pagamento' | 'frete' }) {
   const [status, setStatus] = useState<Status | null>(null)
   const [erroCarga, setErroCarga] = useState('')
   const [aj, setAj] = useState<Ajustes>(AJUSTES_PADRAO)
@@ -164,14 +164,15 @@ export default function AdminIntegracoes() {
   if (!status) return <p className="dica">Carregando...</p>
 
   return (
-    <div className="admin-form">
+    <div className="admin-form admin-integ">
       <p className="dica">
         As chaves ficam guardadas só no servidor: depois de salvas elas não aparecem mais nesta tela nem no site. Tudo começa
-        desligado; enquanto estiver desligado, o pedido segue pelo WhatsApp e o frete é combinado.
+        desligado; enquanto estiver desligado, o pedido segue pelo WhatsApp{parte === 'frete' ? ' e o frete é combinado' : ''}.
       </p>
 
+      {parte === 'pagamento' && (
       <form className="conta-bloco vidro admin-bloco-int" onSubmit={salvarPagamento}>
-        <h2 className="admin-sub">Pagamento online — InfinitePay</h2>
+        <h2 className="admin-sub">Pagamento online — InfinitePay (cartão, Pix e boleto)</h2>
         <label className="radio">
           <input type="checkbox" checked={aj.pagamento.ligado} onChange={(e) => setAj({ ...aj, pagamento: { ligado: e.target.checked } })} />
           Ligar pagamento online no checkout (cartão e Pix)
@@ -194,7 +195,9 @@ export default function AdminIntegracoes() {
           <button type="button" className="btn btn-secundario" disabled={ocupado} onClick={() => testar('infinitepay', setMsgPag)}>Testar conexão</button>
         </div>
       </form>
+      )}
 
+      {parte === 'frete' && (
       <form className="conta-bloco vidro admin-bloco-int" onSubmit={salvarFrete}>
         <h2 className="admin-sub">Frete — Correios (contrato)</h2>
         <label className="radio">
@@ -280,6 +283,7 @@ export default function AdminIntegracoes() {
           <button type="button" className="btn btn-secundario" disabled={ocupado} onClick={() => testar('correios', setMsgFrete)}>Testar conexão</button>
         </div>
       </form>
+      )}
     </div>
   )
 }

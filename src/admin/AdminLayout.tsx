@@ -70,7 +70,8 @@ export default function AdminLayout() {
           {aba === 'inicio' && <AdminInicio />}
           {aba === 'banners' && <AdminBanners />}
           {aba === 'ofertas' && <AdminOfertas />}
-          {aba === 'integracoes' && <AdminIntegracoes />}
+          {aba === 'pagamento' && <AdminIntegracoes parte="pagamento" />}
+          {aba === 'frete' && <AdminIntegracoes parte="frete" />}
           {aba === 'empresa' && <AdminEmpresa />}
           {aba === 'aparencia' && <AdminAparencia />}
           {aba === 'paginas' && <AdminPaginas />}
