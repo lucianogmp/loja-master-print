@@ -7,6 +7,7 @@ import { erp } from '../lib/erp'
 
 export const SECOES = [
   { id: 'produtos', rotulo: 'Produtos' },
+  { id: 'grupos', rotulo: 'Grupos' },
   { id: 'derivados', rotulo: 'Derivados' },
   { id: 'categorias', rotulo: 'Categorias' },
   { id: 'inicio', rotulo: 'Página inicial' },

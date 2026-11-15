@@ -16,6 +16,7 @@ import AdminIntegracoes from './AdminIntegracoes'
 import AdminAparencia from './AdminAparencia'
 import AdminPaginas from './AdminPaginas'
 import AdminDerivados from './AdminDerivados'
+import AdminGrupos from './AdminGrupos'
 
 const PAPEIS = ['dono', 'admin']
 
@@ -65,6 +66,7 @@ export default function AdminLayout() {
         <div className="admin-conteudo">
           <h1 className="titulo-pagina">Administração da loja</h1>
           {aba === 'produtos' && <AdminProdutos />}
+          {aba === 'grupos' && <AdminGrupos />}
           {aba === 'derivados' && <AdminDerivados />}
           {aba === 'categorias' && <AdminCategorias />}
           {aba === 'inicio' && <AdminInicio />}

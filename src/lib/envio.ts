@@ -3,13 +3,28 @@ import type { Produto } from './tipos'
 
 /** Envio pelos Correios só vale para produto com peso e medidas do pacote e que não seja "somente retirada". */
 export function envioPronto(p: Produto, variacaoId?: string): boolean {
-  if (p.entregaModo === 'so_retirada' || !p.pacoteCm) return false
-  // Quantidades fechadas: cada opção pode ter o próprio peso; sem ele vale o peso do produto
+  // Grupo: cada variação é um produto do ERP com peso, medidas e modo de entrega próprios
+  const variacaoPronta = (v: Produto['variacoes'][number]) =>
+    v.produtoId ? !v.soRetirada && (v.pesoKg ?? 0) > 0 && !!v.pacoteCm : (v.pesoKg ?? p.pesoKg ?? 0) > 0
   if (p.temOpcoes) {
     const alvo = variacaoId ? p.variacoes.filter((v) => v.id === variacaoId) : p.variacoes
-    return alvo.length > 0 && alvo.every((v) => (v.pesoKg ?? p.pesoKg ?? 0) > 0)
+    const grupo = alvo.some((v) => v.produtoId)
+    if (!grupo && (p.entregaModo === 'so_retirada' || !p.pacoteCm)) return false
+    return alvo.length > 0 && alvo.every(variacaoPronta)
   }
+  if (p.entregaModo === 'so_retirada' || !p.pacoteCm) return false
   return !!p.pesoKg && p.pesoKg > 0
+}
+
+/** Produto do ERP que entra no pedido: em grupo é o da variação escolhida; senão, o próprio produto. */
+export function produtoIdDoItem(p: Produto, variacaoId: string): string {
+  return p.variacoes.find((v) => v.id === variacaoId)?.produtoId ?? p.id
+}
+
+/** O item só pode ser retirado na gráfica? (em grupo vale o modo da variação escolhida) */
+export function soRetiradaDoItem(p: Produto, variacaoId: string): boolean {
+  const v = p.variacoes.find((x) => x.id === variacaoId)
+  return v?.produtoId ? !!v.soRetirada : p.entregaModo === 'so_retirada'
 }
 
 /** Quantidade da opção escolhida (ex.: 500), ou undefined quando o produto não tem quantidades fechadas. */

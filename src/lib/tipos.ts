@@ -10,6 +10,14 @@ export type Variacao = {
   // Opção de quantidade fechada (ex.: 500 cartões): quantas unidades vêm no pacote e o peso do pacote (opcional, frete)
   quantidade?: number
   pesoKg?: number
+  // Grupo de produtos: cada variação é um produto real do ERP (impressão `a` + quantidade `b`)
+  produtoId?: string
+  a?: string
+  b?: string
+  prazo?: string
+  soRetirada?: boolean
+  pacoteCm?: { comprimento: number; largura: number; altura: number }
+  precoOriginal?: number // preço de tabela quando o produto está em promoção (preco já é o promocional)
 }
 
 export type Categoria = {
@@ -51,6 +59,8 @@ export type Produto = {
   // Produto derivado: usa preço, prazo e produção de um produto do ERP, mas com arte pronta própria
   // Produto com quantidades fechadas escolhidas pelo cliente (cada variação é uma quantidade com preço próprio)
   temOpcoes?: boolean
+  // Grupo (ex.: Cartão de visita com 4x0/4x4 e várias quantidades): rótulos dos seletores; ausente = sem esse seletor
+  grupo?: { rotuloA?: string; rotuloB?: string }
   derivadoId?: string
   arteFixa?: boolean
 }

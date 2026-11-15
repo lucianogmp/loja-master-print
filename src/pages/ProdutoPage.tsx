@@ -28,6 +28,8 @@ export default function ProdutoPage() {
 
   // A escolha vale só se existir no produto: aberto por link, o produto chega depois do primeiro render.
   const [variacaoEscolhida, setVariacaoId] = useState('')
+  const [escolhaA, setEscolhaA] = useState('')
+  const [escolhaB, setEscolhaB] = useState('')
   const [quantidadeDigitada, setQuantidade] = useState(1)
   const [largura, setLargura] = useState('')
   const [altura, setAltura] = useState('')
@@ -45,9 +47,19 @@ export default function ProdutoPage() {
     )
   }
 
-  const variacaoId = produto.variacoes.some((v) => v.id === variacaoEscolhida)
-    ? variacaoEscolhida
-    : (produto.variacoes[0]?.id ?? '')
+  // Grupo: dois seletores (ex.: impressão e quantidade). A opção válida é sempre uma combinação que existe.
+  const ordenados = (xs: string[]) => [...new Set(xs.filter(Boolean))]
+  const opcoesA = ordenados(produto.variacoes.map((v) => v.a ?? ''))
+  const a = opcoesA.includes(escolhaA) ? escolhaA : (opcoesA[0] ?? '')
+  const doA = produto.variacoes.filter((v) => (v.a ?? '') === a)
+  const opcoesB = ordenados(doA.map((v) => v.b ?? ''))
+  const b = opcoesB.includes(escolhaB) ? escolhaB : (opcoesB[0] ?? '')
+  const doGrupo = produto.grupo ? (doA.find((v) => (v.b ?? '') === b) ?? doA[0]) : undefined
+  const variacaoId = doGrupo
+    ? doGrupo.id
+    : produto.variacoes.some((v) => v.id === variacaoEscolhida)
+      ? variacaoEscolhida
+      : (produto.variacoes[0]?.id ?? '')
   const larguraCm = Number(largura.replace(',', '.')) || undefined
   const alturaCm = Number(altura.replace(',', '.')) || undefined
   // Com quantidades fechadas o cliente escolhe a opção (250, 500...): é sempre 1 pacote dela
@@ -56,6 +68,7 @@ export default function ProdutoPage() {
   const sobConsulta = produto.tipoPreco === 'consulta'
   const total = calcularTotal(produto, { variacaoId, quantidade, larguraCm, alturaCm })
   const variacao = produto.variacoes.find((v) => v.id === variacaoId)
+  const precoOriginal = produto.grupo ? variacao?.precoOriginal : produto.precoOriginal
   const categoria = categoriaPorSlug(produto.categoria)
   const faltaMedida = ehM2 && (!larguraCm || !alturaCm)
   const motivoBloqueio =
@@ -105,6 +118,36 @@ export default function ProdutoPage() {
             <p className="dica">Envio pelos Correios indisponível para este produto: retirada na gráfica.</p>
           )}
 
+          {produto.grupo ? (
+            <>
+              {produto.grupo.rotuloA && (
+                <fieldset className="campo seletor-variacao">
+                  <legend>{produto.grupo.rotuloA}: <strong>{a}</strong></legend>
+                  <div className="chips-variacao">
+                    {opcoesA.map((o) => (
+                      <button key={o} type="button" className={`chip-variacao${o === a ? ' ativo' : ''}`} aria-pressed={o === a} onClick={() => setEscolhaA(o)}>{o}</button>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+              {produto.grupo.rotuloB && (
+                <fieldset className="campo seletor-variacao">
+                  <legend>{produto.grupo.rotuloB}: <strong>{b}</strong></legend>
+                  <div className="chips-variacao">
+                    {opcoesB.map((o) => {
+                      const v = doA.find((x) => (x.b ?? '') === o)
+                      return (
+                        <button key={o} type="button" className={`chip-variacao${o === b ? ' ativo' : ''}`} aria-pressed={o === b} onClick={() => setEscolhaB(o)}>
+                          {o}
+                          {v && <small>{brl(v.preco)}</small>}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </fieldset>
+              )}
+            </>
+          ) : (
           <div className="campo">
             <label htmlFor="variacao">{produto.rotuloVariacao}</label>
             <select id="variacao" value={variacaoId} onChange={(e) => setVariacaoId(e.target.value)}>
@@ -117,6 +160,7 @@ export default function ProdutoPage() {
               ))}
             </select>
           </div>
+          )}
 
           {ehM2 && (
             <div className="campo-linha">
@@ -199,11 +243,11 @@ export default function ProdutoPage() {
               <>
                 <span>
                   Total
-                  {produto.precoOriginal && <span className="badge-promo">-{percentualDesconto(produto.precoOriginal, variacao?.preco ?? 0)}%</span>}
+                  {precoOriginal && <span className="badge-promo">-{percentualDesconto(precoOriginal, variacao?.preco ?? 0)}%</span>}
                 </span>
-                {produto.precoOriginal && (
-                  <s className="preco-de" aria-label={`de ${brl(produto.precoOriginal * quantidade)}`}>
-                    {brl(produto.precoOriginal * quantidade)}
+                {precoOriginal && (
+                  <s className="preco-de" aria-label={`de ${brl(precoOriginal * quantidade)}`}>
+                    {brl(precoOriginal * quantidade)}
                   </s>
                 )}
                 <strong>{brl(total)}</strong>
@@ -214,7 +258,7 @@ export default function ProdutoPage() {
                 <strong>—</strong>
               </>
             )}
-            <span className="prazo">Prazo de produção: {produto.prazo}</span>
+            <span className="prazo">Prazo de produção: {variacao?.prazo ?? produto.prazo}</span>
           </div>
 
           <div className="acoes-produto">

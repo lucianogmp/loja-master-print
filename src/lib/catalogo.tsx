@@ -6,7 +6,7 @@ import { precoComPromocao, type Promocao } from './promocao'
 // Catálogo vem do banco do ERP, SOMENTE pela função pública loja_catalogo()
 // (só produtos ativos e marcados "aparece no site"; sem custo, margem ou cliente).
 
-type Linha = {
+export type Linha = {
   id: string
   slug: string
   nome: string
@@ -103,6 +103,81 @@ function paraProduto(l: Linha, opcoes: OpcaoQuantidade[] = []): Produto {
   }
 }
 
+export type GrupoDb = {
+  id: string; slug: string; nome: string; descricao: string | null; imagens: string[]; destaque: boolean; ordem: number
+  principal_id: string | null; rotulo_a: string; rotulo_b: string
+  itens: { produto_id: string; a: string | null; b: string | null }[]
+}
+
+const numeroInicial = (t: string) => {
+  const m = t.replace(/\./g, '').match(/\d+/)
+  return m ? Number(m[0]) : Number.POSITIVE_INFINITY
+}
+
+/** Junta produtos do ERP (um por impressão/quantidade) numa página só. Cada variação é o produto real. */
+export function montarGrupo(g: GrupoDb, linhaPorId: Map<string, Linha>, promos: Map<string, Promocao>): Produto | null {
+  const membros = g.itens
+    .map((it) => ({ it, l: linhaPorId.get(it.produto_id) }))
+    .filter((m): m is { it: GrupoDb['itens'][number]; l: Linha } => !!m.l && !m.l.por_metro_quadrado && m.l.preco !== null)
+  if (membros.length === 0) return null
+  const principal = membros.find((m) => m.l.id === g.principal_id)?.l ?? membros[0].l
+  const base = paraProduto(principal)
+  const ordemA: string[] = []
+  membros.forEach((m) => { const a = (m.it.a ?? '').trim(); if (a && !ordemA.includes(a)) ordemA.push(a) })
+  const temA = ordemA.length > 0
+  const temB = membros.some((m) => (m.it.b ?? '').trim() !== '')
+  const variacoes = membros
+    .map((m, idx) => {
+      const l = m.l
+      const a = (m.it.a ?? '').trim()
+      const b = (m.it.b ?? '').trim()
+      const de = Number(l.preco)
+      const por = precoComPromocao(de, promos.get(l.id))
+      return {
+        idx, a, b,
+        v: {
+          id: l.id,
+          label: [a, b].filter(Boolean).join(' · ') || l.nome,
+          preco: por < de ? por : de,
+          precoOriginal: por < de ? de : undefined,
+          produtoId: l.id, a, b,
+          pesoKg: l.peso_kg ? Number(l.peso_kg) : undefined,
+          pacoteCm: l.comprimento_cm && l.largura_cm && l.altura_cm
+            ? { comprimento: Number(l.comprimento_cm), largura: Number(l.largura_cm), altura: Number(l.altura_cm) } : undefined,
+          soRetirada: l.entrega_modo === 'so_retirada',
+          prazo: l.prazo_entrega_dias ? `${l.prazo_entrega_dias} dia(s) úteis` : 'a combinar',
+        },
+      }
+    })
+    .sort((x, y) => ordemA.indexOf(x.a) - ordemA.indexOf(y.a) || numeroInicial(x.b) - numeroInicial(y.b) || x.idx - y.idx)
+    .map((x) => x.v)
+  return {
+    ...base,
+    id: g.id,
+    slug: g.slug,
+    nome: g.nome,
+    descricao: g.descricao?.trim() ? g.descricao : base.descricao,
+    resumo: (g.descricao?.trim() ? g.descricao : base.descricao).split('\n')[0].slice(0, 110),
+    imagens: g.imagens?.length ? g.imagens : base.imagens,
+    destaque: g.destaque,
+    maisVendido: membros.some((m) => m.l.mais_vendido === true),
+    tipoPreco: 'pacote',
+    temOpcoes: true,
+    grupo: { rotuloA: temA ? g.rotulo_a : undefined, rotuloB: temB ? g.rotulo_b : undefined },
+    variacoes,
+    rotuloVariacao: [temA ? g.rotulo_a : '', temB ? g.rotulo_b : ''].filter(Boolean).join(' e ') || 'Opção',
+    entregaModo: variacoes.every((v) => v.soRetirada) ? 'so_retirada' : 'envio_e_retirada',
+    pesoKg: undefined,
+    pacoteCm: undefined,
+    prazo: variacoes[0]?.prazo ?? base.prazo,
+    prazoDias: undefined,
+    precoOriginal: undefined,
+    precisaArte: true,
+    arteFixa: false,
+    derivadoId: undefined,
+  }
+}
+
 type LinhaPromo = { produto_id: string; tipo: Promocao['tipo']; valor: number }
 
 /** Aplica a promoção: o preço da variação vira o promocional e o de tabela fica em precoOriginal. */
@@ -129,6 +204,7 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
   const [linhas, setLinhas] = useState<Linha[]>([])
   const [promos, setPromos] = useState<Map<string, Promocao>>(new Map())
   const [quantidades, setQuantidades] = useState<Map<string, OpcaoQuantidade[]>>(new Map())
+  const [grupos, setGrupos] = useState<GrupoDb[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
 
@@ -151,11 +227,14 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
           ? new Map<string, OpcaoQuantidade[]>()
           : new Map((data as { produto_id: string; opcoes: unknown }[]).map((x) => [x.produto_id, opcoesValidas(x.opcoes)] as const)),
       )
-    Promise.all([erp.rpc('loja_catalogo_v2'), promocoes, opcoesQ]).then(([{ data, error }, mapa, mapaQ]) => {
+    // Grupos (variações por impressão/quantidade) também vêm à parte: se falharem, os produtos aparecem separados
+    const gruposQ = erp.rpc('loja_grupos').then(({ data, error }) => (error || !Array.isArray(data) ? [] : (data as GrupoDb[])))
+    Promise.all([erp.rpc('loja_catalogo_v2'), promocoes, opcoesQ, gruposQ]).then(([{ data, error }, mapa, mapaQ, listaG]) => {
       if (error) setErro(true)
       else {
         setPromos(mapa)
         setQuantidades(mapaQ)
+        setGrupos(listaG)
         setLinhas((data ?? []) as Linha[])
       }
       setCarregando(false)
@@ -167,9 +246,26 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
   }, [recarregar])
 
   const valor = useMemo<Ctx>(() => {
-    const produtos = linhas.map((l) => comPromocao(paraProduto(l, quantidades.get(l.id)), promos.get(l.id)))
+    // Produtos do ERP que fazem parte de um grupo saem da vitrine; o grupo aparece no lugar do primeiro deles.
+    const linhaPorId = new Map(linhas.filter((l) => !l.derivado_id).map((l) => [l.id, l] as const))
+    const grupoDoMembro = new Map<string, GrupoDb>()
+    grupos.forEach((g) => g.itens.forEach((i) => grupoDoMembro.set(i.produto_id, g)))
+    const jaMontado = new Set<string>()
+    const entradas: { l: Linha; p: Produto }[] = []
+    for (const l of linhas) {
+      const g = l.derivado_id ? undefined : grupoDoMembro.get(l.id)
+      if (!g) {
+        entradas.push({ l, p: comPromocao(paraProduto(l, quantidades.get(l.id)), promos.get(l.id)) })
+        continue
+      }
+      if (jaMontado.has(g.id)) continue
+      jaMontado.add(g.id)
+      const pg = montarGrupo(g, linhaPorId, promos)
+      if (pg) entradas.push({ l, p: pg })
+    }
+    const produtos = entradas.map((e) => e.p)
     const vistas = new Map<string, Categoria>()
-    linhas.forEach((l, i) => {
+    entradas.forEach(({ l }, i) => {
       const c = produtos[i].categoria
       if (!vistas.has(c))
         vistas.set(c, {
@@ -190,7 +286,7 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
       produtoPorSlug: (slug) => produtos.find((p) => p.slug === slug),
       categoriaPorSlug: (slug) => categorias.find((c) => c.slug === slug),
     }
-  }, [linhas, promos, quantidades, carregando, erro, recarregar])
+  }, [linhas, promos, quantidades, grupos, carregando, erro, recarregar])
 
   return <CatalogoCtx.Provider value={valor}>{children}</CatalogoCtx.Provider>
 }

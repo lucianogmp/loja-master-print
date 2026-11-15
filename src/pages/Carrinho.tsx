@@ -61,9 +61,9 @@ export default function Carrinho() {
                   </button>
                 </div>
                 <div className="item-valor">
-                  {total !== null && produto.precoOriginal && (
-                    <s className="preco-de" aria-label={`de ${brl(produto.precoOriginal * item.quantidade)}`}>
-                      {brl(produto.precoOriginal * item.quantidade)}
+                  {total !== null && (variacao?.precoOriginal ?? produto.precoOriginal) && (
+                    <s className="preco-de" aria-label={`de ${brl((variacao?.precoOriginal ?? produto.precoOriginal ?? 0) * item.quantidade)}`}>
+                      {brl((variacao?.precoOriginal ?? produto.precoOriginal ?? 0) * item.quantidade)}
                     </s>
                   )}
                   {total === null ? 'Sob consulta' : brl(total)}

@@ -9,7 +9,7 @@ import { useCatalogo } from '../lib/catalogo'
 import { useSite } from '../lib/site'
 import { ERP_URL } from '../lib/erp'
 import { useAjustes } from '../lib/ajustes'
-import { consultarFrete, envioPronto, opcaoDoItem, type OpcaoFrete } from '../lib/envio'
+import { consultarFrete, envioPronto, opcaoDoItem, produtoIdDoItem, soRetiradaDoItem, type OpcaoFrete } from '../lib/envio'
 import { limparCachePedidos } from '../lib/pedidos'
 import { calcularTotal } from '../lib/preco'
 import { supabase } from '../lib/supabase'
@@ -47,7 +47,7 @@ export default function Checkout() {
   }, [])
 
   // Se algum produto do carrinho é só para retirada, a entrega fica indisponível.
-  const soRetirada = itens.some((i) => produtoPorSlug(i.slug)?.entregaModo === 'so_retirada')
+  const soRetirada = itens.some((i) => { const p = produtoPorSlug(i.slug); return !!p && soRetiradaDoItem(p, i.variacaoId) })
   // Com o frete online ligado, só produto com peso e medidas do pacote cadastrados pode ser enviado
   const freteOnline = ajustes.frete.ligado
   const semEnvio = freteOnline
@@ -76,7 +76,7 @@ export default function Checkout() {
     const lista = itens
       .map((i) => {
         const p = produtoPorSlug(i.slug)
-        return p ? { produto_id: p.id, quantidade: i.quantidade, opcao: opcaoDoItem(p, i.variacaoId) } : null
+        return p ? { produto_id: produtoIdDoItem(p, i.variacaoId), quantidade: i.quantidade, opcao: opcaoDoItem(p, i.variacaoId) } : null
       })
       .filter((x): x is { produto_id: string; quantidade: number; opcao: number | undefined } => !!x)
     consultarFrete(cepEntrega, lista).then((r) => {
@@ -188,7 +188,7 @@ export default function Checkout() {
         itens: itens
           .map((i) => {
             const p = produtoPorSlug(i.slug)
-            return p ? { produto_id: p.id, derivado_id: p.derivadoId, quantidade: i.quantidade, opcao: opcaoDoItem(p, i.variacaoId), arte: i.arte, observacao: i.observacao } : null
+            return p ? { produto_id: produtoIdDoItem(p, i.variacaoId), derivado_id: p.derivadoId, quantidade: i.quantidade, opcao: opcaoDoItem(p, i.variacaoId), arte: i.arte, observacao: i.observacao } : null
           })
           .filter(Boolean),
       }
