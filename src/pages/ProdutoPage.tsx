@@ -28,7 +28,7 @@ export default function ProdutoPage() {
 
   // A escolha vale só se existir no produto: aberto por link, o produto chega depois do primeiro render.
   const [variacaoEscolhida, setVariacaoId] = useState('')
-  const [quantidade, setQuantidade] = useState(1)
+  const [quantidadeDigitada, setQuantidade] = useState(1)
   const [largura, setLargura] = useState('')
   const [altura, setAltura] = useState('')
   const [arte, setArte] = useState<OpcaoArte>('propria')
@@ -50,6 +50,8 @@ export default function ProdutoPage() {
     : (produto.variacoes[0]?.id ?? '')
   const larguraCm = Number(largura.replace(',', '.')) || undefined
   const alturaCm = Number(altura.replace(',', '.')) || undefined
+  // Com quantidades fechadas o cliente escolhe a opção (250, 500...): é sempre 1 pacote dela
+  const quantidade = produto.temOpcoes ? 1 : quantidadeDigitada
   const ehM2 = produto.tipoPreco === 'm2'
   const sobConsulta = produto.tipoPreco === 'consulta'
   const total = calcularTotal(produto, { variacaoId, quantidade, larguraCm, alturaCm })
@@ -99,7 +101,7 @@ export default function ProdutoPage() {
           <p className="produto-descricao">{produto.descricao}</p>
           <Compartilhar titulo={produto.nome} />
           {produto.entregaModo === 'so_retirada' && <p className="dica">Este produto é somente para retirada na gráfica.</p>}
-          {produto.entregaModo !== 'so_retirada' && ajustes.frete.ligado && !envioPronto(produto) && (
+          {produto.entregaModo !== 'so_retirada' && ajustes.frete.ligado && !envioPronto(produto, variacaoId) && (
             <p className="dica">Envio pelos Correios indisponível para este produto: retirada na gráfica.</p>
           )}
 
@@ -144,7 +146,7 @@ export default function ProdutoPage() {
             <p className="dica">Área: {areaM2(larguraCm, alturaCm).toFixed(2).replace('.', ',')} m²</p>
           )}
 
-          {!sobConsulta && (
+          {!sobConsulta && !produto.temOpcoes && (
             <div className="campo">
               <label htmlFor="quantidade">
                 {produto.tipoPreco === 'pacote' ? 'Quantidade de pacotes' : 'Quantidade'}

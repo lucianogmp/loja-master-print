@@ -9,7 +9,7 @@ import { useCatalogo } from '../lib/catalogo'
 import { useSite } from '../lib/site'
 import { ERP_URL } from '../lib/erp'
 import { useAjustes } from '../lib/ajustes'
-import { consultarFrete, envioPronto, type OpcaoFrete } from '../lib/envio'
+import { consultarFrete, envioPronto, opcaoDoItem, type OpcaoFrete } from '../lib/envio'
 import { limparCachePedidos } from '../lib/pedidos'
 import { calcularTotal } from '../lib/preco'
 import { supabase } from '../lib/supabase'
@@ -51,7 +51,7 @@ export default function Checkout() {
   // Com o frete online ligado, só produto com peso e medidas do pacote cadastrados pode ser enviado
   const freteOnline = ajustes.frete.ligado
   const semEnvio = freteOnline
-    ? [...new Set(itens.map((i) => produtoPorSlug(i.slug)).filter((p) => p && !envioPronto(p)).map((p) => p!.nome))]
+    ? [...new Set(itens.filter((i) => { const p = produtoPorSlug(i.slug); return p && !envioPronto(p, i.variacaoId) }).map((i) => produtoPorSlug(i.slug)!.nome))]
     : []
   const entregaBloqueada = soRetirada || semEnvio.length > 0
   const entrega: Entrega = entregaBloqueada ? 'retirada' : entregaEscolhida
@@ -60,7 +60,7 @@ export default function Checkout() {
   // CEP do endereço de entrega escolhido (salvo ou digitado)
   const idPadrao = escolhido || enderecos.find((x) => x.padrao)?.id || enderecos[0]?.id || 'novo'
   const cepEntrega = so((enderecos.find((x) => x.id === idPadrao) ?? novo).cep)
-  const chaveItens = itens.map((i) => `${i.slug}:${i.quantidade}`).join('|')
+  const chaveItens = itens.map((i) => `${i.slug}:${i.variacaoId}:${i.quantidade}`).join('|')
 
   // Calcula o frete quando o CEP está completo
   useEffect(() => {
@@ -76,9 +76,9 @@ export default function Checkout() {
     const lista = itens
       .map((i) => {
         const p = produtoPorSlug(i.slug)
-        return p ? { produto_id: p.id, quantidade: i.quantidade } : null
+        return p ? { produto_id: p.id, quantidade: i.quantidade, opcao: opcaoDoItem(p, i.variacaoId) } : null
       })
-      .filter((x): x is { produto_id: string; quantidade: number } => !!x)
+      .filter((x): x is { produto_id: string; quantidade: number; opcao: number | undefined } => !!x)
     consultarFrete(cepEntrega, lista).then((r) => {
       if (!vivo) return
       setCarregandoFrete(false)
@@ -188,7 +188,7 @@ export default function Checkout() {
         itens: itens
           .map((i) => {
             const p = produtoPorSlug(i.slug)
-            return p ? { produto_id: p.id, derivado_id: p.derivadoId, quantidade: i.quantidade, arte: i.arte, observacao: i.observacao } : null
+            return p ? { produto_id: p.id, derivado_id: p.derivadoId, quantidade: i.quantidade, opcao: opcaoDoItem(p, i.variacaoId), arte: i.arte, observacao: i.observacao } : null
           })
           .filter(Boolean),
       }
@@ -335,7 +335,7 @@ export default function Checkout() {
               return (
                 <li key={item.id}>
                   <span>
-                    {produto.nome} <small>× {item.quantidade}</small>
+                    {produto.nome} <small>{produto.temOpcoes ? `— ${produto.variacoes.find((v) => v.id === item.variacaoId)?.label ?? ''}` : `× ${item.quantidade}`}</small>
                   </span>
                   <strong>{total === null ? 'Sob consulta' : brl(total)}</strong>
                 </li>

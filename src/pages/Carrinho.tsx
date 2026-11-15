@@ -52,7 +52,7 @@ export default function Carrinho() {
                   <p>
                     {variacao?.label}
                     {item.larguraCm && item.alturaCm ? ` · ${item.larguraCm} x ${item.alturaCm} cm` : ''}
-                    {' · '}Qtd. {item.quantidade}
+                    {!produto.temOpcoes && <>{' · '}Qtd. {item.quantidade}</>}
                   </p>
                   <p className="dica">{produto.arteFixa ? 'Arte pronta do produto' : rotuloArte[item.arte]}</p>
                   {item.observacao && <p className="dica">Obs.: {item.observacao}</p>}

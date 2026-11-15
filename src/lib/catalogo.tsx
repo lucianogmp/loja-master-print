@@ -43,9 +43,28 @@ function arteDe(texto: string): ArteTipo {
   return 'impresso'
 }
 
-function paraProduto(l: Linha): Produto {
+export type OpcaoQuantidade = { quantidade: number; preco: number; peso_kg?: number | null }
+
+/** Lê as opções vindas do banco, descartando linha inválida e repetida. */
+export function opcoesValidas(bruto: unknown): OpcaoQuantidade[] {
+  if (!Array.isArray(bruto)) return []
+  const vistas = new Set<number>()
+  const lista: OpcaoQuantidade[] = []
+  for (const o of bruto as any[]) {
+    const q = Number(o?.quantidade)
+    const preco = Number(o?.preco)
+    if (!Number.isInteger(q) || q < 1 || !(preco > 0) || vistas.has(q)) continue
+    vistas.add(q)
+    lista.push({ quantidade: q, preco, peso_kg: Number(o?.peso_kg) > 0 ? Number(o.peso_kg) : null })
+  }
+  return lista.sort((a, b) => a.quantidade - b.quantidade)
+}
+
+function paraProduto(l: Linha, opcoes: OpcaoQuantidade[] = []): Produto {
   // m² ou sem preço: nunca mostra valor; pedido fechado pelo WhatsApp.
-  const sobConsulta = l.por_metro_quadrado || l.preco === null
+  // Produto com quantidades fechadas tem preço por opção, então não depende do preço único do ERP.
+  const temOpcoes = opcoes.length > 0 && !l.por_metro_quadrado
+  const sobConsulta = l.por_metro_quadrado || (l.preco === null && !temOpcoes)
   const categoria = l.categoria_original ? slugify(l.categoria_original) : 'outros'
   return {
     id: l.id,
@@ -62,9 +81,18 @@ function paraProduto(l: Linha): Produto {
         ? { comprimento: Number(l.comprimento_cm), largura: Number(l.largura_cm), altura: Number(l.altura_cm) }
         : undefined,
     entregaModo: l.entrega_modo ?? 'envio_e_retirada',
-    tipoPreco: sobConsulta ? 'consulta' : 'unidade',
-    variacoes: [{ id: 'unico', label: l.nome, preco: l.preco ?? 0 }],
-    rotuloVariacao: 'Produto',
+    tipoPreco: sobConsulta ? 'consulta' : temOpcoes ? 'pacote' : 'unidade',
+    temOpcoes,
+    variacoes: temOpcoes
+      ? opcoes.map((o) => ({
+          id: `q${o.quantidade}`,
+          label: `${o.quantidade.toLocaleString('pt-BR')} unidades`,
+          preco: o.preco,
+          quantidade: o.quantidade,
+          pesoKg: o.peso_kg ?? undefined,
+        }))
+      : [{ id: 'unico', label: l.nome, preco: l.preco ?? 0 }],
+    rotuloVariacao: temOpcoes ? 'Quantidade' : 'Produto',
     prazo: l.prazo_entrega_dias ? `${l.prazo_entrega_dias} dia(s) úteis` : 'a combinar',
     prazoDias: l.prazo_entrega_dias ? Number(l.prazo_entrega_dias) : undefined,
     precisaArte: !l.derivado_id,
@@ -79,7 +107,7 @@ type LinhaPromo = { produto_id: string; tipo: Promocao['tipo']; valor: number }
 
 /** Aplica a promoção: o preço da variação vira o promocional e o de tabela fica em precoOriginal. */
 function comPromocao(p: Produto, promo?: Promocao): Produto {
-  if (!promo || p.tipoPreco !== 'unidade') return p
+  if (!promo || p.tipoPreco !== 'unidade' || p.temOpcoes) return p
   const de = p.variacoes[0]?.preco ?? 0
   const por = precoComPromocao(de, promo)
   if (por >= de) return p
@@ -100,6 +128,7 @@ const CatalogoCtx = createContext<Ctx | null>(null)
 export function CatalogoProvider({ children }: { children: ReactNode }) {
   const [linhas, setLinhas] = useState<Linha[]>([])
   const [promos, setPromos] = useState<Map<string, Promocao>>(new Map())
+  const [quantidades, setQuantidades] = useState<Map<string, OpcaoQuantidade[]>>(new Map())
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
 
@@ -114,10 +143,19 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
           ? new Map<string, Promocao>()
           : new Map((data as LinhaPromo[]).map((x) => [x.produto_id, { tipo: x.tipo, valor: Number(x.valor) }] as const)),
       )
-    Promise.all([erp.rpc('loja_catalogo_v2'), promocoes]).then(([{ data, error }, mapa]) => {
+    // Quantidades fechadas também vêm à parte: se falharem, o produto aparece com o preço único
+    const opcoesQ = erp
+      .rpc('loja_quantidades')
+      .then(({ data, error }) =>
+        error || !Array.isArray(data)
+          ? new Map<string, OpcaoQuantidade[]>()
+          : new Map((data as { produto_id: string; opcoes: unknown }[]).map((x) => [x.produto_id, opcoesValidas(x.opcoes)] as const)),
+      )
+    Promise.all([erp.rpc('loja_catalogo_v2'), promocoes, opcoesQ]).then(([{ data, error }, mapa, mapaQ]) => {
       if (error) setErro(true)
       else {
         setPromos(mapa)
+        setQuantidades(mapaQ)
         setLinhas((data ?? []) as Linha[])
       }
       setCarregando(false)
@@ -129,7 +167,7 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
   }, [recarregar])
 
   const valor = useMemo<Ctx>(() => {
-    const produtos = linhas.map((l) => comPromocao(paraProduto(l), promos.get(l.id)))
+    const produtos = linhas.map((l) => comPromocao(paraProduto(l, quantidades.get(l.id)), promos.get(l.id)))
     const vistas = new Map<string, Categoria>()
     linhas.forEach((l, i) => {
       const c = produtos[i].categoria
@@ -152,7 +190,7 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
       produtoPorSlug: (slug) => produtos.find((p) => p.slug === slug),
       categoriaPorSlug: (slug) => categorias.find((c) => c.slug === slug),
     }
-  }, [linhas, promos, carregando, erro, recarregar])
+  }, [linhas, promos, quantidades, carregando, erro, recarregar])
 
   return <CatalogoCtx.Provider value={valor}>{children}</CatalogoCtx.Provider>
 }

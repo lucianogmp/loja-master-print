@@ -7,6 +7,9 @@ export type Variacao = {
   label: string
   // pacote/unidade: preço do pacote ou da unidade. m2: preço por m². consulta: ignorado.
   preco: number
+  // Opção de quantidade fechada (ex.: 500 cartões): quantas unidades vêm no pacote e o peso do pacote (opcional, frete)
+  quantidade?: number
+  pesoKg?: number
 }
 
 export type Categoria = {
@@ -46,6 +49,8 @@ export type Produto = {
   precoOriginal?: number
   maisVendido?: boolean // só vem do banco quando há venda real
   // Produto derivado: usa preço, prazo e produção de um produto do ERP, mas com arte pronta própria
+  // Produto com quantidades fechadas escolhidas pelo cliente (cada variação é uma quantidade com preço próprio)
+  temOpcoes?: boolean
   derivadoId?: string
   arteFixa?: boolean
 }

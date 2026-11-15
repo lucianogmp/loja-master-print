@@ -2500,3 +2500,11 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
   .admin-integ .admin-bloco-int > .admin-acoes,
   .admin-integ .admin-bloco-int > fieldset { grid-column: 1 / -1; }
 }
+
+/* Admin: quantidades fechadas do produto (compactas, ocupam a largura toda) */
+.ed-quantidades { grid-column: 1 / -1; }
+.ed-opcoes { display: grid; gap: 4px; }
+.ed-opcoes .medidas-linha { gap: 6px 10px; }
+.ed-opcoes .medidas-linha input:not([type='checkbox']) { width: 6.5rem; }
+.ed-opcoes-cab { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+.ed-opcoes-cab span { width: 6.5rem; }

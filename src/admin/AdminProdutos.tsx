@@ -20,6 +20,7 @@ type LP = {
   ordem: number
   promo_tipo: Promocao['tipo'] | null
   promo_valor: number | null
+  opcoes_quantidade: { quantidade: number; preco: number; peso_kg?: number | null }[] | null
 }
 
 // Aceita vírgula decimal (0,4) e devolve null se vazio/inválido.
@@ -103,6 +104,16 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
   const [imagens, setImagens] = useState<string[]>(item.lp?.imagens ?? [])
   const [promoTipo, setPromoTipo] = useState<'' | Promocao['tipo']>(item.lp?.promo_tipo ?? '')
   const [promoValor, setPromoValor] = useState(item.lp?.promo_valor != null ? String(item.lp.promo_valor).replace('.', ',') : '')
+  // Quantidades fechadas (250, 500, 1000...), cada uma com preço próprio. Texto livre até salvar (aceita vírgula).
+  const [opcoes, setOpcoes] = useState<{ q: string; preco: string; peso: string }[]>(
+    (item.lp?.opcoes_quantidade ?? []).map((o) => ({
+      q: String(o.quantidade),
+      preco: String(o.preco).replace('.', ','),
+      peso: o.peso_kg ? String(o.peso_kg).replace('.', ',') : '',
+    })),
+  )
+  const setOpcao = (i: number, campo: 'q' | 'preco' | 'peso', v: string) =>
+    setOpcoes((a) => a.map((o, k) => (k === i ? { ...o, [campo]: v } : o)))
   const [msg, setMsg] = useState('')
   const [enviando, setEnviando] = useState(false)
 
@@ -158,6 +169,18 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
     }
     if (!s) return setMsg('Endereço (slug) inválido.')
     if (textoErroPromo) return setMsg(textoErroPromo)
+    // Quantidades: ignora linha totalmente vazia; as demais precisam de quantidade inteira e preço
+    const linhasOpcoes = opcoes.filter((o) => o.q.trim() || o.preco.trim() || o.peso.trim())
+    const opcoesSalvar: { quantidade: number; preco: number; peso_kg: number | null }[] = []
+    for (const o of linhasOpcoes) {
+      const q = num(o.q)
+      const preco = num(o.preco)
+      if (q === null || !Number.isInteger(q) || preco === null) return setMsg('Cada quantidade precisa de um número inteiro e de um preço.')
+      if (o.peso.trim() && num(o.peso) === null) return setMsg('Peso da quantidade inválido (ou deixe vazio).')
+      opcoesSalvar.push({ quantidade: q, preco, peso_kg: num(o.peso) })
+    }
+    if (new Set(opcoesSalvar.map((o) => o.quantidade)).size !== opcoesSalvar.length) return setMsg('Há quantidades repetidas.')
+    opcoesSalvar.sort((a, b) => a.quantidade - b.quantidade)
     const { error } = await erp.from('loja_produtos').upsert({
       produto_id: item.id,
       slug: s,
@@ -168,6 +191,7 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
       largura_cm: num(larg),
       altura_cm: num(alt),
       entrega_modo: modo,
+      opcoes_quantidade: opcoesSalvar,
       destaque,
       ordem,
       promo_tipo: promoTipo && valorPromo && item.preco !== null ? promoTipo : null,
@@ -214,6 +238,38 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
         <section className="ed-card ed-descricao">
           <h3>Descrição</h3>
           <AutoTextarea id={`d${item.id}`} aria-label="Descrição" rows={3} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+        </section>
+
+        <section className="ed-card ed-quantidades">
+          <h3>Quantidades</h3>
+          <span className="dica">
+            Para produtos vendidos em quantidades fechadas (ex.: cartão de visita 250, 500, 1000). O cliente escolhe uma e paga o preço dela.
+            Deixe vazio para vender como produto comum.
+          </span>
+          {opcoes.length > 0 && (
+            <div className="ed-opcoes">
+              <div className="medidas-linha ed-opcoes-cab" aria-hidden="true">
+                <span>Quantidade</span><span>Preço (R$)</span><span>Peso (kg, opcional)</span>
+              </div>
+              {opcoes.map((o, i) => (
+                <div key={i} className="medidas-linha">
+                  <input inputMode="numeric" value={o.q} onChange={(e) => setOpcao(i, 'q', e.target.value)} placeholder="500" aria-label={`Quantidade ${i + 1}`} />
+                  <input inputMode="decimal" value={o.preco} onChange={(e) => setOpcao(i, 'preco', e.target.value)} placeholder="0,00" aria-label={`Preço da quantidade ${i + 1}`} />
+                  <input inputMode="decimal" value={o.peso} onChange={(e) => setOpcao(i, 'peso', e.target.value)} placeholder={peso || '0,4'} aria-label={`Peso da quantidade ${i + 1}`} />
+                  <button type="button" className="link-botao" onClick={() => setOpcoes((a) => a.filter((_, k) => k !== i))}>Remover</button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div>
+            <button type="button" className="link-botao" onClick={() => setOpcoes((a) => [...a, { q: '', preco: '', peso: '' }])}>+ Adicionar quantidade</button>
+          </div>
+          {opcoes.length > 0 && (
+            <span className="dica">
+              Com quantidades, o preço do ERP não é usado e a promoção do site não vale para este produto. O pedido chega no ERP como
+              “{item.nome} — 500 un.” pelo preço da opção. Para frete, o peso da quantidade vale; vazio, usa o peso do produto (em Envio).
+            </span>
+          )}
         </section>
 
         <section className="ed-card ed-promocao">
