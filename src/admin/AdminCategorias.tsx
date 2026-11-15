@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { erp } from '../lib/erp'
+import { recarregarAjustes } from '../lib/ajustes'
 
 type Cat = { id: string; nome: string; publicados: number; nome_publico: string; imagem: string | null; ordem: number }
 
@@ -7,13 +8,17 @@ export default function AdminCategorias() {
   const [cats, setCats] = useState<Cat[]>([])
   const [todas, setTodas] = useState(false)
   const [msg, setMsg] = useState('')
+  const [destaques, setDestaques] = useState<string[]>([])
 
   const carregar = useCallback(async () => {
-    const [c, p, lc] = await Promise.all([
+    const [c, p, lc, aj] = await Promise.all([
       erp.from('categorias').select('id,nome').order('nome'),
       erp.from('produtos').select('categoria_id').eq('publicar_no_catalogo', true).eq('status', 'ativo'),
       erp.from('loja_categorias').select('categoria_id,nome_publico,imagem,ordem'),
+      erp.from('loja_ajustes').select('valor').eq('chave', 'menu').maybeSingle(),
     ])
+    const lista = (aj.data?.valor as { destaques?: unknown } | null)?.destaques
+    setDestaques(Array.isArray(lista) ? lista.filter((x): x is string => typeof x === 'string') : [])
     const cont = new Map<string, number>()
     ;(p.data ?? []).forEach((r: { categoria_id: string | null }) => r.categoria_id && cont.set(r.categoria_id, (cont.get(r.categoria_id) ?? 0) + 1))
     const extra = new Map((lc.data ?? []).map((r: { categoria_id: string; nome_publico: string | null; imagem: string | null; ordem: number }) => [r.categoria_id, r]))
@@ -26,6 +31,20 @@ export default function AdminCategorias() {
   }, [])
   useEffect(() => { carregar() }, [carregar])
 
+  // Slug da categoria no site = nome público (ou o do ERP)
+  const slugDe = (c: Pick<Cat, 'nome' | 'nome_publico'>) => c.nome_publico.trim() || c.nome
+
+  async function gravarDestaques(lista: string[]) {
+    const { error } = await erp.from('loja_ajustes').upsert({ chave: 'menu', valor: { destaques: lista } })
+    setMsg(error ? 'Não foi possível salvar o menu.' : 'Menu salvo.')
+    if (!error) { setDestaques(lista); recarregarAjustes() }
+  }
+
+  async function alternarDestaque(c: Cat) {
+    const slug = slugDe(c)
+    await gravarDestaques(destaques.includes(slug) ? destaques.filter((x) => x !== slug) : [...destaques, slug])
+  }
+
   async function salvar(c: Cat, campos: Partial<Pick<Cat, 'nome_publico' | 'imagem' | 'ordem'>>) {
     const novo = { ...c, ...campos }
     const { error } = await erp.from('loja_categorias').upsert({
@@ -35,6 +54,10 @@ export default function AdminCategorias() {
       ordem: novo.ordem,
     })
     setMsg(error ? 'Não foi possível salvar.' : 'Salvo.')
+    // Renomear uma categoria em destaque: o menu segue o novo nome
+    if (!error && campos.nome_publico !== undefined && destaques.includes(slugDe(c)) && slugDe(novo) !== slugDe(c)) {
+      await gravarDestaques(destaques.map((x) => (x === slugDe(c) ? slugDe(novo) : x)))
+    }
     carregar()
   }
 
@@ -55,7 +78,7 @@ export default function AdminCategorias() {
   return (
     <div>
       <p className="dica">
-        As categorias vêm do ERP. Aqui você escolhe o nome que o cliente vê, a foto e a ordem no menu.
+        As categorias vêm do ERP. Aqui você escolhe o nome que o cliente vê, a foto e a ordem no menu. Marque <strong>No topo</strong> nas que devem aparecer ao lado de “Todos os produtos” (as demais ficam dentro dele). Sem nenhuma marcada, o topo mostra as primeiras.
         {msg && <strong> {msg}</strong>}
       </p>
       <label className="radio dica">
@@ -63,7 +86,7 @@ export default function AdminCategorias() {
       </label>
       <ul className="lista-admin">
         {visiveis.map((c) => (
-          <CategoriaLinha key={c.id} c={c} aoSalvar={salvar} aoFoto={subirFoto} />
+          <CategoriaLinha key={c.id} c={c} aoSalvar={salvar} aoFoto={subirFoto} noTopo={destaques.includes(slugDe(c))} aoAlternar={() => alternarDestaque(c)} />
         ))}
         {visiveis.length === 0 && <li className="dica">Nenhuma categoria com produto no site ainda.</li>}
       </ul>
@@ -71,7 +94,9 @@ export default function AdminCategorias() {
   )
 }
 
-function CategoriaLinha({ c, aoSalvar, aoFoto }: {
+function CategoriaLinha({ c, aoSalvar, aoFoto, noTopo, aoAlternar }: {
+  noTopo: boolean
+  aoAlternar: () => void
   c: Cat
   aoSalvar: (c: Cat, campos: Partial<Pick<Cat, 'nome_publico' | 'imagem' | 'ordem'>>) => void
   aoFoto: (c: Cat, f: File | undefined) => void
@@ -85,6 +110,7 @@ function CategoriaLinha({ c, aoSalvar, aoFoto }: {
       <span className="cat-erp" title="Nome no ERP">{c.nome}{c.publicados > 0 && <small> ({c.publicados})</small>}</span>
       <input value={nome} onChange={(e) => setNome(e.target.value)} onBlur={() => nome !== c.nome_publico && aoSalvar(c, { nome_publico: nome })} placeholder="Nome no site" aria-label={`Nome no site de ${c.nome}`} />
       <input className="cat-ordem" inputMode="numeric" value={ordem} onChange={(e) => setOrdem(e.target.value)} onBlur={() => Number(ordem) !== c.ordem && aoSalvar(c, { ordem: Number(ordem) || 0 })} title="Ordem no menu" aria-label="Ordem" />
+      <label className="radio cat-topo" title="Mostrar no menu do topo, ao lado de Todos os produtos"><input type="checkbox" checked={noTopo} onChange={aoAlternar} /> No topo</label>
       <button className="link-botao" onClick={() => arq.current?.click()}>{c.imagem ? 'Trocar foto' : 'Foto'}</button>
       {c.imagem && <button className="link-botao" onClick={() => aoSalvar(c, { imagem: null })}>×</button>}
       <input ref={arq} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(e) => { aoFoto(c, e.target.files?.[0]); e.target.value = '' }} />

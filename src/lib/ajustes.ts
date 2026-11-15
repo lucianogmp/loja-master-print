@@ -7,10 +7,13 @@ export type ServicoEnvio = { codigo: string; nome: string; ativo: boolean }
 export type Ajustes = {
   pagamento: { ligado: boolean }
   frete: { ligado: boolean; embalagem: number; gratisAcima: number; diasExtras: number; servicos: ServicoEnvio[] }
+  // Menu do topo: categorias em destaque (slugs) ao lado de "Todos os produtos". Vazio = as primeiras categorias.
+  menu: { destaques: string[] }
 }
 
 export const AJUSTES_PADRAO: Ajustes = {
   pagamento: { ligado: false },
+  menu: { destaques: [] },
   frete: {
     ligado: false,
     embalagem: 0,
@@ -35,6 +38,7 @@ export function normalizarAjustes(bruto: unknown): Ajustes {
     : AJUSTES_PADRAO.frete.servicos
   return {
     pagamento: { ligado: o.pagamento?.ligado === true },
+    menu: { destaques: Array.isArray(o.menu?.destaques) ? o.menu.destaques.filter((x: unknown) => typeof x === 'string').slice(0, 20) : [] },
     frete: {
       ligado: f.ligado === true,
       embalagem: Math.max(0, num(f.embalagem)),
@@ -62,6 +66,9 @@ function carregar(forcar = false): Promise<Ajustes> {
     })
   return pendente
 }
+
+/** Relê os ajustes do servidor (depois de salvar no /admin). */
+export const recarregarAjustes = () => carregar(true)
 
 export function useAjustes() {
   const [ajustes, setAjustes] = useState<Ajustes>(cache ?? AJUSTES_PADRAO)

@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Search, Settings, ShoppingCart, User } from 'lucide-react'
 import { Link, useNavegar } from './Link'
@@ -11,7 +11,7 @@ import { useEhAdmin } from '../lib/erpAdmin'
 import ThemeToggle from './ThemeToggle'
 import Marca from './Marca'
 import Avatar from './Avatar'
-import ChipsCategorias from './ChipsCategorias'
+import MenuTodosProdutos from './MenuTodosProdutos'
 
 export default function Header() {
   const { empresa } = useSite()
@@ -20,15 +20,6 @@ export default function Header() {
   const navegar = useNavegar()
   const { pathname, search } = useLocation()
   const [busca, setBusca] = useState('')
-  // Rolando para baixo, a faixa de categorias recolhe para não tampar os produtos; volta ao chegar ao topo
-  const [recolhido, setRecolhido] = useState(false)
-  useEffect(() => {
-    const aoRolar = () => setRecolhido((r) => (r ? window.scrollY > 24 : window.scrollY > 80))
-    aoRolar()
-    window.addEventListener('scroll', aoRolar, { passive: true })
-    return () => window.removeEventListener('scroll', aoRolar)
-  }, [])
-
   // O destaque da aba depende do ?categoria= da URL, não só do caminho
   const noCatalogo = pathname === '/produtos'
   const categoriaAtual = new URLSearchParams(search).get('categoria')
@@ -40,7 +31,7 @@ export default function Header() {
   }
 
   return (
-    <header className={`header${recolhido ? ' header-recolhido' : ''}`}>
+    <header className="header">
       <div className="barra-topo">
         <div className="container barra-topo-conteudo">
           <span>{empresa.horario}</span>
@@ -84,11 +75,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="categorias-recolhe" inert={recolhido}>
-        <div>
-          <ChipsCategorias faixa atual={noCatalogo ? categoriaAtual ?? undefined : null} />
-        </div>
-      </div>
+      <MenuTodosProdutos atual={noCatalogo ? categoriaAtual : null} />
     </header>
   )
 }
