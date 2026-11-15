@@ -15,10 +15,9 @@ export default function AdminCategorias() {
       erp.from('categorias').select('id,nome').order('nome'),
       erp.from('produtos').select('categoria_id').eq('publicar_no_catalogo', true).eq('status', 'ativo'),
       erp.from('loja_categorias').select('categoria_id,nome_publico,imagem,ordem'),
-      erp.from('loja_ajustes').select('valor').eq('chave', 'menu').maybeSingle(),
+      erp.from('loja_menu_destaques').select('slug,ordem').order('ordem'),
     ])
-    const lista = (aj.data?.valor as { destaques?: unknown } | null)?.destaques
-    setDestaques(Array.isArray(lista) ? lista.filter((x): x is string => typeof x === 'string') : [])
+    setDestaques(((aj.data ?? []) as { slug: string }[]).map((x) => x.slug))
     const cont = new Map<string, number>()
     ;(p.data ?? []).forEach((r: { categoria_id: string | null }) => r.categoria_id && cont.set(r.categoria_id, (cont.get(r.categoria_id) ?? 0) + 1))
     const extra = new Map((lc.data ?? []).map((r: { categoria_id: string; nome_publico: string | null; imagem: string | null; ordem: number }) => [r.categoria_id, r]))
@@ -35,7 +34,10 @@ export default function AdminCategorias() {
   const slugDe = (c: Pick<Cat, 'nome' | 'nome_publico'>) => c.nome_publico.trim() || c.nome
 
   async function gravarDestaques(lista: string[]) {
-    const { error } = await erp.from('loja_ajustes').upsert({ chave: 'menu', valor: { destaques: lista } })
+    // Regrava a lista inteira (poucas linhas): apaga e insere na ordem escolhida
+    const { error: ed } = await erp.from('loja_menu_destaques').delete().neq('slug', '')
+    const { error: ei } = ed || !lista.length ? { error: null } : await erp.from('loja_menu_destaques').insert(lista.map((slug, ordem) => ({ slug, ordem })))
+    const error = ed ?? ei
     setMsg(error ? 'Não foi possível salvar o menu.' : 'Menu salvo.')
     if (!error) { setDestaques(lista); recarregarAjustes() }
   }

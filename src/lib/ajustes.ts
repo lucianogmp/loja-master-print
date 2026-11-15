@@ -55,9 +55,11 @@ let pendente: Promise<Ajustes> | null = null
 function carregar(forcar = false): Promise<Ajustes> {
   if (!forcar && cache) return Promise.resolve(cache)
   if (!forcar && pendente) return pendente
-  pendente = Promise.resolve(erp.rpc('loja_ajustes'))
-    .then(({ data, error }) => {
-      cache = error ? AJUSTES_PADRAO : normalizarAjustes(data)
+  // Os destaques do menu ficam em tabela própria (loja_menu); se falharem, o menu usa as primeiras categorias
+  pendente = Promise.all([Promise.resolve(erp.rpc('loja_ajustes')), Promise.resolve(erp.rpc('loja_menu'))])
+    .then(([{ data, error }, menu]) => {
+      const base = error ? {} : (data as Record<string, unknown> | null) ?? {}
+      cache = error ? AJUSTES_PADRAO : normalizarAjustes({ ...base, menu: { destaques: menu.error ? [] : menu.data } })
       return cache
     })
     .catch(() => (cache = AJUSTES_PADRAO))
