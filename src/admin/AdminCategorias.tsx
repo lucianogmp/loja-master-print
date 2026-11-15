@@ -30,8 +30,10 @@ export default function AdminCategorias() {
   }, [])
   useEffect(() => { carregar() }, [carregar])
 
-  // Slug da categoria no site = nome público (ou o do ERP)
-  const slugDe = (c: Pick<Cat, 'nome' | 'nome_publico'>) => c.nome_publico.trim() || c.nome
+  // Identificador da categoria no site = nome da categoria no ERP sem acento/espaço (o mesmo do link ?categoria=)
+  const slugDe = (c: Pick<Cat, 'nome'>) =>
+    c.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  const noTopo = (c: Cat) => destaques.includes(slugDe(c)) || destaques.includes(c.nome) || destaques.includes(c.nome_publico)
 
   async function gravarDestaques(lista: string[]) {
     // Regrava a lista inteira (poucas linhas): apaga e insere na ordem escolhida
@@ -44,7 +46,8 @@ export default function AdminCategorias() {
 
   async function alternarDestaque(c: Cat) {
     const slug = slugDe(c)
-    await gravarDestaques(destaques.includes(slug) ? destaques.filter((x) => x !== slug) : [...destaques, slug])
+    const ids = [slug, c.nome, c.nome_publico]
+    await gravarDestaques(noTopo(c) ? destaques.filter((x) => !ids.includes(x)) : [...destaques, slug])
   }
 
   async function salvar(c: Cat, campos: Partial<Pick<Cat, 'nome_publico' | 'imagem' | 'ordem'>>) {
@@ -56,10 +59,6 @@ export default function AdminCategorias() {
       ordem: novo.ordem,
     })
     setMsg(error ? 'Não foi possível salvar.' : 'Salvo.')
-    // Renomear uma categoria em destaque: o menu segue o novo nome
-    if (!error && campos.nome_publico !== undefined && destaques.includes(slugDe(c)) && slugDe(novo) !== slugDe(c)) {
-      await gravarDestaques(destaques.map((x) => (x === slugDe(c) ? slugDe(novo) : x)))
-    }
     carregar()
   }
 
@@ -88,7 +87,7 @@ export default function AdminCategorias() {
       </label>
       <ul className="lista-admin">
         {visiveis.map((c) => (
-          <CategoriaLinha key={c.id} c={c} aoSalvar={salvar} aoFoto={subirFoto} noTopo={destaques.includes(slugDe(c))} aoAlternar={() => alternarDestaque(c)} />
+          <CategoriaLinha key={c.id} c={c} aoSalvar={salvar} aoFoto={subirFoto} noTopo={noTopo(c)} aoAlternar={() => alternarDestaque(c)} />
         ))}
         {visiveis.length === 0 && <li className="dica">Nenhuma categoria com produto no site ainda.</li>}
       </ul>

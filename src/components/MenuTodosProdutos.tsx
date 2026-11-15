@@ -31,9 +31,9 @@ export default function MenuTodosProdutos({ atual }: { atual?: string | null }) 
   }, [aberto])
 
   const escolhidas = ajustes.menu.destaques
-  const destaques = escolhidas.length
-    ? categorias.filter((c) => escolhidas.includes(c.slug))
-    : categorias.slice(0, PADRAO_QTD)
+  // Aceita o identificador do link (slug) ou o nome da categoria; sem nenhum válido, mostra as primeiras
+  const marcadas = categorias.filter((c) => escolhidas.includes(c.slug) || escolhidas.includes(c.nome))
+  const destaques = marcadas.length ? marcadas : categorias.slice(0, PADRAO_QTD)
 
   return (
     <nav className="categorias menu-todos" aria-label="Categorias" ref={raiz}>
