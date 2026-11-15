@@ -12,7 +12,7 @@ type Grupo = {
   id: string; slug: string; nome: string; descricao: string | null; imagens: string[]; destaque: boolean; ordem: number
   visivel: boolean; principal_id: string | null; rotulo_a: string; rotulo_b: string
 }
-type Linha = { produto_id: string; a: string; b: string }
+type Linha = { produto_id: string; a: string; b: string; texto?: string } // texto: o que foi digitado na busca do produto (só na tela)
 
 const slugify = (s: string) =>
   s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80)
@@ -90,7 +90,7 @@ function Editor({ inicial, existe, linhasIniciais, prods, usadosEmOutros, aoVolt
   aoVoltar: () => void; aoSalvar: (msg: string) => void
 }) {
   const [f, setF] = useState<Grupo>({ ...inicial, descricao: inicial.descricao ?? '' })
-  const [linhas, setLinhas] = useState<Linha[]>(linhasIniciais.map((l) => ({ produto_id: l.produto_id, a: l.a, b: l.b })))
+  const [linhas, setLinhas] = useState<Linha[]>(linhasIniciais.map((l) => ({ produto_id: l.produto_id, a: l.a, b: l.b, texto: prods.find((p) => p.id === l.produto_id)?.nome ?? '' })))
   const [slugManual, setSlugManual] = useState(existe)
   const [msg, setMsg] = useState('')
   const [enviando, setEnviando] = useState(false)
@@ -99,8 +99,12 @@ function Editor({ inicial, existe, linhasIniciais, prods, usadosEmOutros, aoVolt
   const nomeDe = (id: string) => prods.find((p) => p.id === id)?.nome ?? ''
   const livres = (daLinha: string) => prods.filter((p) => !usadosEmOutros.has(p.id) && (p.id === daLinha || !linhas.some((l) => l.produto_id === p.id)))
 
-  function escolherProduto(i: number, id: string) {
-    setLinhas((a) => a.map((l, k) => (k === i ? { ...l, produto_id: id, b: l.b || sugerirQuantidade(nomeDe(id)) } : l)))
+  // Busca digitando: o navegador filtra a lista pelo que foi escrito; ao bater com um produto, ele é escolhido
+  function digitarProduto(i: number, texto: string) {
+    const achado = livres(linhas[i]?.produto_id ?? '').find((p) => p.nome === texto)
+    setLinhas((a) => a.map((l, k) => (k === i
+      ? { ...l, texto, produto_id: achado?.id ?? '', b: achado ? l.b || sugerirQuantidade(achado.nome) : l.b }
+      : l)))
   }
 
   async function subir(e: ChangeEvent<HTMLInputElement>) {
@@ -128,6 +132,7 @@ function Editor({ inicial, existe, linhasIniciais, prods, usadosEmOutros, aoVolt
     setMsg('')
     const nome = f.nome.trim()
     const slug = slugify(f.slug || nome)
+    if (linhas.some((l) => l.texto?.trim() && !l.produto_id)) return setMsg('Há um produto digitado que não foi encontrado. Escolha um da lista que aparece ao digitar.')
     const validas = linhas.filter((l) => l.produto_id)
     if (!nome) return setMsg('Dê um nome ao grupo.')
     if (!slug) return setMsg('Endereço (slug) inválido.')
@@ -226,10 +231,11 @@ function Editor({ inicial, existe, linhasIniciais, prods, usadosEmOutros, aoVolt
             )}
             {linhas.map((l, i) => (
               <div key={i} className="g-linha">
-                <select className="ed-select" value={l.produto_id} onChange={(e) => escolherProduto(i, e.target.value)} aria-label={`Produto ${i + 1}`}>
-                  <option value="">Escolha...</option>
-                  {livres(l.produto_id).map((p) => <option key={p.id} value={p.id}>{p.nome}</option>)}
-                </select>
+                <input list={`g-prods-${i}`} value={l.texto ?? ''} onChange={(e) => digitarProduto(i, e.target.value)}
+                  placeholder="Digite o nome do produto..." aria-label={`Produto ${i + 1}`} aria-invalid={!!l.texto && !l.produto_id} autoComplete="off" />
+                <datalist id={`g-prods-${i}`}>
+                  {livres(l.produto_id).map((p) => <option key={p.id} value={p.nome} />)}
+                </datalist>
                 <input value={l.a} onChange={(e) => setLinha(i, 'a', e.target.value)} placeholder="4x0" aria-label={`${f.rotulo_a} do produto ${i + 1}`} />
                 <input value={l.b} onChange={(e) => setLinha(i, 'b', e.target.value)} placeholder="500 unidades" aria-label={`${f.rotulo_b} do produto ${i + 1}`} />
                 <span className="dica">{(() => { const p = prods.find((x) => x.id === l.produto_id); return p?.preco_venda ? brl(Number(p.preco_venda)) : '—' })()}</span>
@@ -237,7 +243,7 @@ function Editor({ inicial, existe, linhasIniciais, prods, usadosEmOutros, aoVolt
               </div>
             ))}
           </div>
-          <div><button type="button" className="link-botao" onClick={() => setLinhas((a) => [...a, { produto_id: '', a: '', b: '' }])}>+ Adicionar produto</button></div>
+          <div><button type="button" className="link-botao" onClick={() => setLinhas((a) => [...a, { produto_id: '', a: '', b: '', texto: '' }])}>+ Adicionar produto</button></div>
           {linhas.filter((l) => l.produto_id).length > 1 && (
             <label className="medidas-linha">
               Produto principal (foto, descrição e categoria quando o grupo não tiver)

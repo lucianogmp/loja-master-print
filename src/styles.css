@@ -2530,3 +2530,4 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
 .g-rotulo { width: 7.5rem !important; text-align: left !important; }
 .admin-lista-grupos { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 4px; }
 @media (max-width: 700px) { .g-linha { grid-template-columns: 1fr 1fr; } .g-linha > :first-child { grid-column: 1 / -1; } .g-linha.ed-opcoes-cab { display: none; } }
+.g-linha input[aria-invalid='true'] { border-color: var(--erro); }
