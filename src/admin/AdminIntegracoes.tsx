@@ -150,7 +150,7 @@ export default function AdminIntegracoes({ parte }: { parte: 'pagamento' | 'fret
     definir('Testando...')
     try {
       const r = await chamar({ acao: 'testar', integracao })
-      definir(`${r.ok ? '✅' : '⚠️'} ${r.mensagem}`)
+      definir(`${r.ok ? '✅' : '⚠️'} ${r.mensagem}${!r.ok && r.detalhe ? ` — Resposta dos Correios: ${r.detalhe}` : ''}`)
     } catch (er) {
       definir((er as Error).message)
     } finally {
