@@ -4,10 +4,13 @@ import { brl } from '../lib/format'
 import { useCart } from '../lib/cart'
 import { calcularTotal, rotuloArte } from '../lib/preco'
 import ProductArt from '../components/ProductArt'
+import { useFreteCarrinho } from '../lib/freteCarrinho'
+import { mascaraCep } from '../lib/enderecos'
 
 export default function Carrinho() {
   const { itens, remover, subtotal, temSobConsulta } = useCart()
   const { produtoPorSlug } = useCatalogo()
+  const fr = useFreteCarrinho(itens)
 
   if (itens.length === 0) {
     return (
@@ -79,10 +82,41 @@ export default function Carrinho() {
             <span>Subtotal</span>
             <strong>{brl(subtotal)}</strong>
           </div>
-          <div className="linha-resumo">
-            <span>Frete</span>
-            <span>Combinado no fechamento</span>
-          </div>
+          {fr.disponivel ? (
+            <div className="frete-carrinho">
+              <label htmlFor="cep-carrinho">Calcular frete (CEP)</label>
+              <input id="cep-carrinho" inputMode="numeric" placeholder="00000-000" value={mascaraCep(fr.cep)} onChange={(e) => fr.setCep(e.target.value)} autoComplete="postal-code" />
+              {fr.cep.length !== 8 && <span className="dica">Digite o CEP para ver o valor e o prazo.</span>}
+              {fr.carregando && <span className="dica">Calculando o frete...</span>}
+              {fr.erro && <span className="dica" role="alert">{fr.erro}{fr.detalhe ? <><br /><small>Motivo: {fr.detalhe}</small></> : null}</span>}
+              {fr.opcoes.map((o) => (
+                <label key={o.codigo} className="radio">
+                  <input type="radio" name="frete-carrinho" checked={fr.escolhida?.codigo === o.codigo} onChange={() => fr.escolher(o.codigo)} />
+                  <span>
+                    <strong>{o.nome}</strong> — {o.valor === 0 ? 'Grátis' : brl(o.valor)}
+                    {o.prazo ? <small> · {o.prazo} dia(s) úteis</small> : null}
+                  </span>
+                </label>
+              ))}
+            </div>
+          ) : (
+            <div className="linha-resumo">
+              <span>Frete</span>
+              <span>{fr.soRetirada || fr.semEnvio.length > 0 ? 'Retirada ou combinado com a gráfica' : 'Combinado no fechamento'}</span>
+            </div>
+          )}
+          {fr.disponivel && fr.escolhida && (
+            <>
+              <div className="linha-resumo">
+                <span>Frete ({fr.escolhida.nome})</span>
+                <strong>{fr.escolhida.valor === 0 ? 'Grátis' : brl(fr.escolhida.valor)}</strong>
+              </div>
+              <div className="linha-resumo">
+                <span>Total</span>
+                <strong>{brl(subtotal + fr.escolhida.valor)}</strong>
+              </div>
+            </>
+          )}
           {temSobConsulta && <p className="dica">Há itens sob consulta que não entram no subtotal.</p>}
           <Link to="/checkout" className="btn btn-primario btn-bloco">
             Finalizar pedido

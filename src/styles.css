@@ -2541,3 +2541,7 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
 .menu-todos-grade a.ativo { color: var(--cor-3); font-weight: 700; }
 .menu-todos-ver { display: inline-block; font-weight: 700; font-size: 0.9rem; color: var(--cor-3); text-decoration: none; padding: 4px 10px; }
 .cat-topo { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; font-size: 0.8rem; }
+
+.frete-carrinho { display: grid; gap: 6px; margin: 10px 0; }
+.frete-carrinho input[type='text'], .frete-carrinho input:not([type]), .frete-carrinho input[inputmode='numeric'] { max-width: 9.5rem; }
+.frete-carrinho .radio { font-size: 0.9rem; }

@@ -35,7 +35,7 @@ export function opcaoDoItem(p: Produto, variacaoId: string): number | undefined 
 export type OpcaoFrete = { codigo: string; nome: string; valor: number; prazo: number | null }
 export type ResultadoFrete =
   | { ok: true; opcoes: OpcaoFrete[]; gratis: boolean }
-  | { ok: false; erro: string; indisponivel?: boolean }
+  | { ok: false; erro: string; indisponivel?: boolean; detalhe?: string }
 
 /** Pergunta à função do servidor o frete do carrinho; o preço sempre vem dos Correios, nunca daqui. */
 export async function consultarFrete(cep: string, itens: { produto_id: string; quantidade: number; opcao?: number }[]): Promise<ResultadoFrete> {
@@ -46,7 +46,7 @@ export async function consultarFrete(cep: string, itens: { produto_id: string; q
       body: JSON.stringify({ cep, itens }),
     })
     const j = await r.json().catch(() => ({}))
-    if (!r.ok) return { ok: false, erro: j.erro ?? 'Não foi possível calcular o frete agora.', indisponivel: !!j.indisponivel }
+    if (!r.ok) return { ok: false, erro: j.erro ?? 'Não foi possível calcular o frete agora.', indisponivel: !!j.indisponivel, detalhe: typeof j.detalhe === 'string' ? j.detalhe : undefined }
     return { ok: true, opcoes: j.opcoes ?? [], gratis: !!j.gratis }
   } catch {
     return { ok: false, erro: 'Sem conexão. Tente de novo em instantes.' }

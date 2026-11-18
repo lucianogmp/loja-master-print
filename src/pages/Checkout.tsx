@@ -9,6 +9,7 @@ import { useCatalogo } from '../lib/catalogo'
 import { useSite } from '../lib/site'
 import { ERP_URL } from '../lib/erp'
 import { useAjustes } from '../lib/ajustes'
+import { cepSalvo } from '../lib/freteCarrinho'
 import { consultarFrete, envioPronto, opcaoDoItem, produtoIdDoItem, soRetiradaDoItem, type OpcaoFrete } from '../lib/envio'
 import { limparCachePedidos } from '../lib/pedidos'
 import { calcularTotal } from '../lib/preco'
@@ -26,7 +27,7 @@ export default function Checkout() {
   const [entregaEscolhida, setEntrega] = useState<Entrega>('retirada')
   const { lista: enderecos, indisponivel: semEnderecos } = useEnderecos()
   const [escolhido, setEscolhido] = useState<string>('') // id de um endereço salvo, ou 'novo'
-  const [novo, setNovo] = useState<Campos>(ENDERECO_VAZIO)
+  const [novo, setNovo] = useState<Campos>(() => ({ ...ENDERECO_VAZIO, cep: cepSalvo() }))
   const [salvarNovo, setSalvarNovo] = useState(true)
   const [observacao, setObservacao] = useState('')
   const [enviando, setEnviando] = useState(false)
@@ -37,6 +38,7 @@ export default function Checkout() {
   const [freteCodigo, setFreteCodigo] = useState('')
   const [carregandoFrete, setCarregandoFrete] = useState(false)
   const [erroFrete, setErroFrete] = useState('')
+  const [detalheFrete, setDetalheFrete] = useState('')
   const { ehMobile } = useShell()
   const Titulo = ehMobile ? 'h2' : 'h1' // no celular o h1 é o da barra do topo
   const ref = useRef(crypto.randomUUID()) // evita pedido duplicado se clicar duas vezes
@@ -89,6 +91,7 @@ export default function Checkout() {
         setOpcoesFrete([])
         setFreteCodigo('')
         setErroFrete(r.erro)
+        setDetalheFrete(r.detalhe ?? '')
       }
     })
     return () => {
@@ -292,7 +295,7 @@ export default function Checkout() {
               <legend>Forma de envio</legend>
               {cepEntrega.length !== 8 && <span className="dica">Informe o CEP do endereço para calcular o frete.</span>}
               {carregandoFrete && <span className="dica">Calculando o frete nos Correios...</span>}
-              {erroFrete && <span className="dica" role="alert">{erroFrete}</span>}
+              {erroFrete && <span className="dica" role="alert">{erroFrete}{detalheFrete ? <><br /><small>Motivo: {detalheFrete}</small></> : null}</span>}
               {opcoesFrete.map((o) => (
                 <label key={o.codigo} className="radio">
                   <input type="radio" name="frete" checked={freteCodigo === o.codigo} onChange={() => setFreteCodigo(o.codigo)} />
