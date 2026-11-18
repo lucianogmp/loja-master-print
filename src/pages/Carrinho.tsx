@@ -5,12 +5,16 @@ import { useCart } from '../lib/cart'
 import { calcularTotal, rotuloArte } from '../lib/preco'
 import ProductArt from '../components/ProductArt'
 import { useFreteCarrinho } from '../lib/freteCarrinho'
-import { mascaraCep } from '../lib/enderecos'
+import { mascaraCep, useEnderecos } from '../lib/enderecos'
+import { useAuth } from '../lib/auth'
 
 export default function Carrinho() {
   const { itens, remover, subtotal, temSobConsulta } = useCart()
   const { produtoPorSlug } = useCatalogo()
-  const fr = useFreteCarrinho(itens)
+  const { session } = useAuth()
+  const { lista: enderecos } = useEnderecos()
+  const padrao = session ? (enderecos.find((x) => x.padrao) ?? enderecos[0]) : undefined
+  const fr = useFreteCarrinho(itens, padrao?.cep)
 
   if (itens.length === 0) {
     return (
@@ -86,6 +90,7 @@ export default function Carrinho() {
             <div className="frete-carrinho">
               <label htmlFor="cep-carrinho">Calcular frete (CEP)</label>
               <input id="cep-carrinho" inputMode="numeric" placeholder="00000-000" value={mascaraCep(fr.cep)} onChange={(e) => fr.setCep(e.target.value)} autoComplete="postal-code" />
+              {fr.usandoConta && <span className="dica">Usando o CEP do seu endereço padrão. Pode trocar se quiser.</span>}
               {fr.cep.length !== 8 && <span className="dica">Digite o CEP para ver o valor e o prazo.</span>}
               {fr.carregando && <span className="dica">Calculando o frete...</span>}
               {fr.erro && <span className="dica" role="alert">{fr.erro}{fr.detalhe ? <><br /><small>Motivo: {fr.detalhe}</small></> : null}</span>}

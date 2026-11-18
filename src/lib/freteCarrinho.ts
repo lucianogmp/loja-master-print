@@ -15,10 +15,14 @@ export function guardarCep(cep: string) {
 }
 
 /** Frete do carrinho a partir só do CEP (sem login). O preço sempre vem dos Correios. */
-export function useFreteCarrinho(itens: ItemCarrinho[], cepInicial?: string) {
+/** cepConta: CEP do endereço padrão da conta (cliente logado). Se o cliente digitar outro CEP, vale o digitado. */
+export function useFreteCarrinho(itens: ItemCarrinho[], cepConta?: string) {
   const { ajustes } = useAjustes()
   const { produtoPorSlug } = useCatalogo()
-  const [cep, setCepEstado] = useState(() => (cepInicial ?? '').replace(/\D/g, '').slice(0, 8) || cepSalvo())
+  const [manual, setManual] = useState<string | null>(null)
+  const doConta = (cepConta ?? '').replace(/\D/g, '').slice(0, 8)
+  const cep = manual ?? (doConta.length === 8 ? doConta : cepSalvo())
+  const usandoConta = manual === null && doConta.length === 8
   const [opcoes, setOpcoes] = useState<OpcaoFrete[]>([])
   const [codigo, setCodigo] = useState(() => { try { return localStorage.getItem(CHAVE_SERV) ?? '' } catch { return '' } })
   const [carregando, setCarregando] = useState(false)
@@ -34,7 +38,7 @@ export function useFreteCarrinho(itens: ItemCarrinho[], cepInicial?: string) {
 
   function setCep(v: string) {
     const d = v.replace(/\D/g, '').slice(0, 8)
-    setCepEstado(d)
+    setManual(d)
     guardarCep(d)
   }
 
@@ -58,5 +62,5 @@ export function useFreteCarrinho(itens: ItemCarrinho[], cepInicial?: string) {
     setCodigo(c)
     try { localStorage.setItem(CHAVE_SERV, c) } catch { /* sem armazenamento */ }
   }
-  return { ligado, disponivel, soRetirada, semEnvio, cep, setCep, opcoes, escolhida, escolher, carregando, erro, detalhe }
+  return { usandoConta, ligado, disponivel, soRetirada, semEnvio, cep, setCep, opcoes, escolhida, escolher, carregando, erro, detalhe }
 }
