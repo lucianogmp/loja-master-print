@@ -2545,3 +2545,23 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
 .frete-carrinho { display: grid; gap: 6px; margin: 10px 0; }
 .frete-carrinho input[type='text'], .frete-carrinho input:not([type]), .frete-carrinho input[inputmode='numeric'] { max-width: 9.5rem; }
 .frete-carrinho .radio { font-size: 0.9rem; }
+
+/* Fotos de produto padronizadas no estilo Mercado Livre: quadradas, produto inteiro (sem cortar) sobre fundo branco */
+.produto-imagem img,
+.card-imagem img,
+.item-imagem img {
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: #fff;
+}
+.produto-imagem img {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--shadow-card);
+}
+.item-imagem img { width: 88px; height: 88px; }
+@media (max-width: 640px) {
+  .item-imagem img { width: 72px; height: 72px; }
+}
