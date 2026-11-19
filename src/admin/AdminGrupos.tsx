@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { erp } from '../lib/erp'
 import { brl } from '../lib/format'
 import AutoTextarea from '../components/AutoTextarea'
-import { enquadrarFoto } from './EnquadrarFoto'
+import { enquadrarFoto, enquadrarFotoExistente } from './EnquadrarFoto'
 
 // Grupo = vários produtos do ERP que só mudam em impressão (4x0, 4x4...) e/ou quantidade, vendidos numa página só
 // com seletores. Nada é criado nem alterado no ERP: cada opção continua sendo o produto real (preço, prazo, produção).
@@ -130,6 +130,24 @@ function Editor({ inicial, existe, linhasIniciais, prods, usadosEmOutros, aoVolt
     setEnviando(false)
   }
 
+  async function ajustar(u: string) {
+    setMsg('')
+    try {
+      const arq = await enquadrarFotoExistente(u)
+      if (!arq) return
+      setEnviando(true)
+      const caminho = `grupos/${f.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`
+      const { error } = await erp.storage.from('loja-produtos').upload(caminho, arq, { contentType: arq.type })
+      if (error) { setMsg('Falha ao enviar a foto ajustada.'); return }
+      const nova = erp.storage.from('loja-produtos').getPublicUrl(caminho).data.publicUrl
+      set('imagens', f.imagens.map((x) => (x === u ? nova : x)))
+    } catch {
+      setMsg('Não consegui abrir essa foto para ajustar. Remova e suba de novo.')
+    } finally {
+      setEnviando(false)
+    }
+  }
+
   async function salvar(e: FormEvent) {
     e.preventDefault()
     setMsg('')
@@ -213,6 +231,7 @@ function Editor({ inicial, existe, linhasIniciais, prods, usadosEmOutros, aoVolt
                 {i === 0 && <span className="ed-principal">Principal</span>}
                 <div>
                   {i > 0 && <button type="button" className="link-botao" onClick={() => set('imagens', [u, ...f.imagens.filter((x) => x !== u)])}>Principal</button>}
+                  <button type="button" className="link-botao" onClick={() => ajustar(u)} disabled={enviando}>Ajustar</button>
                   <button type="button" className="link-botao" onClick={() => set('imagens', f.imagens.filter((x) => x !== u))}>Remover</button>
                 </div>
               </div>

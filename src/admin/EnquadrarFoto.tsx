@@ -140,3 +140,11 @@ export function enquadrarFoto(arquivo: File): Promise<File | null> {
     raiz.render(<Enquadrar arquivo={arquivo} aoConfirmar={fechar} aoCancelar={() => fechar(null)} />)
   })
 }
+
+/** Reabre uma foto que já está no site para enquadrar de novo. Devolve o novo arquivo, null se cancelar; lança erro se não conseguir baixar. */
+export async function enquadrarFotoExistente(url: string): Promise<File | null> {
+  const r = await fetch(url)
+  if (!r.ok) throw new Error('download')
+  const b = await r.blob()
+  return enquadrarFoto(new File([b], 'foto.jpg', { type: b.type || 'image/jpeg' }))
+}

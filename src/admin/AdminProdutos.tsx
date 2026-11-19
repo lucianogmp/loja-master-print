@@ -5,7 +5,7 @@ import { brl } from '../lib/format'
 import { percentualDesconto, precoComPromocao, type Promocao } from '../lib/promocao'
 import AutoTextarea from '../components/AutoTextarea'
 import ListaOuBlocos, { BotoesVisao, useVisao } from './ListaOuBlocos'
-import { enquadrarFoto } from './EnquadrarFoto'
+import { enquadrarFoto, enquadrarFotoExistente } from './EnquadrarFoto'
 
 type Item = { id: string; nome: string; categoria: string | null; preco: number | null; lp: LP | null }
 type LP = {
@@ -145,6 +145,23 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
     setEnviando(false)
   }
 
+  async function ajustar(i: number) {
+    setMsg('')
+    try {
+      const f = await enquadrarFotoExistente(imagens[i])
+      if (!f) return
+      setEnviando(true)
+      const caminho = `${item.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`
+      const { error } = await erp.storage.from('loja-produtos').upload(caminho, f, { contentType: f.type })
+      if (error) { setMsg('Falha ao enviar a foto ajustada.'); return }
+      const nova = erp.storage.from('loja-produtos').getPublicUrl(caminho).data.publicUrl
+      setImagens((a) => a.map((u, k) => (k === i ? nova : u)))
+    } catch {
+      setMsg('Não consegui abrir essa foto para ajustar. Remova e suba de novo.')
+    } finally {
+      setEnviando(false)
+    }
+  }
   const principal = (i: number) => setImagens((a) => [a[i], ...a.filter((_, k) => k !== i)])
   const remover = (i: number) => setImagens((a) => a.filter((_, k) => k !== i))
 
@@ -229,6 +246,7 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
                 {i === 0 && <span className="ed-principal">Principal</span>}
                 <div>
                   {i > 0 && <button type="button" className="link-botao" onClick={() => principal(i)}>Principal</button>}
+                  <button type="button" className="link-botao" onClick={() => ajustar(i)} disabled={enviando}>Ajustar</button>
                   <button type="button" className="link-botao" onClick={() => remover(i)}>Remover</button>
                 </div>
               </div>
