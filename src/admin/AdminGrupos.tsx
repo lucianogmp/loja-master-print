@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { erp } from '../lib/erp'
 import { brl } from '../lib/format'
 import AutoTextarea from '../components/AutoTextarea'
+import { enquadrarFoto } from './EnquadrarFoto'
 
 // Grupo = vários produtos do ERP que só mudam em impressão (4x0, 4x4...) e/ou quantidade, vendidos numa página só
 // com seletores. Nada é criado nem alterado no ERP: cada opção continua sendo o produto real (preço, prazo, produção).
@@ -114,8 +115,10 @@ function Editor({ inicial, existe, linhasIniciais, prods, usadosEmOutros, aoVolt
     setEnviando(true)
     setMsg('')
     const novas: string[] = []
-    for (const arq of arquivos) {
-      if (!['image/jpeg', 'image/png', 'image/webp'].includes(arq.type)) { setMsg('Use JPG, PNG ou WebP.'); continue }
+    for (const orig of arquivos) {
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(orig.type)) { setMsg('Use JPG, PNG ou WebP.'); continue }
+      const arq = await enquadrarFoto(orig)
+      if (!arq) continue
       if (arq.size > 5 * 1024 * 1024) { setMsg('Imagem acima de 5 MB foi ignorada.'); continue }
       const ext = arq.type === 'image/png' ? 'png' : arq.type === 'image/webp' ? 'webp' : 'jpg'
       const caminho = `grupos/${f.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`

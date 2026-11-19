@@ -2565,3 +2565,15 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
 @media (max-width: 640px) {
   .item-imagem img { width: 72px; height: 72px; }
 }
+
+/* Janela de enquadrar foto no envio */
+.enq-fundo { position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, 0.6); display: grid; place-items: center; padding: 12px; }
+.enq-caixa { background: var(--body-bg, #fff); color: var(--body-text, inherit); border: 1px solid var(--glass-border); border-radius: 1rem; padding: 14px; width: min(94vw, 400px); display: grid; gap: 8px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4); }
+.enq-caixa h3 { margin: 0; font-size: 1.05rem; }
+.enq-quadro { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #fff; border: 1px solid var(--glass-border); border-radius: 0.5rem; touch-action: none; cursor: grab; }
+.enq-quadro img { position: absolute; left: 50%; top: 50%; max-width: none; user-select: none; pointer-events: none; }
+.enq-linha { display: flex; gap: 8px; flex-wrap: wrap; }
+.enq-linha .btn { padding: 6px 12px; }
+.enq-linha .btn.ativo { outline: 2px solid var(--link, currentColor); }
+.enq-zoom { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+.enq-zoom input { flex: 1; }

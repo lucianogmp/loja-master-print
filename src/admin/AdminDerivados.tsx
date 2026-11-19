@@ -3,6 +3,7 @@ import { erp } from '../lib/erp'
 import { brl } from '../lib/format'
 import AutoTextarea from '../components/AutoTextarea'
 import ListaOuBlocos, { BotoesVisao, useVisao } from './ListaOuBlocos'
+import { enquadrarFoto } from './EnquadrarFoto'
 
 type Base = { id: string; nome: string; preco_venda: number | null }
 type Der = {
@@ -116,8 +117,10 @@ function Editor({ inicial, existe, bases, aoSalvar }: { inicial: Der; existe: bo
     setEnviando('fotos')
     setErro('')
     const novas: string[] = []
-    for (const a of arquivos) {
-      if (!['image/jpeg', 'image/png', 'image/webp'].includes(a.type)) { setErro('Fotos: use JPG, PNG ou WebP.'); continue }
+    for (const orig of arquivos) {
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(orig.type)) { setErro('Fotos: use JPG, PNG ou WebP.'); continue }
+      const a = await enquadrarFoto(orig)
+      if (!a) continue
       if (a.size > 5 * 1024 * 1024) { setErro('Foto acima de 5 MB ignorada.'); continue }
       const ext = a.type === 'image/png' ? 'png' : a.type === 'image/webp' ? 'webp' : 'jpg'
       const caminho = `derivados/${f.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`

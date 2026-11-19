@@ -5,6 +5,7 @@ import { brl } from '../lib/format'
 import { percentualDesconto, precoComPromocao, type Promocao } from '../lib/promocao'
 import AutoTextarea from '../components/AutoTextarea'
 import ListaOuBlocos, { BotoesVisao, useVisao } from './ListaOuBlocos'
+import { enquadrarFoto } from './EnquadrarFoto'
 
 type Item = { id: string; nome: string; categoria: string | null; preco: number | null; lp: LP | null }
 type LP = {
@@ -129,8 +130,10 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
     setEnviando(true)
     setMsg('')
     const novas: string[] = []
-    for (const f of arquivos) {
-      if (!['image/jpeg', 'image/png', 'image/webp'].includes(f.type)) { setMsg('Use JPG, PNG ou WebP.'); continue }
+    for (const orig of arquivos) {
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(orig.type)) { setMsg('Use JPG, PNG ou WebP.'); continue }
+      const f = await enquadrarFoto(orig)
+      if (!f) continue
       if (f.size > 5 * 1024 * 1024) { setMsg('Imagem acima de 5 MB foi ignorada.'); continue }
       const ext = f.type === 'image/png' ? 'png' : f.type === 'image/webp' ? 'webp' : 'jpg'
       const caminho = `${item.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
