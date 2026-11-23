@@ -12,6 +12,9 @@ export type Variacao = {
   pesoKg?: number
   // Grupo de produtos: cada variação é um produto real do ERP (impressão `a` + quantidade `b`)
   produtoId?: string
+  // Em grupo: fotos e descrição do produto real daquela opção (a foto muda ao escolher)
+  imagens?: string[]
+  descricao?: string
   a?: string
   b?: string
   prazo?: string

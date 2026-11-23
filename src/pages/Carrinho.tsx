@@ -49,10 +49,11 @@ export default function Carrinho() {
               )
             const variacao = produto.variacoes.find((v) => v.id === item.variacaoId)
             const total = calcularTotal(produto, item)
+            const foto = (produto.grupo ? variacao?.imagens?.[0] : undefined) ?? produto.imagens[0]
             return (
               <li key={item.id} className="item-carrinho">
                 <div className="item-imagem">
-                  {produto.imagens[0] ? <img src={produto.imagens[0]} alt={produto.nome} /> : <ProductArt tipo={produto.arte} />}
+                  {foto ? <img src={foto} alt={produto.nome} /> : <ProductArt tipo={produto.arte} />}
                 </div>
                 <div className="item-info">
                   <h3>{produto.nome}</h3>

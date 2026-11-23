@@ -5,6 +5,7 @@ import { useCatalogo } from '../lib/catalogo'
 import { useSite } from '../lib/site'
 import { linkWhatsApp } from '../config'
 import { brl } from '../lib/format'
+import { explicarImpressao } from '../lib/impressao'
 import { percentualDesconto } from '../lib/promocao'
 import { useCart } from '../lib/cart'
 import { areaM2, calcularTotal, rotuloArte, type OpcaoArte } from '../lib/preco'
@@ -69,6 +70,10 @@ export default function ProdutoPage() {
   const total = calcularTotal(produto, { variacaoId, quantidade, larguraCm, alturaCm })
   const variacao = produto.variacoes.find((v) => v.id === variacaoId)
   const precoOriginal = produto.grupo ? variacao?.precoOriginal : produto.precoOriginal
+  // Em grupo, a foto muda com a opção escolhida (usa a foto do produto daquela opção; sem foto, a do grupo)
+  const imagemAtual = (produto.grupo ? variacao?.imagens?.[0] : undefined) ?? produto.imagens[0]
+  const explicaImpressao = produto.grupo ? explicarImpressao(a) : null
+  const detalheOpcao = produto.grupo && variacao?.descricao && variacao.descricao !== produto.descricao ? variacao.descricao : ''
   const categoria = categoriaPorSlug(produto.categoria)
   const faltaMedida = ehM2 && (!larguraCm || !alturaCm)
   const motivoBloqueio =
@@ -99,8 +104,8 @@ export default function ProdutoPage() {
 
       <div className="produto-grade">
         <div className="produto-imagem">
-          {produto.imagens[0] ? (
-            <img src={produto.imagens[0]} alt={produto.nome} />
+          {imagemAtual ? (
+            <img src={imagemAtual} alt={produto.nome} />
           ) : (
             <>
               <ProductArt tipo={produto.arte} />
@@ -128,6 +133,7 @@ export default function ProdutoPage() {
                       <button key={o} type="button" className={`chip-variacao${o === a ? ' ativo' : ''}`} aria-pressed={o === a} onClick={() => setEscolhaA(o)}>{o}</button>
                     ))}
                   </div>
+                  {explicaImpressao && <p className="dica explica-opcao"><strong>{a}:</strong> {explicaImpressao}</p>}
                 </fieldset>
               )}
               {produto.grupo.rotuloB && (
@@ -146,6 +152,7 @@ export default function ProdutoPage() {
                   </div>
                 </fieldset>
               )}
+              {detalheOpcao && <p className="dica detalhe-opcao">{detalheOpcao}</p>}
             </>
           ) : (
           <div className="campo">

@@ -2586,3 +2586,5 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
 .rastreio-eventos li:last-child::after { display: none; }
 .rastreio-eventos li.atual::before { background: var(--cor-1, #2b7cff); box-shadow: 0 0 0 4px color-mix(in srgb, var(--cor-1, #2b7cff) 25%, transparent); }
 .rastreio-eventos small { color: var(--text-muted); }
+
+.explica-opcao, .detalhe-opcao { margin: 6px 0 0; white-space: pre-line; }

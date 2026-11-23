@@ -141,6 +141,8 @@ export function montarGrupo(g: GrupoDb, linhaPorId: Map<string, Linha>, promos: 
           preco: por < de ? por : de,
           precoOriginal: por < de ? de : undefined,
           produtoId: l.id, a, b,
+          imagens: l.imagens ?? [],
+          descricao: l.descricao_publica?.trim() || undefined,
           pesoKg: l.peso_kg ? Number(l.peso_kg) : undefined,
           pacoteCm: l.comprimento_cm && l.largura_cm && l.altura_cm
             ? { comprimento: Number(l.comprimento_cm), largura: Number(l.largura_cm), altura: Number(l.altura_cm) } : undefined,
