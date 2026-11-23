@@ -7,6 +7,7 @@ import { linkWhatsApp } from '../config'
 import { useTitulo } from '../lib/telas'
 import { useSite } from '../lib/site'
 import { brl } from '../lib/format'
+import RastreioPedido from '../components/RastreioPedido'
 import { dataPedido, ETAPAS, etapaInfo, mensagemWhatsAppPedido, totalFormatado, usePedidos, type Pedido } from '../lib/pedidos'
 
 export default function PedidoDetalhe() {
@@ -105,6 +106,8 @@ function Conteudo({ p, whatsapp, aviso, onRecarregar }: { p: Pedido; whatsapp: b
           ))}
         </ol>
       )}
+
+      {!info.cancelado && <RastreioPedido numero={p.numero} />}
 
       <section className="conta-bloco vidro pedido-bloco">
         <h2>Itens</h2>

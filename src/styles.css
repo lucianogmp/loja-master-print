@@ -2577,3 +2577,12 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
 .enq-linha .btn.ativo { outline: 2px solid var(--link, currentColor); }
 .enq-zoom { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
 .enq-zoom input { flex: 1; }
+
+/* Rastreio dos Correios no pedido */
+.rastreio-eventos { list-style: none; margin: 8px 0 12px; padding: 0; display: grid; }
+.rastreio-eventos li { position: relative; display: grid; gap: 1px; padding: 0 0 14px 26px; }
+.rastreio-eventos li::before { content: ''; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--glass-border); }
+.rastreio-eventos li::after { content: ''; position: absolute; left: 5px; top: 18px; bottom: 0; width: 2px; background: var(--glass-border); }
+.rastreio-eventos li:last-child::after { display: none; }
+.rastreio-eventos li.atual::before { background: var(--cor-1, #2b7cff); box-shadow: 0 0 0 4px color-mix(in srgb, var(--cor-1, #2b7cff) 25%, transparent); }
+.rastreio-eventos small { color: var(--text-muted); }
