@@ -4,6 +4,7 @@ import { brl } from '../lib/format'
 import AutoTextarea from '../components/AutoTextarea'
 import ListaOuBlocos, { BotoesVisao, useVisao } from './ListaOuBlocos'
 import { enquadrarFoto, enquadrarFotoExistente } from './EnquadrarFoto'
+import { useColarFotos } from './colarFotos'
 
 type Base = { id: string; nome: string; preco_venda: number | null }
 type Der = {
@@ -110,9 +111,14 @@ function Editor({ inicial, existe, bases, aoSalvar }: { inicial: Der; existe: bo
   const set = <K extends keyof Der>(k: K, v: Der[K]) => setF((x) => ({ ...x, [k]: v }))
   const base = bases.find((b) => b.id === f.produto_id)
 
-  async function subirFotos(e: ChangeEvent<HTMLInputElement>) {
+  function subirFotos(e: ChangeEvent<HTMLInputElement>) {
     const arquivos = [...(e.target.files ?? [])]
     e.target.value = ''
+    void processarFotos(arquivos)
+  }
+  useColarFotos((arq) => { if (!enviando) void processarFotos(arq) })
+
+  async function processarFotos(arquivos: File[]) {
     if (!arquivos.length) return
     setEnviando('fotos')
     setErro('')
@@ -237,7 +243,7 @@ function Editor({ inicial, existe, bases, aoSalvar }: { inicial: Der; existe: bo
           ))}
         </div>
         <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={subirFotos} />
-        <span className="dica">{enviando === 'fotos' ? 'Enviando...' : 'Mostre o produto pronto (JPG, PNG ou WebP, até 5 MB cada).'}</span>
+        <span className="dica">{enviando === 'fotos' ? 'Enviando...' : 'Mostre o produto pronto (JPG, PNG ou WebP, até 5 MB cada). Também dá para colar a imagem (Ctrl+V).'}</span>
       </div>
 
       <div className="campo">

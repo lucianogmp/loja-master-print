@@ -6,6 +6,7 @@ import { percentualDesconto, precoComPromocao, type Promocao } from '../lib/prom
 import AutoTextarea from '../components/AutoTextarea'
 import ListaOuBlocos, { BotoesVisao, useVisao } from './ListaOuBlocos'
 import { enquadrarFoto, enquadrarFotoExistente } from './EnquadrarFoto'
+import { useColarFotos } from './colarFotos'
 
 type Item = { id: string; nome: string; categoria: string | null; preco: number | null; lp: LP | null }
 type LP = {
@@ -123,9 +124,14 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [])
 
-  async function subir(e: ChangeEvent<HTMLInputElement>) {
+  function subir(e: ChangeEvent<HTMLInputElement>) {
     const arquivos = [...(e.target.files ?? [])]
     e.target.value = ''
+    void processar(arquivos)
+  }
+  useColarFotos((arq) => { if (!enviando) void processar(arq) })
+
+  async function processar(arquivos: File[]) {
     if (!arquivos.length) return
     setEnviando(true)
     setMsg('')
@@ -253,7 +259,7 @@ function Editor({ item, aoSalvar, aoVoltar }: { item: Item; aoSalvar: () => void
             ))}
           </div>
           <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={subir} disabled={enviando} aria-label="Adicionar fotos" />
-          <span className="dica">{enviando ? 'Enviando...' : 'JPG, PNG ou WebP, até 5 MB cada. A primeira é a principal.'}</span>
+          <span className="dica">{enviando ? 'Enviando...' : 'JPG, PNG ou WebP, até 5 MB cada. A primeira é a principal. Também dá para colar a imagem (Ctrl+V).'}</span>
         </section>
 
         <section className="ed-card ed-descricao">

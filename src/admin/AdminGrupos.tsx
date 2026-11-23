@@ -4,6 +4,7 @@ import { erp } from '../lib/erp'
 import { brl } from '../lib/format'
 import AutoTextarea from '../components/AutoTextarea'
 import { enquadrarFoto, enquadrarFotoExistente } from './EnquadrarFoto'
+import { useColarFotos } from './colarFotos'
 
 // Grupo = vários produtos do ERP que só mudam em impressão (4x0, 4x4...) e/ou quantidade, vendidos numa página só
 // com seletores. Nada é criado nem alterado no ERP: cada opção continua sendo o produto real (preço, prazo, produção).
@@ -108,9 +109,14 @@ function Editor({ inicial, existe, linhasIniciais, prods, usadosEmOutros, aoVolt
       : l)))
   }
 
-  async function subir(e: ChangeEvent<HTMLInputElement>) {
+  function subir(e: ChangeEvent<HTMLInputElement>) {
     const arquivos = [...(e.target.files ?? [])]
     e.target.value = ''
+    void processar(arquivos)
+  }
+  useColarFotos((arq) => { if (!enviando) void processar(arq) })
+
+  async function processar(arquivos: File[]) {
     if (!arquivos.length) return
     setEnviando(true)
     setMsg('')
