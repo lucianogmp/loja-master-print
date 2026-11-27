@@ -19,6 +19,24 @@ export type Pedido = {
   pagamento?: { status: 'aguardando' | 'pago' | 'cancelado'; link: string | null; metodo?: string | null; parcelas?: number | null } | null
 }
 
+/** Cliente só cancela enquanto o pedido está em "Recebido" (sem aprovação no ERP) e sem pagamento confirmado. */
+export const podeCancelar = (p: Pick<Pedido, 'etapa' | 'pagamento'>) => p.etapa === 1 && p.pagamento?.status !== 'pago'
+
+export async function cancelarPedido(token: string, numero: number): Promise<{ ok: true } | { ok: false; erro: string }> {
+  try {
+    const r = await fetch(`${ERP_URL}/functions/v1/loja-cancelar-pedido`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-comprador-token': token },
+      body: JSON.stringify({ numero }),
+    })
+    const j = await r.json().catch(() => ({}))
+    if (r.ok && j.ok) return { ok: true }
+    return { ok: false, erro: typeof j.erro === 'string' ? j.erro : MSG_FALHA }
+  } catch {
+    return { ok: false, erro: MSG_SEM_CONEXAO }
+  }
+}
+
 export const ETAPAS = ['Recebido', 'Em produção', 'Pronto', 'Entregue']
 
 const PREFIXO_CACHE = 'loja-pedidos:'

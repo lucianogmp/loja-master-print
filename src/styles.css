@@ -2588,3 +2588,6 @@ html.sem-ptr-nativo { overscroll-behavior-y: contain; }
 .rastreio-eventos small { color: var(--text-muted); }
 
 .explica-opcao, .detalhe-opcao { margin: 6px 0 0; white-space: pre-line; }
+
+.cancelar-pedido { margin: 12px 0; display: grid; gap: 8px; }
+.cancelar-confirma { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--glass-border); border-radius: 0.75rem; }

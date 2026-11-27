@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useAuth } from '../lib/auth'
 import { ChevronLeft } from 'lucide-react'
 import { Link } from '../components/Link'
 import { useShell } from '../components/LojaShell'
@@ -8,7 +10,7 @@ import { useTitulo } from '../lib/telas'
 import { useSite } from '../lib/site'
 import { brl } from '../lib/format'
 import RastreioPedido from '../components/RastreioPedido'
-import { dataPedido, ETAPAS, etapaInfo, mensagemWhatsAppPedido, totalFormatado, usePedidos, type Pedido } from '../lib/pedidos'
+import { cancelarPedido, dataPedido, ETAPAS, podeCancelar, etapaInfo, mensagemWhatsAppPedido, totalFormatado, usePedidos, type Pedido } from '../lib/pedidos'
 
 export default function PedidoDetalhe() {
   const { numero = '' } = useParams()
@@ -74,6 +76,37 @@ function Detalhe({ numero }: { numero: string }) {
   )
 }
 
+function CancelarPedido({ p, onFeito }: { p: Pedido; onFeito: () => void }) {
+  const { session } = useAuth()
+  const [confirmando, setConfirmando] = useState(false)
+  const [enviando, setEnviando] = useState(false)
+  const [erro, setErro] = useState('')
+  async function cancelar() {
+    if (!session?.access_token) return
+    setEnviando(true); setErro('')
+    const r = await cancelarPedido(session.access_token, p.numero)
+    setEnviando(false)
+    if (r.ok) onFeito()
+    else setErro(r.erro)
+  }
+  return (
+    <div className="cancelar-pedido">
+      {!confirmando ? (
+        <button type="button" className="btn btn-secundario" onClick={() => setConfirmando(true)}>Cancelar pedido</button>
+      ) : (
+        <div role="alertdialog" aria-label="Confirmar cancelamento" className="cancelar-confirma">
+          <p><strong>Cancelar o pedido nº {p.numero}?</strong> Essa ação não pode ser desfeita. Se quiser, você faz um novo pedido depois.</p>
+          <div className="campo-linha">
+            <button type="button" className="btn btn-primario" disabled={enviando} onClick={() => void cancelar()}>{enviando ? 'Cancelando...' : 'Sim, cancelar pedido'}</button>
+            <button type="button" className="btn btn-secundario" disabled={enviando} onClick={() => setConfirmando(false)}>Voltar</button>
+          </div>
+        </div>
+      )}
+      {erro && <p className="dica" role="alert">{erro}</p>}
+    </div>
+  )
+}
+
 function Conteudo({ p, whatsapp, aviso, onRecarregar }: { p: Pedido; whatsapp: boolean; aviso: boolean; onRecarregar: () => void }) {
   const info = etapaInfo(p.etapa, p.situacao)
   const receb = recebimentoDoPedido(p)
@@ -108,6 +141,7 @@ function Conteudo({ p, whatsapp, aviso, onRecarregar }: { p: Pedido; whatsapp: b
       )}
 
       {!info.cancelado && <RastreioPedido numero={p.numero} />}
+      {!info.cancelado && podeCancelar(p) && <CancelarPedido p={p} onFeito={onRecarregar} />}
 
       <section className="conta-bloco vidro pedido-bloco">
         <h2>Itens</h2>
